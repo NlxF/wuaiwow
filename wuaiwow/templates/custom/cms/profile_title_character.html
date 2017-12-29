@@ -1,0 +1,176 @@
+<div id="divUpdateChars" align="center" style="margin-right:12px;margin-left:18px;">
+    <button type="button" class="btn btn-default btn-block click-udtacntchar">刷新</button>
+</div>
+<br>
+<div class="loadingchars"></div>
+<div class="row">
+    <div class="udtacntchar" style="width:100%;height:600px;overflow: scroll">
+        {% for idx, character in characters %}
+        <div id="offset-{{character.name}}" class="span4">
+            <div class="widget">
+                <div class="widget-header">
+                    <span class="label label-default span-character-name" style="height:40px">
+                        <label class="label-text-center">{{character.name}}</label>
+                    </span>
+                    <img id='{{character.name}}' src="" class="stop-img refresh-btn pull-right" alt="刷新中..."/>
+                </div>
+                <div class="widget-content alive-{{character.alive|lower}}">
+                    <table class="table table-character table-bordered">
+                        <tbody>
+                            <tr>
+                              <td colspan="3" id="alive-{{character.name}}" style="text-align: left; ">
+                                  {{prompts[0][idx]}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width= "25px" style="text-align: center; ">等级:</td>
+                              <td width= "25px" id="level-{{character.name}}" style="text-align:center; ">{{character.level}}</td>
+                              <td style="text-align: center;font-size:10px;">
+                                  <a href="#" id="{{character.name}}-{{character.level}}" data-type="select" data-pk="1" data-name="{{character.name}}" data-url="/profile/promote-character" data-title="快速升级,飞一般的感觉" class="editable editable-click upgrade-level">
+                                      {{prompts[1][idx]}}
+                                  </a>
+                                  <script>
+                                     $('#{{character.name}}-{{character.level}}').editable({
+                                        prepend: "{{character.level}}级",
+                                        source: [
+                                            {% for l in range(character.level+1, 71) %}
+                                            {value: {{l}}, text: '{{l}}级'},
+                                            {% endfor %}
+                                        ],
+                                        success: function(response, newValue) {
+                                            if(response.status =='Ok') {
+                                                return response.msg;
+                                            }else{
+                                                return response.msg;
+                                                }
+                                        },
+                                        error: function(response, newValue) {
+                                            if(response.status === 500) {
+                                                return 'Service unavailable. Please try later.';
+                                            } else {
+                                                return response.responseText;
+                                            }
+                                        },
+                                        name:"{{character.name}}",
+                                     });
+                                  </script>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width= "25px" style="text-align: center; ">种族:</td>
+                              <td width= "25px" id="race-{{character.name}}" style="text-align: center;font-size:10px;">{{character.race}}</td>
+                              <td style="text-align: center; font-size:10px;">
+                                  <a href="#" id="{{character.name}}-{{character.race_id}}" data-pk="2" data-name="{{character.name}}" data-type="select" data-url="/profile/promote-character" data-title="来一发" class="editable editable-click upgrade-level">
+                                      {{prompts[2][idx]}}
+                                  </a>
+                                  <script>
+                                     $('#{{character.name}}-{{character.race_id}}').editable({
+                                        source: [
+                                            {% for idx, race in races[idx] %}
+                                            {value: {{idx}}, text: '{{race}}'},
+                                            {% endfor %}
+                                        ],
+                                        success: function(response, newValue) {
+                                            if(response.status =='Ok') {
+                                                return response.msg;
+                                            }else{
+                                                return response.msg;
+                                            }
+                                        },
+                                        error: function(response, newValue) {
+                                            if(response.status === 500) {
+                                                return 'Service unavailable. Please try later.';
+                                            } else {
+                                                return response.responseText;
+                                            }
+                                        }
+                                     });
+                                  </script>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width= "25xp" style="text-align: center; ">职业:</td>
+                              <td width= "25px" id="job-{{character.name}}" style="text-align: center; ">{{character.job}}</td>
+                              <td style="text-align: center; font-size:10px;">
+                                  <a href="#" id="{{character.name}}-{{character.job}}" class="unknown upgrade-level">
+                                      {{prompts[3][idx]}}
+                                  </a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width= "25px" style="text-align: center; ">性别:</td>
+                              <td width= "25px" id="gender-{{character.name}}" style="text-align: center; ">{{character.gender}}</td>
+                              <td style="text-align: center; font-size:10px;">
+                                  <a href="#" id="{{character.name}}-{{character.gender}}" data-type="select" data-pk="4" data-name="{{character.name}}" data-url="/profile/promote-character" data-title="变变变" class="editable editable-click upgrade-level">
+                                      {{prompts[4][idx]}}
+                                  </a>
+                                  <script>
+                                     $('#{{character.name}}-{{character.gender}}').editable({
+                                        source: [
+                                            {value: 1, text: '当男'},
+                                            {value: 2, text: '当女'}
+                                        ],
+                                        success: function(response, newValue) {
+                                            if(response.status =='Ok') {
+                                                return response.msg;
+                                            }else{
+                                                return response.msg;
+                                            }
+                                        },
+                                        error: function(response, newValue) {
+                                            if(response.status === 500) {
+                                                return 'Service unavailable. Please try later.';
+                                            } else {
+                                                return response.responseText;
+                                            }
+                                        }
+                                     });
+                                  </script>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width= "25px" style="text-align: center; ">Money:</td>
+                              <td width= "25px" id="money-{{character.name}}" style="text-align: center; ">{{character.money}}</td>
+                              <td style="text-align: center; ">
+                                  <a href="#" id="{{character.name}}-money" data-pk="5" data-name="{{character.name}}" data-type="select" data-title="拼RP" data-url="/profile/promote-character" class="editable editable-click upgrade-level">
+                                      {{prompts[5][idx]}}
+                                  </a>
+                                  <script>
+                                     $('#{{character.name}}-money').editable({
+                                        source: [
+                                              {value: 1, text: '1~9000随机'},
+                                              {value: 2, text: '固定4000'}
+                                        ],
+                                        success: function(response, newValue) {
+                                            if(response.status =='Ok') {
+                                                return response.msg;
+                                            }else{
+                                                return response.msg;
+                                            }
+                                        },
+                                        error: function(response, newValue) {
+                                            if(response.status === 500) {
+                                                return 'Service unavailable. Please try later.';
+                                            } else {
+                                                return response.responseText;
+                                            }
+                                        },
+                                        name:"{{character.name}}",
+                                     });
+                                  </script>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="3">
+                                  <span>游戏总时间:</span><span id="player_time-{{character.name}}">{{character.played_time}}</span>
+                                  <br/>
+                                  <span>上次登录时间:</span><span id="last_login-{{character.name}}">{{character.last_login}}</span><a href="/user/change-password"> 有疑问?立即修改密码</a></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                </div> <!-- /widget-content -->
+            </div> <!-- /widget -->
+        </div> <!-- /span4 -->
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,68 @@
+{% extends "layout/base_layout.html" %}
+
+{% block body %}
+<div id="layout-middle">
+    <div class="wrapper">
+        <div id="header">
+            <h1 id="logo"></h1>
+        </div>
+        <div id="content" style="background-color:transparent">
+            {% block content %}
+            <div class="g-wraper">
+                    <div class="g-content">
+                        <h2 class="u-title">下载最新客户端</h2>
+                        <div class="m-download">
+                            <a href="http://client01.pdl.wow.battlenet.com.cn/downloads/wow-installers/full/World-of-Warcraft-Setup-zhCN.exe" target="_blank" class="u-downloadBtn" id="j-downloadBtn">客户端下载器</a>
+                            <p id="j-downloadBtnList">
+                                <a href="http://client01.pdl.wow.battlenet.com.cn/downloads/wow-installers/full/World-of-Warcraft-Setup-zhCN.exe" target="_blank">下载地址一</a>
+                                <a href="http://client02.pdl.wow.battlenet.com.cn/downloads/wow-installers/full/World-of-Warcraft-Setup-zhCN.exe" target="_blank">下载地址二</a>
+                                <a href="http://client03.pdl.wow.battlenet.com.cn/downloads/wow-installers/full/World-of-Warcraft-Setup-zhCN.exe" target="_blank">下载地址三</a>
+                            </p>
+                            <p>请下载下载器并运行安装</p>
+
+                            <a href="http://down.sandai.net/xlgame/wow0403_setup.exe" target="_blank" class="u-downloadBtn u-downloadBtn-green" id="j-downloadBtn-green">绿色客户端下载器</a>
+                            <p>客户端版本号：<strong>6.2.3</strong>  文件大小：<strong>32G</strong></p>
+                        </div>
+
+                        <div class="m-dvd">
+                            <a href="http://bmall.163.com/script/buyer/product_dtl/product_id___873/" target="_blank" class="u-buyBtn">点击购买</a>
+                            <div class="u-buyBtn-2">2014年12月起在全家®便利店有售<br/>或者通过<a href="/wow/dvd-dealer/" target="_blank">各省市的魔兽世界经销商购买</a></div>
+                        </div>
+
+                        <div class="f-cl"></div>
+
+                        <div class="m-meidaDownload">
+                            <h3>合作媒体下载：</h3>
+                            <ul class="f-cb" style="margin-bottom:30px;">
+                                <li>|<a href="http://games.qq.com/a/20141205/031338.htm" target="_blank">腾讯</a></li>
+                                <li>|<a href="http://games.sina.com.cn/o/z/wow/2014-11-17/1208584255.shtml?qq-pf-to=pcqq.c2c" target="_blank">新浪</a></li>
+                                <li>|<a href="http://www.gamersky.com/Soft/201411/492422.shtml " target="_blank">游民星空</a></li>
+                                <li>|<a href="http://mydown.yesky.com/game/60/38806060.shtml?qq-pf-to=pcqq.discussion" target="_blank">天极</a></li>
+                                <li>|<a href="http://dl.pcgames.com.cn/download/66425.html" target="_blank">Pcgame</a></li>
+                                <li>|<a href="http://down.it168.com/228/235/159162/index.shtml" target="_blank">IT 168</a>|</li>
+                            </ul>
+                            <h3>合作媒体：</h3>
+                            <ul class="f-cb">
+                                <li>|<a href="http://w.163.com/" target="_blank">网易魔兽世界专区</a></li>
+                                <li>|<a href="http://wow.17173.com/" target="_blank">17173</a></li>
+                                <li>|<a href="http://wow.178.com/" target="_blank">178</a>|</li>
+                            </ul>
+                        </div>
+
+                        <div class="m-tip">
+                            <p>
+                                如果你已经安装了[魔兽世界]客户端，请使用Battle.net直接更新到最新版本，相关指引请查看<a target="_blank" href="http://www.battlenet.com.cn/wow/zh/blog/6770863">更新指引</a>。
+                            </p>
+                            <p>
+                                如果在自动升级中遇到问题，<a target="_blank" href="http://www.battlenet.com.cn/wow/zh/forum/2826572/">可以联系我们的客服</a>。你也可以访问常见问答来了解更多：<a target="_blank" href="https://www.battlenet.com.cn/support/zh/article/Agent%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">Agent常见问题</a>、<a target="_blank" href="https://www.battlenet.com.cn/support/zh/article/Launcher%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">Launcher常见问题</a>。
+                            </p>
+                        </div>
+                    </div><!--g-content end-->
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

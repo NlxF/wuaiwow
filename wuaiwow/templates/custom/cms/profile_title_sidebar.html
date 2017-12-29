@@ -1,0 +1,46 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>添加/编辑侧边栏</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+                <fieldset>
+                    <div class="select-button custom-select">
+                    <select id="sidebar-edit-selector" class="form-control">
+                        {% for idx, sd in  sidebars %}
+                        <option value="{{idx}}">{{sd}}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </fieldset>
+                <br/>
+                <hr/>
+                <br/>
+				<form id="form-sidebar" action="" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <fieldset class="form-group">
+                        <label>侧边栏标题:</label>
+                        <input id="sidebar-name" type="text" class="form-control" placeholder="侧边栏名" name="sidebar-name" style="height:35px;">
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label>侧边栏图片:</label>
+                        <br/>
+                        <img id="sidebar-photo" src="{{photo}}" style="height:52px;width:304px;">
+                        <input id="sidebar-file-upload" type="file" accept="image/gif,image/jpeg,image/bmp,image/png" name="sidebar-photo">
+                    </fieldset>
+				  	<fieldset class="form-group">
+						<label for="sidebar-content">侧边栏正文:</label>
+						<textarea class="form-control" id="sidebar-content" rows="50" name="sidebar-content">{{content|safe}}</textarea>
+				  	</fieldset>
+				  	<button type="submit" class="btn btn-primary">保存</button>
+					<script type="text/javascript">
+					    CKEDITOR.replace('sidebar-content', {
+						customConfig: '/static/js/custom.js',
+					});
+					</script>
+				</form>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->

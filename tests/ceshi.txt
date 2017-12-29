@@ -1,0 +1,12 @@
+1. 账号升级功能测试（刷新后15~300s内再次刷新有效）, pass
+2. 在线时间、等级、权限、角色四者关系:
+    1. 在线时间与等级关系: H = 0.25 * L * ( L - 1 ), pass
+    2. 等级与权限关系: P = 5 * (L + 1), pass
+    3. 权限与角色关系: 一个权限可以拥有多个角色，通过调整此关系来改变用户当前可执行的操作, pass
+3. web-server端与wow-server端权限相关同步(mysql-sqlite同步)
+    1. update_account_permission, pass
+    2. update_permission_table, pass
+4. web-server端与wow-server端账号相关同步
+    1. create_account， pass
+    2. change_pwd, pass
+    3. active_account, pass

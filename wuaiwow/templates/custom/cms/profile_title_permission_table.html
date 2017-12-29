@@ -1,0 +1,42 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>权限表</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+                <div class="span7">
+                    <br>
+                    <br>
+                    <br>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                {% for title in titles%}
+                                <th style="text-align: center;">{{title}}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in rows %}
+                                {% if cur_per==row.0 %}
+                                <tr class="success">
+                                {% else %}
+                                <tr>
+                                {% endif %}
+                                <td style="text-align: center;">{{row.0}}</td>
+                                {% for r in row.1 %}
+                                <td style="text-align: center;"><span class="{{r}}"></span></td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <br>
+                </div>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->
+

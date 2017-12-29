@@ -1,0 +1,21 @@
+{% extends "layout/base_layout.html" %}
+
+{% block headstyle%}
+{% endblock %}
+
+{% block body %}
+<div id="layout-middle">
+    <div class="wrapper">
+        <div id="header"></div>
+        <div class="input" id="login-wrapper">
+            <div id="main-div" class="with-margins">
+                {% block pre_content %}{% endblock %}
+                {% block content %}{% endblock %}
+                {% block post_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+

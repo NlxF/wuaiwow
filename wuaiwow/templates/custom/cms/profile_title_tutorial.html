@@ -1,0 +1,26 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>添加/修改指南内容</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+				<form action="" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+				  	<fieldset class="form-group">
+						<!--<label for="exampleTextarea">{{result}}</label>-->
+						{% if result %}
+							{% if result.retCode %}
+							<script>$.toast({heading: 'Success', text: '{{ result|safe }}', position: 'top-center',icon: 'Error'}); </script>
+							{% else %}
+							<script>$.toast({heading: 'Error', text: '{{ result|safe }}', position: 'top-center',icon: 'Error'}); </script>
+							{% endif %}
+						{% endif %}
+						<textarea class="form-control ckeditor" id="exampleTextarea" rows="40" name="guildinfotext">{{guild_info|safe}}</textarea>
+				  	</fieldset>
+				  	<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->

@@ -1,0 +1,53 @@
+{% extends "layout/base_layout.html" %}
+
+{% block headstyle %}
+<style type="text/css">
+    body{
+        color: #4a515b0;
+    }
+    #content{
+        padding-top: 30px;
+        //background: url(/static/images/wuaiwow/gm-content-bg.png) repeat 0 0;
+    }
+    hr {
+        margin: 18px 0;
+        border: 0;
+        border-top: 1px solid #eeeeee;
+        border-bottom: 1px solid #ffffff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+                <div class="account-container">
+					<div class="account-avatar">
+						<img src="{{user.avatar}}" alt="头像" class="thumbnail">
+					</div> <!-- /account-avatar -->
+					<div class="account-details">
+						<span class="account-name">{{user.username}}</span>
+						<span class="account-role">{{user.role_string}}</span>
+						<span class="account-actions">
+                            <span>上次登录时间:</span>
+                            <span>{{user.last_login}}</span><a href="/user/change-password"> 有疑问?立即修改密码</a>
+						</span>
+					</div> <!-- /account-details -->
+				</div>
+                <hr style="border-top-color:#DDD;">
+				{% block profile_nav %}
+				{% endblock %}
+				<hr style="border-top-color:#DDD;">
+				<div class="sidebar-extra">
+					<p>这里是提示信息文字这里是提示信息文字这里是提示信息文字这里是提示信息文字这里是提示信息文字这里是提示信息文字这里是提示信息文字这里是提示信息文字.</p>
+				</div> <!-- .sidebar-extra -->
+				<br />
+			</div> <!-- /span3 -->
+			<div class="span8">
+				{% block profile_title %}
+                {% endblock %}
+			</div> <!-- /span8 -->
+		</div> <!-- /row -->
+	</div> <!-- /container -->
+{% endblock%}

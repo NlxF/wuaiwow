@@ -1,0 +1,100 @@
+{% extends "layout/base_layout.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+<div class="content-top body-top">	
+	<div class="content-bot clear">
+		<div class="right-sidebar">		
+			<div class="sidebar" id="sidebar">
+				<div class="sidebar-top">
+					<div class="sidebar-bot">
+						<div id="sidebar-links" class="sidebar-module">
+                            {% for sd in all_sidebar%}
+                            <a target="_blank" class="sidebar-link" href="user/register"  <!--"/wuaiwow/sidebar/{{sd.id}}/{{sd.name}}"--> style="background-image:url('{{sd.image_url}}');"></a>
+                            {% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="left-content" itemscope="itemscope">
+			<div class="left-content-inner">
+				<div class="featured-news-container">
+                    <ul class="featured-news">
+                        {% for news in all_news[:3]%}
+                            <li>
+                                <div class="article-wrapper">
+                                    <a href="/wuaiwow/news/{{news.id}}/{{news.title}}" class="featured-news-link" data-category="wow" data-action="Blog_Click-Throughs">
+                                        <div class="article-image" style="background-image:url('{{news.image_url}}');">
+                                            <div class="article-image-frame"></div>
+                                        </div>
+                                        <div class="article-content">
+                                            <span class="article-title" title="{{news.title}}">{{news.title}}</span>
+                                            <span class="article-summary">{{news.summary}}</span>
+                                        </div>
+                                    </a>
+                                    <div class="article-meta">
+                                        <span class="publish-date" title="{{news.update|strftime}} CST">{{news.update|strftime}}</span>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+					</ul>
+				</div>
+                <span class="clear"><!-- --></span>
+                {% for news in all_news[3:] %}
+                    <div id="blog-articles" class="blog-articles" itemscope="itemscope">
+                        <div class="article-wrapper">
+                            <a href="/wuaiwow/news/{{news.id}}/{{news.title}}" itemprop="url">
+                                <div class="article-image" style="background-image:url(//cms-origin-cn.battle.net/cms/blog_thumbnail/ix/IXV7EDHUJBD61444359129597.jpg)">
+                                    <div class="article-image-frame"></div>
+                                </div>
+                                <div class="article-content" itemprop="blogPost" itemscope="itemscope">
+                                    <h2 class="header-2">
+                                        <span class="article-title" itemprop="headline">{{news.title}}</span>
+                                    </h2>
+                                    <span class="clear"><!-- --></span>
+                                    <div class="article-summary" itemprop="description">{{news.summary}}</div>
+                                    <span class="clear"><!-- --></span>
+                                </div>
+                            </a>
+                            <div class="article-meta">
+                                <span class="publish-date" title="{{news.update|strftime}} CST">
+                                        {{news.update|timespan}}
+                                </span>
+                            </div>
+                            <span class="clear"><!-- --></span>
+                        </div>
+                    </div>
+                {% endfor %}
+				<span class="clear"><!-- --></span>
+				<div class="blog-load-more">
+					<a class="load-more" id="load-more" href="javascript:;">查看更多</a>
+					<span class="clear"><!-- --></span>
+				</div>			
+			</div>	
+		</div>
+		<span class="clear"><!-- --></span>
+	</div>	
+</div>
+{% endblock %}
+{% block bottom %}
+<div id="layout-bottom">
+    <div class="wrapper">
+        <div id="nav-client-footer" class="nav-client foot-background">
+            <div class="mobileFooterEnabled footer-content footer-desktop grid-container">
+                <div class="nav-section">
+                    <div class="nav-left">
+                        <span>当前在线{{g.online_users_msg.all}}人: {{g.online_users_msg.register}}会员,{{g.online_users_msg.visitor}}游客. 最高记录是{{g.online_users_msg.max_num}}  发生于{{g.online_users_msg.occ_time}} {{g.online_users_msg.time_zone}}</span>
+                    </div>
+                    <div class="nav-right">
+                        <div id="nav-feedback">
+                            <span class="nav-item nav-a nav-item-btn">吾爱魔兽  &copy; 2015</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

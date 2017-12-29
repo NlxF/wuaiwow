@@ -1,0 +1,164 @@
+<!doctype html>
+<html xml:lang="zh-cn" class="zh-cn">
+	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <title>Nothing</title>
+
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="shortcut icon" href="/static/images/wuaiwow/favicon.ico">
+
+        <script src="/static/js/html5boilerplate/js/modernizr-2.8.3.min.js"></script>
+        <!--<script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>-->
+        <script src="//cdn.ckeditor.com/4.4.6/full/ckeditor.js"></script>
+        <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+        <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="/static/editable-3/js/bootstrap-editable.js"></script>
+        <script src="/static/js/jquery.toast.min.js"></script>
+        <!--<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>-->
+        <script src="/static/js/bootstrap-table.min.js"></script>
+        <script src="/static/js/bootstrap-table-zh-CN.min.js"></script>
+        <script src="/static/js/jquery.shCircleLoader.min.js"></script>
+        {#<script src="/static/js/jquery.imgareaselect.pack.js"></script>#}
+        <script src="http://odyniec.net/projects/imgareaselect/jquery.imgareaselect.pack.js"></script>
+        <script src="/static/js/wuaiwow/avatar_upload.js"></script>
+        {#<script src="/static/js/image-scale.min.js"></script>#}
+        {#<script src="/static/js/croppie.js"></script>#}
+        <script src="/static/js/Chart.min.js"></script>
+
+        <link rel="stylesheet" href="/static/css/html5boilerplate/css/normalize.css">
+        <link rel="stylesheet" href="/static/css/html5boilerplate/css/main.css">
+        <link rel="stylesheet" href="/static/css/wuaiwow/old.min.css">
+        <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/editable-3/css/bootstrap-editable.css">
+        <link rel="stylesheet" href="/static/css/user/user.css">
+        <link rel="stylesheet" href="/static/css/wuaiwow/nav-client-desktop.css">
+		<link rel="stylesheet" href="/static/css/wuaiwow/cms.min.css">
+        <link rel="stylesheet" href="/static/css/wuaiwow/cms.css?q=1280549780">
+        <link rel="stylesheet" href="/static/css/wuaiwow/3k.css?q=1280549782">
+		<link rel="stylesheet" href="/static/css/wuaiwow/wow.css?q=12805497812">
+		<link rel="stylesheet" href="/static/css/wuaiwow/flatty.css">
+		<link rel="stylesheet" href="/static/css/jquery.toast.min.css">
+        <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">-->
+        <link rel="stylesheet" href="/static/css/bootstrap-table.min.css">
+        <link rel="stylesheet" href="/static/css/jquery.shCircleLoader.css">
+        <link rel="stylesheet" href="/static/css/imgareaselect/imgareaselect-default.css">
+        {#<link rel="stylesheet" href="/static/css/croppie.css">#}
+
+        {% block headstyle%}
+        <style type="text/css">
+        *{
+            -webkit-box-sizing: inherit;
+            -moz-box-sizing: inherit;
+            box-sizing: inherit;
+        }
+        </style>
+        {% endblock %}
+	</head>
+	<body class="zh-cn homepage login-template news">
+		<!-- Application specific HTML -->
+        {# One-time system messages called Flash messages #}
+		{% block flash_messages %}
+		    {%- with messages = get_flashed_messages(with_categories=true) -%}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category=='error' %}
+                            <script>$.toast({heading: 'Error', text: '{{ message|safe }}', position: 'top-center',icon: 'Error',hideAfter:false}); </script>
+                        {% else %}
+                            <script>$.toast({heading: 'Success', text: '{{ message|safe }}', position: 'top-center', icon: 'success',hideAfter:false}); </script>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+		    {%- endwith %}
+		{% endblock %}
+        <div id="layout-top">
+            <div id="nav-client-header" class="nav-client compact">
+                <div id="nav-client-bar">
+                    <div class="grid-container nav-header-content">
+                        <ul class="nav-list nav-left" id="nav-client-main-menu">
+                            <li>
+                                <a href="/" class="nav-item nav-link needsclick"> 主页 </a>
+                            </li>
+                            <li>
+                                <a href="/tutorial" class="nav-item nav-link needsclick"> 游戏指南 </a>
+                            </li>
+                        </ul>
+                        <ul class="nav-list nav-right" id="nav-client-account-menu">
+                            <li>
+                                <div id="username">
+                                    <div class="dropdown pull-right">
+                                        {% if user and user.is_authenticated %}
+                                            <a class="nav-link username username--loggedout needsclick dropdown-toggle" data-toggle="dropdown" rel="navbar">{{ user.username }}<b class="caret"></b></a>
+                                        {% else %}
+                                            <a class="nav-link username username--loggedout needsclick dropdown-toggle" data-toggle="dropdown" rel="navbar">您的通行证<b class="caret"></b></a>
+                                        {% endif %}
+                                        <div class="dropdown-menu">
+                                            <div class="user-profile">
+                                                {% if user and user.is_authenticated %}
+                                                <div class="dropdown-section">
+                                                    <ul class="nav-list">
+                                                        <li>
+                                                            <a class="nav-item nav-a nav-item-box " href="/user/account"><i class="nav-icon-24-blue nav-icon-character-cog"></i> 账号</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="dropdown-section">
+                                                    <ul class="nav-list">
+                                                        <li>
+                                                            <a class="nav-item nav-a nav-item-box" href="/user/sign-out"><i class="nav-icon-24-blue nav-icon-logout"></i> 退出登录</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                {% else %}
+                                                <div class="dropdown-section">
+                                                    <div class="nav-box selectable">
+                                                        <a class="nav-item nav-btn nav-btn-block nav-login-btn" href="/user/sign-in" data-analytics="global-nav" data-analytics-placement="Nav - Account - Log In">登录</a>
+                                                    </div>
+                                                </div>
+                                                <div class="dropdown-section"><ul class="nav-list"><li></li></ul></div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a id="nav-client-support-link" class="nav-item nav-link needsclick" href="/donate" data-analytics="global-nav" data-analytics-placement="Nav - Support"> 捐赠 </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% block body %}
+        <div id="layout-middle">
+            <div class="wrapper">
+                <div id="header">
+                    <h1 id="logo"></h1>
+                </div>
+                <div id="content">
+                    {% block pre_content %} {% endblock %}
+                    {% block content %} {% endblock %}
+                    {% block post_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        {% block bottom %}
+        {% endblock %}
+	    <!-- Application specific JS -->
+		<script src="/static/js/wuaiwow/3k.js?v=1.3"></script>
+        <!-- HTML5 boilerplate JS -->
+        <script src="/static/js/html5boilerplate/js/main.js"></script>
+
+		<script type=text/javascript>
+	  		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>
+	</body>
+</html>

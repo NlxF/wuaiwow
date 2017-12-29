@@ -1,0 +1,13 @@
+{% extends 'flask_user/emails/base_message.txt' %}
+
+{% block message %}
+感谢注册吾爱魔兽.
+
+{% if user_manager.enable_confirm_email -%}
+访问下面的链接完成注册:
+{{ confirm_email_link }}
+
+如果您并未发起此注册请求，可以放心地忽略此邮件.
+
+{%- endif %}
+{% endblock %}

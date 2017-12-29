@@ -1,0 +1,27 @@
+{% extends "layout/base_layout.html" %}
+
+{% block body %}
+<div id="layout-middle">
+    <div class="wrapper">
+        <div id="header">
+            <h1 id="logo"></h1>
+        </div>
+        <div id="content" style="background-color:transparent">
+            {% block content %}
+            <div class="g-wraper">
+                <div class="g-content">
+                    <div style="width:100%;height:470px;overflow: scroll">
+                        <div align="center">
+                            <h2 class="u-title">游玩指南</h2>
+                        </div>
+                        <br/>
+                        {{tutorial|safe}}
+                    </div>
+                </div><!--g-content end-->
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

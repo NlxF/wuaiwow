@@ -1,0 +1,666 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2016 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2016-08-20 09:40+0800\n"
+"PO-Revision-Date: 2016-08-20 09:33+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/config_vars.py:15
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/config_vars.py:18
+msgid "Config"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/headers.py:37
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/headers.py:40
+msgid "HTTP Headers"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/logger.py:87
+msgid "Logging"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/logger.py:95
+msgid "Log Messages"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/request_vars.py:16
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/request_vars.py:19
+msgid "Request Vars"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/route_list.py:16
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/route_list.py:19
+msgid "Route List"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/sqlalchemy.py:90
+msgid "SQLAlchemy"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/sqlalchemy.py:101
+msgid "SQLAlchemy queries"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/template.py:53
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/template.py:59
+msgid "Templates"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:36
+msgid "Time"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:49
+msgid "Resource Usage"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:81
+msgid "User CPU time"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:82
+msgid "System CPU time"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:83
+msgid "Total CPU time"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:84
+msgid "Elapsed time"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/timer.py:85
+msgid "Context switches"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/versions.py:28
+#: env/lib/python2.7/site-packages/flask_debugtoolbar/panels/versions.py:37
+msgid "Versions"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_script/__init__.py:41
+msgid "show this help message and exit"
+msgstr ""
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:35
+msgid ""
+"Password must have at least 6 characters with one lowercase letter, one "
+"uppercase letter and one number"
+msgstr "密码必须包含6个字符,其中至少一个小写字母,一个大写字母和一个数字"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:41
+msgid "Username must be at least 3 characters long"
+msgstr "用户名必须包含3个字符"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:46
+msgid "Username may only contain letters, numbers, '-', '.' and '_'"
+msgstr "用户名只能包含字母,数字,'-', '.' 和 '_'"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:52
+msgid "This Username is already in use. Please try another one."
+msgstr "此用户名已被占用, 换一个试试."
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:59
+msgid "This Email is already in use. Please try another one."
+msgstr "此邮箱已被占用, 换一个试试."
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:66
+#: env/lib/python2.7/site-packages/flask_user/forms.py:167
+#: env/lib/python2.7/site-packages/flask_user/forms.py:226
+#: env/lib/python2.7/site-packages/flask_user/forms.py:254
+#: env/lib/python2.7/site-packages/flask_user/forms.py:330
+msgid "Email"
+msgstr "邮箱"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:67
+#: env/lib/python2.7/site-packages/flask_user/forms.py:168
+#: env/lib/python2.7/site-packages/flask_user/forms.py:255
+#: env/lib/python2.7/site-packages/flask_user/forms.py:331
+msgid "Email is required"
+msgstr "邮箱必填"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:68
+#: env/lib/python2.7/site-packages/flask_user/forms.py:169
+#: env/lib/python2.7/site-packages/flask_user/forms.py:256
+#: env/lib/python2.7/site-packages/flask_user/forms.py:332
+msgid "Invalid Email"
+msgstr "邮箱无效"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:70
+msgid "Add Email"
+msgstr "添加邮箱"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:73
+#: env/lib/python2.7/site-packages/flask_user/forms.py:116
+msgid "Old Password"
+msgstr "旧密码"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:74
+#: env/lib/python2.7/site-packages/flask_user/forms.py:117
+msgid "Old Password is required"
+msgstr "旧密码必填"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:76
+#: env/lib/python2.7/site-packages/flask_user/forms.py:304
+msgid "New Password"
+msgstr "新密码"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:77
+#: env/lib/python2.7/site-packages/flask_user/forms.py:305
+msgid "New Password is required"
+msgstr "新密码必填"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:79
+#: env/lib/python2.7/site-packages/flask_user/forms.py:306
+msgid "Retype New Password"
+msgstr "再次输入新密码"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:80
+#: env/lib/python2.7/site-packages/flask_user/forms.py:307
+msgid "New Password and Retype Password did not match"
+msgstr "两次密码不匹配"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:83
+#: env/lib/python2.7/site-packages/flask_user/forms.py:309
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/change_password.html:5
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/user_profile.html:11
+msgid "Change password"
+msgstr "修改密码"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:105
+#: env/lib/python2.7/site-packages/flask_user/forms.py:139
+msgid "Old Password is incorrect"
+msgstr "旧密码错误"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:112
+msgid "New Username"
+msgstr "新用户"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:113
+#: env/lib/python2.7/site-packages/flask_user/forms.py:165
+#: env/lib/python2.7/site-packages/flask_user/forms.py:252
+msgid "Username is required"
+msgstr "用户名必填"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:120
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/change_username.html:5
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/user_profile.html:8
+msgid "Change username"
+msgstr "修改用户名"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:146
+#: env/lib/python2.7/site-packages/flask_user/forms.py:297
+msgid "Your email address"
+msgstr "邮箱地址"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:147
+#: env/lib/python2.7/site-packages/flask_user/forms.py:298
+msgid "Email address is required"
+msgstr "邮箱地址必填"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:148
+#: env/lib/python2.7/site-packages/flask_user/forms.py:299
+msgid "Invalid Email address"
+msgstr "无效的邮箱地址"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:150
+msgid "Send reset password email"
+msgstr "发送重置密码邮件"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:157
+#: env/lib/python2.7/site-packages/flask_user/forms.py:231
+#, python-format
+msgid "%(username_or_email)s does not exist"
+msgstr "%(username_or_email)s不存在"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:164
+#: env/lib/python2.7/site-packages/flask_user/forms.py:223
+#: env/lib/python2.7/site-packages/flask_user/forms.py:251
+msgid "Username"
+msgstr "用户名"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:171
+#: env/lib/python2.7/site-packages/flask_user/forms.py:258
+msgid "Password"
+msgstr "密码"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:172
+#: env/lib/python2.7/site-packages/flask_user/forms.py:259
+msgid "Password is required"
+msgstr "密码必填"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:174
+msgid "Remember me"
+msgstr "记住我"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:176
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/login.html:5
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/login_or_register.html:9
+#: wuaiwow/templates/flask_user/login.html:6
+#: wuaiwow/templates/flask_user/login_or_register.html:9
+msgid "Sign in"
+msgstr "登录"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:183
+msgid "Username or Email"
+msgstr "用户名或邮箱"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:220
+msgid "Username/Email"
+msgstr "用户名/邮箱"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:238
+#, python-format
+msgid "Incorrect %(username_or_email)s and/or Password"
+msgstr "%(username_or_email)s或密码不正确"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:260
+msgid "Retype Password"
+msgstr "再次输入密码"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:261
+msgid "Password and Retype Password did not match"
+msgstr "两次密码不匹配"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:262
+msgid "Token"
+msgstr "令牌"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:264
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/login_or_register.html:41
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/register.html:5
+#: wuaiwow/templates/flask_user/login_or_register.html:36
+#: wuaiwow/templates/flask_user/register.html:6
+msgid "Register"
+msgstr "创建账号"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:301
+msgid "Resend email confirmation email"
+msgstr "重新发送确认邮件"
+
+#: env/lib/python2.7/site-packages/flask_user/forms.py:334
+msgid "Invite!"
+msgstr "邀请!"
+
+#: env/lib/python2.7/site-packages/flask_user/translations.py:74
+msgid "Home Page"
+msgstr "主页"
+
+#: env/lib/python2.7/site-packages/flask_user/translations.py:75
+msgid "Profile Page"
+msgstr "个人主页"
+
+#: env/lib/python2.7/site-packages/flask_user/translations.py:76
+msgid "Special Page"
+msgstr "特殊页面"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:34
+msgid "Your confirmation token has expired."
+msgstr "确认邮件已过期"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:38
+#: env/lib/python2.7/site-packages/flask_user/views.py:58
+msgid "Invalid confirmation token."
+msgstr "确认无效令牌"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:65
+msgid "Your email has been confirmed."
+msgstr "邮箱已确认"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:102
+#: wuaiwow/controllers/users.py:218
+msgid "Your password has been changed successfully."
+msgstr "您的密码已成功修改"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:138
+#, python-format
+msgid "Your username has been changed to '%(username)s'."
+msgstr "您的用户名修改为'%(username)s'"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:205
+#, python-format
+msgid ""
+"A reset password email has been sent to '%(email)s'. Open that email and "
+"follow the instructions to reset your password."
+msgstr "重置密码邮件已发送至'%(email)s'. 请按照邮件指示重置您的密码."
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:277
+msgid "You have signed out successfully."
+msgstr "注销成功"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:519
+msgid "Invitation has been sent."
+msgstr "邀请已发送"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:562
+#: wuaiwow/controllers/users.py:253
+msgid "Your reset password token has expired."
+msgstr "重置密码令牌过期"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:566
+#: env/lib/python2.7/site-packages/flask_user/views.py:577
+#: wuaiwow/controllers/users.py:257 wuaiwow/controllers/users.py:268
+msgid "Your reset password token is invalid."
+msgstr "重置密码令牌无效"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:604
+#: wuaiwow/controllers/users.py:301
+msgid "Your password has been reset successfully."
+msgstr "您的密码已重置成功"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:621
+#, python-format
+msgid "You must confirm your email to access '%(url)s'."
+msgstr "您必须先确认邮箱才能访问'%(url)s'"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:632
+#: wuaiwow/controllers/users.py:366
+#, python-format
+msgid "You must be signed in to access '%(url)s'."
+msgstr "登录已访问'%(url)s'"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:646
+#, python-format
+msgid "You do not have permission to access '%(url)s'."
+msgstr "您没有权限访问'%(url)s'"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:677
+#: env/lib/python2.7/site-packages/flask_user/views.py:698
+#: wuaiwow/controllers/users.py:357
+#, python-format
+msgid ""
+"A confirmation email has been sent to %(email)s with instructions to "
+"complete your registration."
+msgstr "确认邮件已发送到%(email)s,请按照指示完成剩余注册"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:679
+#: wuaiwow/controllers/users.py:359
+msgid "You have registered successfully."
+msgstr "您已成功注册"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:707
+#: wuaiwow/controllers/users.py:386
+msgid "Your account has not been enabled."
+msgstr "您的帐户尚未启用"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:716
+#: wuaiwow/controllers/users.py:395
+#, python-format
+msgid ""
+"Your email address has not yet been confirmed. Check your email Inbox and"
+" Spam folders for the confirmation email or <a href=\"%(url)s\">Re-send "
+"confirmation email</a>."
+msgstr "您的邮箱尚未确认. 请检查您的收件箱或垃圾箱来确认邮箱或<a href=\"%(url)s\">重新发送确认邮件</a>"
+
+#: env/lib/python2.7/site-packages/flask_user/views.py:727
+#: wuaiwow/controllers/users.py:403
+msgid "You have signed in successfully."
+msgstr "登录成功"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/forgot_password.html:5
+#: wuaiwow/templates/flask_user/forgot_password.html:6
+msgid "Forgot Password"
+msgstr "忘记密码"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/invite.html:5
+msgid "Invite User"
+msgstr "邀请用户"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/login.html:21
+#: wuaiwow/templates/flask_user/login.html:22
+msgid "New here? Register."
+msgstr "新玩家?马上注册!"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/login.html:44
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/login_or_register.html:34
+#: wuaiwow/templates/flask_user/login.html:45
+#: wuaiwow/templates/flask_user/login_or_register.html:29
+msgid "Forgot your Password?"
+msgstr "忘记密码?"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/manage_emails.html:5
+#: wuaiwow/templates/flask_user/manage_emails.html:6
+msgid "Manage Emails"
+msgstr "邮箱管理"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/register.html:21
+#: wuaiwow/templates/flask_user/register.html:24
+msgid "Already registered? Sign in."
+msgstr "已经是注册用户?马上登录!"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/resend_confirm_email.html:5
+#: wuaiwow/templates/flask_user/resend_confirm_email.html:6
+msgid "Resend Confirmation Email"
+msgstr "重新发送确认邮件"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/reset_password.html:5
+#: wuaiwow/templates/flask_user/reset_password.html:6
+msgid "Reset Password"
+msgstr "重置密码"
+
+#: env/lib/python2.7/site-packages/flask_user/templates/flask_user/user_profile.html:5
+msgid "User profile"
+msgstr "用户资料"
+
+#: env/lib/python2.7/site-packages/flask_wtf/file.py:36
+#: env/lib/python2.7/site-packages/wtforms/validators.py:203
+#: env/lib/python2.7/site-packages/wtforms/validators.py:243
+msgid "This field is required."
+msgstr "此字段必填"
+
+#: env/lib/python2.7/site-packages/flask_wtf/form.py:110
+#: env/lib/python2.7/site-packages/wtforms/csrf/session.py:61
+#: env/lib/python2.7/site-packages/wtforms/ext/csrf/session.py:58
+msgid "CSRF token missing"
+msgstr "CSRF令牌丢失"
+
+#: env/lib/python2.7/site-packages/passlib/ext/django/utils.py:196
+msgid "algorithm"
+msgstr "算法"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:56
+#, python-format
+msgid "Invalid field name '%s'."
+msgstr "无效的字段名:'%s'"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:64
+#, python-format
+msgid "Field must be equal to %(other_name)s."
+msgstr "字段值必须等于%(other_name)s"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:97
+#, python-format
+msgid "Field must be at least %(min)d character long."
+msgid_plural "Field must be at least %(min)d characters long."
+msgstr[0] "字符长度不能小于%(min)d"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:100
+#, python-format
+msgid "Field cannot be longer than %(max)d character."
+msgid_plural "Field cannot be longer than %(max)d characters."
+msgstr[0] "字符长度不能大于%(max)d"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:103
+#, python-format
+msgid "Field must be between %(min)d and %(max)d characters long."
+msgstr "字符长度必须介于%(min)d和%(max)d之间"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:139
+#, python-format
+msgid "Number must be at least %(min)s."
+msgstr "数值不能小于%(min)s"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:141
+#, python-format
+msgid "Number must be at most %(max)s."
+msgstr "数值不能大于%(max)s"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:143
+#, python-format
+msgid "Number must be between %(min)s and %(max)s."
+msgstr "数值必须介于%(min)s 和 %(max)s之间"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:275
+msgid "Invalid input."
+msgstr "无效输入"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:301
+msgid "Invalid email address."
+msgstr "无效的邮箱地址"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:335
+msgid "Invalid IP address."
+msgstr "无效的IP地址"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:386
+msgid "Invalid Mac address."
+msgstr "无效的MAC地址"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:415
+msgid "Invalid URL."
+msgstr "无效的网站"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:436
+msgid "Invalid UUID."
+msgstr "无效的UUID"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:464
+#, python-format
+msgid "Invalid value, must be one of: %(values)s."
+msgstr "无效值,必须为%(values)s之一"
+
+#: env/lib/python2.7/site-packages/wtforms/validators.py:496
+#, python-format
+msgid "Invalid value, can't be any of: %(values)s."
+msgstr "无效值,不能为任意的%(values)s"
+
+#: env/lib/python2.7/site-packages/wtforms/csrf/core.py:98
+#: env/lib/python2.7/site-packages/wtforms/ext/csrf/form.py:47
+msgid "Invalid CSRF Token"
+msgstr "无效的CSRF令牌"
+
+#: env/lib/python2.7/site-packages/wtforms/csrf/session.py:69
+#: env/lib/python2.7/site-packages/wtforms/ext/csrf/session.py:66
+msgid "CSRF failed"
+msgstr "CSRF错误"
+
+#: env/lib/python2.7/site-packages/wtforms/csrf/session.py:74
+#: env/lib/python2.7/site-packages/wtforms/ext/csrf/session.py:71
+msgid "CSRF token expired"
+msgstr "CSRF令牌过期"
+
+#: env/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:87
+#: env/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:164
+#: env/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:166
+#: env/lib/python2.7/site-packages/wtforms/ext/django/fields.py:95
+#: env/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:125
+#: env/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:127
+#: env/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:180
+#: env/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:185
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:472
+msgid "Not a valid choice"
+msgstr "不是有效的选项"
+
+#: env/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:185
+msgid "Not a valid list"
+msgstr "不是有效的列表"
+
+#: env/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:204
+msgid "Not a valid integer list"
+msgstr "不是有效的整数列表"
+
+#: env/lib/python2.7/site-packages/wtforms/ext/dateutil/fields.py:63
+msgid "Please input a date/time value"
+msgstr "请输入date/time值"
+
+#: env/lib/python2.7/site-packages/wtforms/ext/dateutil/fields.py:75
+#: env/lib/python2.7/site-packages/wtforms/ext/dateutil/fields.py:83
+msgid "Invalid date/time input"
+msgstr "输入无效的date/time"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:465
+msgid "Invalid Choice: could not coerce"
+msgstr "无效选项:不能强制转换"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:498
+msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgstr "无效选项:一个或多个输入数据不能强制转换"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:505
+#, python-format
+msgid "'%(value)s' is not a valid choice for this field"
+msgstr "'%(value)s' 不是此字段有效的选项"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:588
+msgid "Not a valid integer value"
+msgstr "不是有效的整数"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:654
+msgid "Not a valid decimal value"
+msgstr "不是有效的十进制数"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:681
+msgid "Not a valid float value"
+msgstr "不是有效的浮点数"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:742
+msgid "Not a valid datetime value"
+msgstr "不是有效的datetime值"
+
+#: env/lib/python2.7/site-packages/wtforms/fields/core.py:759
+msgid "Not a valid date value"
+msgstr "不是有效的date值"
+
+#: wuaiwow/controllers/users.py:42
+msgid "Registration is invite only"
+msgstr "仅邀请注册"
+
+#: wuaiwow/controllers/users.py:51
+msgid "Invalid invitation token"
+msgstr "无效的邀请令牌"
+
+#: wuaiwow/controllers/users.py:152
+msgid "lserver:create account failed"
+msgstr "游戏账号创建失败,请在"
+
+#: wuaiwow/controllers/users.py:204
+msgid "lserver:change password fail"
+msgstr "游戏账号修改密码失败"
+
+#: wuaiwow/controllers/users.py:232
+msgid "lserver:activation failed"
+msgstr "游戏账号激活失败"
+
+#: wuaiwow/controllers/users.py:235
+msgid "activation success"
+msgstr "邀请成功"
+
+#: wuaiwow/controllers/users.py:288
+msgid "lserver:reset password failed"
+msgstr "游戏账号重置密码失败"
+
+#: wuaiwow/templates/flask_user/change_password.html:6
+msgid "Change Password"
+msgstr "修改密码"
+
+#: wuaiwow/templates/flask_user/change_username.html:6
+msgid "Change Username"
+msgstr "修改用户名"
+
+#~ msgid "Automatic activation fails, you need to manually activate"
+#~ msgstr "自动激活失败,需要您手动激活"
+

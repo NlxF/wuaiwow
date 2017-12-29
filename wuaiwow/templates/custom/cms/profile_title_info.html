@@ -1,0 +1,97 @@
+{% from "flask_user/_macros.html" import render_field, render_submit_field %}
+
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>{%trans%}Base Info{%endtrans%}</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+					   <li class="active"><a href="#base" data-toggle="tab">基本资料</a></li>
+					   <li class=""><a href="#avatar" data-toggle="tab">头像</a></li>
+					</ul>
+					<br>
+					<div class="tab-content" style="height:400px;margin-top:20px;margin-left:63px;">
+						<div class="tab-pane active" id="base">
+							<div class="col-md-10 col-lg-10">
+								<table class="table userProfile">
+									<tbody>
+										<tr>
+											<td class="col-md-1 container" style="vertical-align:middle">用户名:</td>
+											<td class="col-md-8 container" style="vertical-align:middle;font-size:15px">
+												<a href="" data-toggle="tooltip" data-placement="right" title="用户名已用于创建游戏账号,不能修改." onclick="return false;">
+													<strong>{{user.username}}</strong>
+												</a>
+											</td>
+										</tr>
+										<tr></tr>
+										<tr>
+											<td class="container" style="vertical-align:middle">邮箱：</td>
+											<td class="container" style="vertical-align:middle;font-size:15px">
+												<a href="/change-email" data-toggle="tooltip" data-placement="right" title="邮箱暂不能修改" onclick="return false;">
+													<strong>{{user.email}}</strong>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class="container" style="vertical-align:middle">在线时间:</td>
+											<td class="container" style="vertical-align:middle;font-size:15px">
+												<a href="/upgrade-table" data-toggle="tooltip" data-placement="right" title="点击查看升级规则">
+													{{user.online_time_by_hour}}
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td class="container" style="vertical-align:middle">权限值:</td>
+											<td class="container" style="vertical-align:middle;font-size:15px">
+												<a href="/permission-table" data-toggle="tooltip" data-placement="bottom" title="查看当前权限">
+													<strong>{{user.role_name}}</strong>
+												</a>
+											</td>
+										</tr>
+										<tr></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="tab-pane" id="avatar">
+							<div class="container">
+								<div class="photo_frame" id="photo_select">
+									<img id="avatar_photo" src="" class="scale" data-scale="best-fill" data-align="center">
+								</div>
+
+								<div style="float:left;margin:0 10px 0 10px;vertical-align:middle">
+									<div id="avatar_preview">
+										<img src="">
+									</div>
+									<div id="div_avatar_upload">
+										<!--span class="btn btn-success fileinput-button"-->
+										<span class="btn1 fileinput-button">
+											<i class="icon-plus icon-white"></i>
+											<span>上传</span>
+											<input id="avatar_file_upload" type="file" size="45" name="Filedata" onchange="return $.avatarUpload.ajaxFileUpload(this);">
+										</span>
+									</div>
+									<div id="div_avatar_edit" style="display: none;">
+										{#<input type="hidden" class="avatar_edit" name="left" id="left">
+										<input type="hidden" class="avatar_edit" name="top" id="top">
+										<input type="hidden" class="avatar_edit" name="width" id="width">
+										<input type="hidden" class="avatar_edit" name="height" id="height">#}
+										<span onclick="$.avatarUpload.func_edit_avatar();" class="btn1 fileinput-button">
+											<i class="icon-plus icon-white"></i>
+											<span>确定修改</span>
+										</span>
+									</div>
+									<div id="avatar_result" class="msg_ok" style="display: block;">上传jpg jpeg png gif 格式文件</div>
+								</div>
+								<script>$.avatarUpload.init();</script>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->

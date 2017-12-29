@@ -1,0 +1,24 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>添加/修改用户协议</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+				<form action="" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+				  	<fieldset class="form-group">
+						<label for="contentTextarea">{{result}}</label>
+						<textarea class="form-control" id="contentTextarea" rows="50" name="agreement-content">{{content|safe}}</textarea>
+				  	</fieldset>
+				  	<button type="submit" class="btn btn-primary">Submit</button>
+					<script type="text/javascript">
+					    CKEDITOR.replace('contentTextarea', {
+						customConfig: '/static/js/custom.js',
+					});
+					</script>
+				</form>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->

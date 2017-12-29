@@ -1,0 +1,10 @@
+{% extends 'flask_user/emails/base_message.txt' %}
+
+{% block message %}
+您的用户名已更改.
+
+如果您没有要求更改用户名, 请登录并修改密码.
+    {{ url_for('user.login', _external=True) }}
+{% endblock %}
+
+

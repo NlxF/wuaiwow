@@ -1,0 +1,75 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>添加/修改提示语</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+                <div class="span2">
+                    <ul id="myaffix" class="nav nav-list nav-pills nav-stacked" data-spy="affix">
+				    {% for pt in prompts %}
+                        <li><a href="#{{pt.id}}">{{pt.title}}<i class="icon-chevron-right"></i></a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="span5">
+                    {% for pt in prompts %}
+                    <section id="{{pt.id}}">
+                        <div class="page-header">
+                            <h3>{{pt.title}}</h3>
+                        </div>
+                        <table id="table-{{pt.id}}" class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;width:25px;">#</th>
+                                    <th style="text-align:center;">提示语</th>
+                                    <th style="text-align:center;width:25px;">#</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i, item in pt.prompt %}
+                                <tr>
+                                    <td style="text-align: center;">{{i+1}}</td>
+                                    <td style="text-align: center;">{{item}}</td>
+                                    <td style="text-align: center;" class='deletetablerow' name="{{pt.id}}">
+                                        <div class='glyphicon glyphicon-remove'></div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                          </tbody>
+                        </table>
+                         <hr/>
+                        <br/>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                            <div class="form-group">
+                                <label for="input-{{pt.id}}">添加新的{{pt.title}}:</label>
+                                {% if pt.id=='alive' %}
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                    <div class="btn-group">
+                                        <button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle">活着
+                                            <span class="caret" style="margin-top: 0px;"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li value="1"><a href="javascript:;">活着</a></li>
+                                            <li value="2"><a href="javascript:;">死去</a></li>
+                                        </ul>
+                                    </div>
+                                    </div>
+                                    <input id="input-{{pt.id}}" type="text" class="form-control" style="height:35px;" placeholder="添加一条">
+                                </div>
+                                {% else %}
+                                <input id="input-{{pt.id}}" type="text" class="form-control" style="height:35px;" placeholder="添加一条">
+                                {% endif %}
+                            </div>
+                            <button type="button" class="btn btn-primary btn-lg btn-block add-prompt" name="{{pt.id}}" value="1">添加</button>
+                    </section>
+                    <br/>
+                    <br/>
+                    {% endfor %}
+                </div>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->
+

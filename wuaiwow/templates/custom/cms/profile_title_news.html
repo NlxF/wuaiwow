@@ -1,0 +1,46 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>添加/编辑新闻</h3>
+			</div> <!-- /widget-header -->
+            <div class="widget-content">
+                <fieldset>
+                    <div class="select-button custom-select">
+                    <select id="news-edit-selector" class="form-control">
+                        {% for idx, title in  titles %}
+                        <option value="{{idx}}">{{title}}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </fieldset>
+                <br/>
+                <hr/>
+                <br/>
+				<form id="form-news" action="" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <fieldset class="form-group">
+                        <label>标题:</label>
+                        <input id="news-title" type="text" class="form-control" placeholder="新闻标题" name="news-title" style="height:35px;">
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label>标题图片:</label>
+                        <br/>
+                        <img id="news-photo" src="{{photo}}" style="height:98px;width:192px;">
+                        <input id="news-file-upload" type="file" accept="image/gif,image/jpeg,image/bmp,image/png" name="news-photo">
+                    </fieldset>
+				  	<fieldset class="form-group">
+						<label for="news-content">正文:</label>
+						<textarea class="form-control" id="news-content" rows="50" name="news-content">{{content|safe}}</textarea>
+				  	</fieldset>
+				  	<button type="submit" class="btn btn-primary">保存</button>
+					<script type="text/javascript">
+					    CKEDITOR.replace('news-content', {
+						customConfig: '/static/js/custom.js',
+					});
+					</script>
+				</form>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->

@@ -1,0 +1,72 @@
+<div class="row">
+	<div class="span8">
+		<div class="widget">
+			<div class="widget-header">
+				<h3>升级规则</h3>
+			</div> <!-- /widget-header -->
+			<div class="widget-content">
+                <div class="span7">
+                    <canvas id="upgrade-chart" width="600" height="400"></canvas>
+                    <script>
+                        var ctx = document.getElementById("upgrade-chart");
+                        var data = {
+							labels: {{ x_axis }},
+							datasets: [
+								{
+									label: '{{chartLabel1}}',
+									backgroundColor: [{% for c in color%}
+														'{{c}}0.2)',
+													  {% endfor %}],
+									borderColor: [{% for c in color%}
+														'{{c}}1)',
+												  {% endfor %}],
+									borderWidth: 1,
+									data: {{ y_axis }},
+								},
+								{
+									type: 'line',
+									label: '{{chartLabel2}}',
+									fill: false,
+									data: {{online}}
+								}
+							]
+						};
+                        var options = {
+							scales: {
+								xAxes: [
+									{
+										scaleLabel: {
+											display: true,
+											position:"right",
+											labelString: '单位: 等级'
+										}
+									}
+								],
+								yAxes: [
+									{
+										ticks: {
+											callback: function(label, index, labels) {
+												return label+'h';
+											}
+										},
+										scaleLabel: {
+											display: true,
+											labelString: '单位: 小时'
+										}
+									}
+								]
+							}
+						};
+                        var scatterChart = new Chart(ctx, {
+                        	type: 'bar',
+                        	data: data,
+                        	options: options
+                        });
+                    </script>
+                    <span>{{ps}}</span>
+                </div>
+			</div> <!-- /widget-content -->
+		</div> <!-- /widget -->
+	</div> <!-- /span5 -->
+</div> <!-- /row -->
+

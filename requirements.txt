@@ -1,0 +1,20 @@
+Flask == 0.10.1
+Flask-Bootstrap 
+Flask-SQLAlchemy
+Flask-Script
+Flask-migrate
+Flask-mail
+Flask-WTF
+Flask-Login
+Flask-cache
+Flask-debugtoolbar
+Flask-user
+Flask-babel
+passlib
+Pillow
+cffi
+MySQL-python
+SQLAlchemy
+redis
+gevent
+celery[gevent,redis]
