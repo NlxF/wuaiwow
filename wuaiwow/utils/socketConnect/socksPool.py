@@ -15,7 +15,7 @@ class SocksPool(object):
         return self.queue.empty()
 
     def put(self, item, block=True, timeout=None):
-        logger.info('Put sock into queue again')
+        logger.info('Put sock(%d) into queue(%d) again' % (id(item), id(self.queue)))
         item.close()
         self.queue.put(item=item, block=block, timeout=timeout)
 
