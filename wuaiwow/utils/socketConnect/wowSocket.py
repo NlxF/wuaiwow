@@ -101,6 +101,27 @@ class ConnWowSrv(object):
             # else:
             #     self.connected = True
 
+    def _to_bytes(self, num, length, endianess='big'):
+        try:
+            h = '%x' % num
+            s = ('0' * (len(h) % 2) + h).zfill(length * 2).decode('hex')
+            return s if endianess == 'big' else s[::-1]
+        except:
+            return '00'
+
+    def _to_int(self, buf, length):
+        value = 0
+        try:
+            for i in range(length):
+                bit = ord(buf[i])
+                if bit > 255 or bit < 0:
+                    value = 0
+                    break
+                value = value * 256 + bit
+        except:
+            pass
+        return value
+
     def send_command(self, data):
         try:
             self.connect_to()
@@ -110,7 +131,8 @@ class ConnWowSrv(object):
                 data = str(data).strip()
             encode = self.tea.encrypt(data) if self.tea else data
             crc_data = self.crc8.crc8_data(encode)
-            count = self.sock.send(crc_data)
+            with_head = self._to_bytes(len(crc_data), app.config['PACKAGE_HEAD_SIZE']) + crc_data    # 加上head byte
+            count = self.sock.sendall(with_head)
             return count
         except socket.error, e:
             logger.error('socket error. exception: {0}'.format(e))
@@ -118,6 +140,15 @@ class ConnWowSrv(object):
         except Exception, e:
             logger.error('send command raise unknown exception:{0}'.format(e.message))
             raise WowSocketException(err_code=wowSocketExceptionType.wowSocketExceptUnknown, err_msg=e.message)
+
+    def _recv_n(self, count):
+        data = b''
+        while len(data) < count:
+            packet = self.sock.recv(count - len(data))
+            if not packet:
+                return None
+            data += packet
+        return data
 
     def receive_data(self, timeout_in_seconds=1):
         """等待timeout_in_seconds秒or超时
@@ -131,7 +162,11 @@ class ConnWowSrv(object):
             self.sock.setblocking(0)
             ready = select.select([self.sock], [], [], timeout_in_seconds)
             if ready[0]:
-                receive = self.sock.recv(1024*2)
+                head_size = app.config['PACKAGE_HEAD_SIZE']
+                buf = self.sock.recv(head_size, socket.MSG_PEEK)
+                n_read = self._to_int(buf, head_size)
+                receive = self._recv_n(n_read + head_size)[head_size:]
+                # receive = self.sock.recv(1024*2)
                 if self.crc8.is_data_integrity(receive):
                     reverse_data = self.crc8.reverse_crc8_data(receive)
                     decrypt_data = self.tea.decrypt(reverse_data) if self.tea else reverse_data
