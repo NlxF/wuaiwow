@@ -45,7 +45,7 @@ class JobTask(celery.Task):
             db.session.commit()
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        logger.error("task failed") # , exc:{0}, args:{1}, kwargs:{2}".format(exc, args, kwargs))
+        logger.error("task failed")   # , exc:{0}, args:{1}, kwargs:{2}".format(exc, args, kwargs))
         if isinstance(exc, WowSocketException):
             task = TaskResult(task_id=task_id,
                               task_name=self.name,
@@ -57,12 +57,12 @@ class JobTask(celery.Task):
             db.session.commit()
 
 
-@celery.task(bind=True, max_retries=1)
-def create_account(self, username, password):
+# @celery.task(bind=True, max_retries=1)
+def create_account(username, password):
     """
-    创建wow账号但是没有激活
+    创建wow账号但是没有激活,
 
-    @param self 绑定为当前对象
+    # @param self 绑定为当前对象
     @param username 新建账户名
     @param password 新账户密码
     """
@@ -75,17 +75,14 @@ def create_account(self, username, password):
         json_data = _assembly_request(cmd)
         if json_data is not None and sock:
             sock.send_command(json_data)
-            rst = True, 'OK'
-
-        # socksPool.put(sock)
-        # return rst
+            response = sock.receive_data(5)
+            dict_resp = json.loads(response)
+            rst = dict_resp['isopok'], dict_resp['message']
     except Exception as exc:
-        self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        rst = (False, exc.message)
     finally:
         socksPool.put(sock)
         return rst
-
-        # raise WowSocketException(wowSocketExceptionType.wowSocketExceptTimeOut, e.message)
 
 
 @celery.task(bind=True, max_retries=1)

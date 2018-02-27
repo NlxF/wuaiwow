@@ -12,7 +12,7 @@ from wuaiwow import app, db
 from wuaiwow.utils.create_users import resize_and_crop
 from wuaiwow.utils import add_blueprint, save_file_avatar
 from wuaiwow.utils.accountHelper import endpoint_url
-try:  # Handle Python 2.x and Python 3.x
+try:
     from urllib.parse import quote      # Python 3.x
 except ImportError:
     from urllib import quote            # Python 2.x
@@ -142,49 +142,37 @@ def register():
                 require_email_confirmation = False
                 db_adapter.update_object(user, confirmed_at=datetime.utcnow())
 
-        db_adapter.commit()
+        # db_adapter.commit()
 
         # Send 'registered' email and delete new User object if send fails
         if user_manager.send_registered_email:
             try:
-                # Send create_account message, async
-                tasks.create_account.delay(user_fields['username'], register_form.data['password'])
-
-                # Send 'registered' email
-                _send_registered_email(user, user_email, require_email_confirmation)
+                # Send create_account message to proxy_server, sync
+                resp = tasks.create_account(user_fields['username'], register_form.data['password'])
+                if resp[0]:
+                    # Send 'registered' email
+                    _send_registered_email(user, user_email, require_email_confirmation)
+                    db_adapter.commit()
+                else:
+                    flash(_(resp[1]), category='error')
             except Exception as e:
-                # delete new User object if send  fails
-                db_adapter.delete_object(user)
-                db_adapter.commit()
-                raise
+                flash(_('lserver:create account failed'), category='error')
+                # delete new User object if send fails
+                # db_adapter.delete_object(user)
+                # db_adapter.commit()
+            else:
+                if resp[0]:
+                    # Redirect if USER_ENABLE_CONFIRM_EMAIL is set
+                    if user_manager.enable_confirm_email and require_email_confirmation:
+                        next = request.args.get('next', endpoint_url(user_manager.after_register_endpoint))
+                        return redirect(next)
 
-        # if user_manager.send_registered_email:
-        #     try:
-        #         # First send 'register wuaiwow' socket and flash error message if send fails
-        #         try:
-        #             socketConnect.create_account(user_fields['username'], register_form.data['password'])
-        #         except socketConnect.WowSocketException as e:
-        #             flash(_('lserver:create account failed'), category='error')
-        #
-        #         _send_registered_email(user, user_email, require_email_confirmation)
-        #     except Exception as e:
-        #         # delete new User object if send  fails
-        #         socketConnect.delete_account(user_fields['username'])
-        #         db_adapter.delete_object(user)
-        #         db_adapter.commit()
-        #         # raise
-
-        # Redirect if USER_ENABLE_CONFIRM_EMAIL is set
-        if user_manager.enable_confirm_email and require_email_confirmation:
-            next = request.args.get('next', endpoint_url(user_manager.after_register_endpoint))
-            return redirect(next)
-
-        # Auto-login after register or redirect to login page
-        next = request.args.get('next', endpoint_url(user_manager.after_confirm_endpoint))
-        if user_manager.auto_login_after_register:
-            return _do_login_user(user, reg_next)                     # auto-login
-        else:
-            return redirect(url_for('user.login')+'?next='+reg_next)  # redirect to login page
+                    # Auto-login after register or redirect to login page
+                    next = request.args.get('next', endpoint_url(user_manager.after_confirm_endpoint))
+                    if user_manager.auto_login_after_register:
+                        return _do_login_user(user, reg_next)                     # auto-login
+                    else:
+                        return redirect(url_for('user.login')+'?next='+reg_next)  # redirect to login page
 
     # Process GET or invalid POST
     return render_template(user_manager.register_template,
@@ -211,34 +199,39 @@ def change_password():
         hashed_password = user_manager.hash_password(form.new_password.data)
 
         try:
-            tasks.change_pwd(current_user.username, form.new_password.data)
+            resp = tasks.change_pwd(current_user.username, form.new_password.data)
+            if not resp[0]:
+                flash(_("lserver:change password fail"), category='error')
         except Exception, e:
             flash(_("lserver:change password fail"), category='error')
         else:
-            # Change password
-            user_manager.update_password(current_user, hashed_password)
+            if resp[0]:
+                # Change password
+                user_manager.update_password(current_user, hashed_password)
 
-            # Send 'password_changed' email
-            if user_manager.enable_email and user_manager.send_password_changed_email:
-                emails.send_password_changed_email(current_user)
+                # Send 'password_changed' email
+                if user_manager.enable_email and user_manager.send_password_changed_email:
+                    emails.send_password_changed_email(current_user)
 
-            # Send password_changed signal
-            # signals.user_changed_password.send(current_app._get_current_object(), user=current_user)
+                # Send password_changed signal
+                # signals.user_changed_password.send(current_app._get_current_object(), user=current_user)
 
-            # Prepare one-time system message
-            flash(_('Your password has been changed successfully.'), 'success')
+                # Prepare one-time system message
+                flash(_('Your password has been changed successfully.'), 'success')
 
-            # Redirect to 'next' URL
-            return redirect(form.next.data)
+                # Redirect to 'next' URL
+                return redirect(form.next.data)
 
     # Process GET or invalid POST
-    return render_template(user_manager.change_password_template, form=form)
+    return render_template(user_manager.change_password_template, form=form, user=current_user)
 
 
 @user_confirmed_email.connect_via(app)
 def active_use(sender, user, **extra):
     try:
-        tasks.active_account(user.username)
+        resp = tasks.active_account(user.username)
+        if not resp[0]:
+            flash(_("lserver:activation failed"), 'error')
     except Exception, e:
         flash(_("lserver:activation failed"), 'error')
         # raise
@@ -350,29 +343,6 @@ def user_avatar():
 
     return redirect('/user/profile#avatar')
 
-
-# @bp.route('/profile', methods=['GET', ])
-# @login_required
-# @confirm_email_required
-# def user_profile():
-#
-#     user_manager = current_app.user_manager
-#     # Initialize form
-#
-#     form = LoginForm(request.form, current_user)
-#     # Process valid POST
-#     if request.method == 'POST' and form.validate():
-#         # Copy form fields to user_profile fields
-#         form.populate_obj(current_user)
-#
-#         # Save user_profile
-#         db.session.commit()
-#
-#         # Redirect to home page
-#         return redirect(url_for('wuaiwow.home_page'))
-#
-#     # Process GET or invalid POST
-#     return render_template('custom/profile.html', form=form)
 
 def _send_registered_email(user, user_email, require_email_confirmation=True):
     user_manager = current_app.user_manager
