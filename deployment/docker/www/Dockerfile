@@ -1,10 +1,9 @@
-# Use the standard Nginx image from Docker Hub
 FROM wuaiwow/server:base
 
-ENV HOME=/www
+ENV HOME=/www/app
 
-# install python, uwsgi, and supervisord
-RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps vim && \
+# install python, uwsgi, and supervisord, redis-server
+RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server && \
     /usr/bin/pip install uwsgi==2.0.17 flask==1.0.2
 
 # Source code file
@@ -28,7 +27,7 @@ RUN ln -s /etc/uwsgi/apps-available/uwsgi.ini /etc/uwsgi/apps-enabled/uwsgi.ini
 COPY ./deployment/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN touch /var/log/supervisor/supervisord.log
 
-EXPOSE 8080:8080
+EXPOSE 80:8080
 
 # setup entrypoint
 COPY ./deployment/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

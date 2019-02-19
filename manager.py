@@ -4,9 +4,10 @@
 from wuaiwow import db
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
-from celery_worker import app
+from wuaiwow import create_app, celery
 
-
+app = create_app()
+app.app_context().push()
 manager = Manager(app)
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)

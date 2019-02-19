@@ -43,10 +43,10 @@ function init(){
     clearExistImages
 
     local idx=4
-    if [ $1x == "rebuild"x ]
-    then
+    # if [ $1x == "rebuild"x ]
+    # then
         
-    fi
+    # fi
     echo ${idx}".构建主服务镜像:"
     docker-compose -f docker-compose.yml build
 }
