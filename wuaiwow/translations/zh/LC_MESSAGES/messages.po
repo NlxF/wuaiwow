@@ -642,12 +642,12 @@ msgid "lserver:change password fail"
 msgstr "游戏账号修改密码失败"
 
 #: wuaiwow/controllers/users.py:232
-msgid "lserver:activation failed"
+msgid "lserver:account activation failed"
 msgstr "游戏账号激活失败"
 
 #: wuaiwow/controllers/users.py:235
-msgid "activation success"
-msgstr "邀请成功"
+msgid "account activation succeeded"
+msgstr "游戏账号激活成功"
 
 #: wuaiwow/controllers/users.py:288
 msgid "lserver:reset password failed"

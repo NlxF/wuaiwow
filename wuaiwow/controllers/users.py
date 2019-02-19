@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 from flask import current_app, flash, redirect, render_template, request, url_for, Blueprint, jsonify
 from flask_login import login_user, logout_user
 from flask_user import current_user, login_required, emails
@@ -8,7 +8,7 @@ from flask_user.forms import LoginForm
 from flask_user.translations import gettext as _
 from datetime import datetime
 from wuaiwow import tasks
-from wuaiwow import app, db
+from wuaiwow import app, db, logger
 from wuaiwow.utils.create_users import resize_and_crop
 from wuaiwow.utils import add_blueprint, save_file_avatar
 from wuaiwow.utils.accountHelper import endpoint_url
@@ -142,8 +142,6 @@ def register():
                 require_email_confirmation = False
                 db_adapter.update_object(user, confirmed_at=datetime.utcnow())
 
-        # db_adapter.commit()
-
         # Send 'registered' email and delete new User object if send fails
         if user_manager.send_registered_email:
             try:
@@ -151,15 +149,25 @@ def register():
                 resp = tasks.create_account(user_fields['username'], register_form.data['password'])
                 if resp[0]:
                     # Send 'registered' email
-                    _send_registered_email(user, user_email, require_email_confirmation)
+                    # _send_registered_email(user, user_email, require_email_confirmation)
                     db_adapter.commit()
+
+                    # send register email async
+                    tasks.send_registered_email(user, user_email, require_email_confirmation)
+
+                    # Prepare one-time system message
+                    if user_manager.enable_confirm_email and require_email_confirmation:
+                        email = user_email.email if user_email else user.email
+                        flash(_('A confirmation email has been sent to %(email)s with instructions to complete your registration.', email=email), 'success')
+                    else:
+                        flash(_('You have registered successfully.'), 'success')
                 else:
-                    flash(_(resp[1]), category='error')
+                    msg = u"{0}:{1}".format("LServer", resp[-1])
+                    flash(_(msg), category='error')
             except Exception as e:
-                flash(_('lserver:create account failed'), category='error')
-                # delete new User object if send fails
-                # db_adapter.delete_object(user)
-                # db_adapter.commit()
+                msg = u"{}:{}".format(e.args[0], unicode(e.args[-1]))
+                logger.error(msg)
+                flash(_("LServer:Create account failed."), category='error')
             else:
                 if resp[0]:
                     # Redirect if USER_ENABLE_CONFIRM_EMAIL is set
@@ -231,12 +239,11 @@ def active_use(sender, user, **extra):
     try:
         resp = tasks.active_account(user.username)
         if not resp[0]:
-            flash(_("lserver:activation failed"), 'error')
+            flash(_("lserver:account activation failed"), 'error')
     except Exception, e:
-        flash(_("lserver:activation failed"), 'error')
-        # raise
+        flash(_("lserver:Account activation failed"), 'error')
     else:
-        flash(_('activation success'))
+        flash(_('account activation succeeded'))
 
 
 @bp.route('/reset-password/<token>', methods=['GET', 'POST'])
@@ -344,26 +351,26 @@ def user_avatar():
     return redirect('/user/profile#avatar')
 
 
-def _send_registered_email(user, user_email, require_email_confirmation=True):
-    user_manager = current_app.user_manager
-    db_adapter = user_manager.db_adapter
-
-    # Send 'confirm_email' or 'registered' email
-    if user_manager.enable_email and user_manager.enable_confirm_email:
-        # Generate confirm email link
-        object_id = user_email.id if user_email else int(user.get_id())
-        token = user_manager.generate_token(object_id)
-        confirm_email_link = url_for('user.confirm_email', token=token, _external=True)
-
-        # Send email
-        emails.send_registered_email(user, user_email, confirm_email_link)
-
-        # Prepare one-time system message
-        if user_manager.enable_confirm_email and require_email_confirmation:
-            email = user_email.email if user_email else user.email
-            flash(_('A confirmation email has been sent to %(email)s with instructions to complete your registration.', email=email), 'success')
-        else:
-            flash(_('You have registered successfully.'), 'success')
+# def _send_registered_email(user, user_email, require_email_confirmation=True):
+#     user_manager = current_app.user_manager
+#     db_adapter = user_manager.db_adapter
+#
+#     # Send 'confirm_email' or 'registered' email
+#     if user_manager.enable_email and user_manager.enable_confirm_email:
+#         # Generate confirm email link
+#         object_id = user_email.id if user_email else int(user.get_id())
+#         token = user_manager.generate_token(object_id)
+#         confirm_email_link = url_for('user.confirm_email', token=token, _external=True)
+#
+#         # Send email
+#         emails.send_registered_email(user, user_email, confirm_email_link)
+#
+#         # Prepare one-time system message
+#         if user_manager.enable_confirm_email and require_email_confirmation:
+#             email = user_email.email if user_email else user.email
+#             flash(_('A confirmation email has been sent to %(email)s with instructions to complete your registration.', email=email), 'success')
+#         else:
+#             flash(_('You have registered successfully.'), 'success')
 
 
 def unauthenticated():

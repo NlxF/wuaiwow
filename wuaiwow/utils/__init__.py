@@ -1,7 +1,7 @@
-# coding: utf-8
+# coding:utf-8
 import os
 import re
-import math
+# import math
 import string
 import random
 import datetime
@@ -27,7 +27,7 @@ def configure_extensions(app, db):
     babel = Babel(app)
 
     # Setup DebugToolbarExtension
-    toolbar = DebugToolbarExtension(app)
+    # toolbar = DebugToolbarExtension(app)
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
@@ -42,7 +42,7 @@ def configure_extensions(app, db):
     from wuaiwow.forms import MyRegisterForm, MyLoginForm, MyChangePasswordForm
 
     # Setup the SQLAlchemy DB Adapter
-    db_adapter = SQLAlchemyAdapter(db, User, UserInvitationClass=UserInvitation)
+    db_adapter = SQLAlchemyAdapter(db, User, UserEmailClass=None, UserInvitationClass=UserInvitation)
     # using a custom register form with UserProfile fields
     from wuaiwow.controllers.users import register, change_password, reset_password   # user_profile
     from wuaiwow.controllers.player import user_account
@@ -98,10 +98,11 @@ def init_mysql_handler(app, level):
     import logging
     import mySQLHandler
     logger = logging.getLogger('wuaiwow')
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.ERROR)
     handler = mySQLHandler.mySQLHandler(db=app.config["DB"])
     handler.setLevel(level)
     app.logger.addHandler(handler)
+    return logger
 
 
 def gen_rnd_string(n):

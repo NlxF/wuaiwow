@@ -1,0 +1,101 @@
+{% from "flask_user/_macros.html" import render_field, render_submit_field %}
+
+<html>
+    <head>
+        <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+        <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="/static/js/bootstrap-table.min.js"></script>
+        <script src="/static/js/bootstrap-table-zh-CN.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.btn-filter').on('click', function () {
+                    var $target = $(this).data('target');
+                    if ($(this).hasClass('selected'))
+                    {
+                        $(this).removeClass('selected');
+                        $('.table tbody tr').css('display', 'none').fadeIn('slow');
+                    }else{
+                        $(this).addClass('selected');
+                        $('.table tbody tr').css('display', 'none');
+                        $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+                    }
+                });
+
+//                $('a').click(function(e){
+//                    e.preventDefault();
+//                    $('#iframe_target').attr("src", $(this).attr("href"));
+//                });
+             });
+        </script>
+
+        <!--<link rel="stylesheet" href="/static/css/filter-table.css">-->
+        <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/bootstrap-table.min.css">
+        <style>
+            button.btn-filter.selected{
+                box-shadow: inset 1px 1px 5px #000;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="toolbar" class="btn-group">
+                            <button class="btn btn-default btn-filter" data-target="closenvelope">
+                                <span aria-hidden="true">未读消息</span>
+                            </button>
+                        </div>
+                        <table id="user-message-list"
+                               data-height="518"
+                               data-toolbar="#toolbar"
+                               data-pagination="true"
+                               data-pagination-pre-text="<"
+                               data-pagination-next-text=">"
+                               data-search="true"
+                               data-show-refresh="true"
+                               data-page-list="[1,5,15,20,25]"
+                               data-toggle="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center" data-field="table_index"><i class="glyphicon glyphicon-th-list"></i></th>
+                                    <th class="col-md-1 text-center" data-field="table_envelipe"><i class="glyphicon glyphicon-envelope"></i></th>
+                                    <th class="col-md-8 text-center" data-field="table_title">主题</th>
+                                    <th class="col-md-1 text-center" data-field="table_date">时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for idx, user_msg in mlist %}
+                                <tr data-status="{{ user_msg | struct }}">
+                                    <td style="text-align: center; vertical-align: middle">
+                                        <span>{{ idx+1 }}</span>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        <i class="{{user_msg | isread}}"></i>
+                                        <a class="star"> </a>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        <!--<div class="media">-->
+                                            <!--<div class="media-body">-->
+                                                {#<h4>{{user_msg.message.title}}:</h4>#}
+                                                <a style="text-align: center; vertical-align: middle" class="summary" id="iframe_target" target="messages_iframe" href="/message/details/{{ idx+1 }}">
+                                                    <span>{{user_msg.message.content|safe|summary}}</span>
+                                                </a>
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle">
+                                        <span>{{user_msg.message.created|strftime("%Y-%m-%d")}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

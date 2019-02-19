@@ -1,16 +1,16 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 import urllib2
 import json
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask import jsonify
-from flask_wtf.csrf import CsrfProtect
+# from flask_wtf.csrf import CsrfProtect
 from flask_user import current_user, login_required
 from flask_user.signals import user_logged_in, user_logged_out
 from wuaiwow import app, db, onlineHelper
 from wuaiwow.utils import add_blueprint, filters
 from wuaiwow.models import GuildInfo, Donate, UserIp, News, Sidebar, Agreement
 
-csrf = CsrfProtect()
+# csrf = CsrfProtect()
 bp = Blueprint('wuaiwow', __name__, template_folder='templates', static_folder='static', url_prefix='/')
 
 
@@ -128,11 +128,6 @@ def _track_login(sender, user, **extra):
 def _track_logout(sender, user, **extra):
     if not current_user.is_anonymous:
         onlineHelper.make_user_offline(current_user.username)   # 退出账号时设为离线状态
-
-
-@csrf.error_handler
-def csrf_error(reason):
-    return render_template('csrf_error.html', reason=reason), 400
 
 
 # Register blueprint

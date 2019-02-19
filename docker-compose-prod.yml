@@ -1,0 +1,26 @@
+version: '3.2'
+
+services:
+
+    www-database:
+        image: wuaiwow/www-database
+        networks:
+            - www-network
+        ports:
+            - 3306:3306
+        environment:
+            - MYSQL_ROOT_PASSWORD=password
+        volumes:
+            - ./volume/var/lib/mysql:/var/lib/mysql
+
+    www-server:
+        image: wuaiwow/www-server
+        networks:
+            - www-network
+        ports:
+            - 80:8080
+        depends_on:
+            - www-database
+
+networks:
+    www-network:

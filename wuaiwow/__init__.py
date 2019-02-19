@@ -1,9 +1,9 @@
-# -*- coding:utf-8 -*-
+# coding:utf-8
 import os
-import time
+# import time
 from uuid import uuid4
-from flask import Flask, request, g, session, url_for
-from flask_wtf.csrf import CsrfProtect
+from flask import Flask, request, g, session, url_for, render_template
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_user import current_user
 from utils import (init_email_error_handler,
                    init_mysql_handler,
@@ -17,22 +17,20 @@ from celery.utils.log import get_task_logger
 # Initialize Flask app and db
 app = Flask("wuaiwow")
 
-db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
+db = None
+csrf = None
+logger = None
+onlineHelper = None
 
 celery = make_celery(app)
-
-onlineHelper = Online(app=app)
-
-csrf = CsrfProtect()                     # for csrf protect
-
-logger = get_task_logger(__name__)       # celery logger
+celery_logger = get_task_logger(__name__)       # celery logger
 
 
-@app.before_first_request
-def initialize_app_on_first_request():
-    """ Create users and roles tables on first HTTP request """
-    from utils.create_users import create_users
-    create_users()
+# @app.before_first_request
+# def initialize_app_on_first_request():
+#     """ Create users and roles tables on first HTTP request """
+#     from utils.create_users import create_users
+#     create_users()
 
 
 @app.before_request
@@ -51,14 +49,14 @@ def online_setup():
                 elapse_time = onlineHelper.get_valid_elapse_time(user_last_activity)
                 if app.config['PAGE_REFRESH_MIN_TIME'] < elapse_time < app.config['PAGE_REFRESH_MAX_TIME']:  # 有效刷新
                     current_user.online_time += elapse_time     # 更新用户总在线时间(可能会升级!!!)
-                    db.session.add(current_user)
+                    db.session.add(current_user)                # block
         else:                                                   # 游客更新最新在线时间
             key = session.get("_expires_name", None)
             if not key:
                 key = str(uuid4())
                 session["_expires_name"] = key
-        onlineHelper.make_current_user_online(user_id=key)      # 设置为在线状态
 
+        onlineHelper.make_current_user_online(user_id=key)      # 设置为在线状态
         all_online_users = onlineHelper.get_online_users()      # 获取所有在线用户,包括游客
         visitor = [x for x in all_online_users if valid_uuid(x)]
         register = all_online_users - set(visitor)
@@ -74,13 +72,18 @@ def online_setup():
                               'visitor': len(visitor),
                               'max_num': max_online.online_user_num,
                               'occ_time': max_online.occ_time,
-                              'time_zone': time.strftime("%z")}
+                              'time_zone': u"中国标准时间"}   # time.strftime("%z")}
 
 
 # 实时更新资源文件
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)
+
+
+@app.errorhandler(CSRFError)
+def csrf_error(error):
+    return render_template('csrf_error.html', reason=error.description), 400
 
 
 def dated_url_for(endpoint, **values):
@@ -116,14 +119,24 @@ def create_app(debug=True, test=False):
     # Setup an CRITICAL logger to send emails to app.config.ADMINS
     init_email_error_handler(app=app, level=logging.CRITICAL)
 
+    # Mysql setting
+    global  db
+    db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
+
+    # onlineHelper setting
+    global onlineHelper
+    onlineHelper = Online(app=app)
+
     # add error below CRITICAL
-    init_mysql_handler(app=app, level=logging.INFO)
+    global logger
+    logger = init_mysql_handler(app=app, level=logging.INFO)
 
     # Configure app extensions
     configure_extensions(app, db)
 
-    # cstf setting
-    csrf.init_app(app)
+    # csrf setting
+    global csrf
+    csrf = CSRFProtect(app=app)
 
     # celery setting
     celery.conf.update(app.config)	 # 更新 celery 的配置

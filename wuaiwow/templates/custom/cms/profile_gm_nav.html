@@ -6,27 +6,33 @@
         </a>
     </li>#}
     <li {{addnews}}>
-        <a href="/gm/add-news">
+        <a href="{{ url_for('GM.add_news') }}">
             <i class="glyphicon glyphicon-plus-sign"></i>
             添加新闻
         </a>
     </li>
     <li {{addtutorial}}>
-        <a href="/gm/add-tutorial">
+        <a href="{{ url_for('GM.add_tutorial') }}">
             <i class="glyphicon glyphicon-magnet"></i>
             游戏指南
         </a>
     </li >
     <li {{addrole}}>
-        <a href="/gm/change-user-role">
+        <a href="{{ url_for('GM.change_user_role') }}">
             <i class="glyphicon glyphicon-pencil"></i>
             账号权限修改
         </a>
     </li>
     <li  {{profile}}>
-        <a href="/user/profile">
+        <a href="{{ url_for('player.user_account') }}">
             <i class="glyphicon glyphicon-user"></i>
             个人设置
+        </a>
+    </li>
+    <li {{usermsg}}>
+        <a href="{{ url_for('player.user_message') }}">
+            <i class="glyphicon glyphicon-envelope"></i>
+            消息  <span class="badge pull-right">{{unread_cnt}}</span>
         </a>
     </li>
 </ul>

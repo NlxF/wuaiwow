@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 from sqlalchemy import literal, desc
 from sqlalchemy.orm import synonym
 from flask_user import UserMixin
@@ -96,6 +96,23 @@ class Permission(db.Model):
         return '<Permission: {0}>'.format(self.value)
 
 
+class UserMessage(db.Model):
+    """
+        用户消息关系表
+    """
+    __tablename__ = 'user_message_association'
+    id = db.Column(db.Integer, primary_key=True)
+    is_read = db.Column('is_read', db.Boolean, nullable=False, default=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
+
+    message = db.relationship('Message', backref=db.backref('users_assocs'))
+
+    def __repr__(self):
+        return '<UserMessage: {0}>'.format(self.id)
+
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -123,6 +140,9 @@ class User(db.Model, UserMixin):
 
     # user login information
     ips = db.relationship('UserIp', order_by=desc(UserIp.login_time), backref="user", lazy='dynamic')
+
+    # user's messages
+    messages = db.relationship('UserMessage', order_by=desc(UserMessage.message_id), backref=db.backref('user'), lazy='dynamic')
 
     @property
     def online_time(self):
@@ -186,11 +206,11 @@ class User(db.Model, UserMixin):
     def _role(self, need_string):
         if need_string:
             if self.permission.value < 98:
-                role_name = u'玩家'
+                role_name = 'player'  # u'玩家'
             elif self.permission.value < 100:
-                role_name = u'游戏管理员'
+                role_name = 'GM'  # u'游戏管理员'
             else:
-                role_name = u'超级管理员'
+                role_name = 'admin'  # u'超级管理员'
         else:
             role_name = self.permission.value
         return role_name
@@ -205,7 +225,8 @@ class User(db.Model, UserMixin):
 
     @property
     def last_login(self):
-        return self.ips[0].login_time
+        ips = self.ips.all()
+        return ips[0].login_time if ips else u'未知'
 
     @property
     def online_time_by_hour(self):
@@ -215,6 +236,20 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Message(db.Model):
+    """
+        消息类
+    """
+    __tablename__ = 'message'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Unicode(512), nullable=False, default=u'无题')
+    content = db.Column(db.Text, nullable=True)
+    created = db.Column(db.DateTime, default=db.func.now())
+
+    def __repr__(self):
+        return '<Message %r>' % self.title
 
 
 class UserOnline(db.Model):

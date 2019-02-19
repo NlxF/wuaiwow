@@ -68,9 +68,9 @@
                 {% if messages %}
                     {% for category, message in messages %}
                         {% if category=='error' %}
-                            <script>$.toast({heading: 'Error', text: '{{ message|safe }}', position: 'top-center',icon: 'Error',hideAfter:false}); </script>
+                            <script>$.toast({heading: 'Error', text: "{{ message|safe }}", position: 'top-center',icon: 'Error',hideAfter:false}); </script>
                         {% else %}
-                            <script>$.toast({heading: 'Success', text: '{{ message|safe }}', position: 'top-center', icon: 'success',hideAfter:false}); </script>
+                            <script>$.toast({heading: 'Success', text: "{{ message|safe }}", position: 'top-center', icon: 'success',hideAfter:false}); </script>
                         {% endif %}
                     {% endfor %}
                 {% endif %}

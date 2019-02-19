@@ -1,4 +1,4 @@
-# --* coding:utf-8 *--
+# coding:utf-8
 from flask import url_for
 from functools import wraps
 from flask import current_app

@@ -1,8 +1,8 @@
-# --* coding:utf-8 *--
+# coding:utf-8
 import json
 import random
 import math
-# import datetime
+import datetime
 # from celery.exceptions import TimeoutError
 from flask import jsonify, current_app, url_for
 from flask import render_template, Blueprint, request, redirect, flash
@@ -21,7 +21,8 @@ from wuaiwow.utils.modelHelper import (level_by_permission_value, time_by_level,
 #                                          find_or_create_character)
 # from wuaiwow.models import (Characters, AlivePrompt, LevelPrompt, RacePrompt,
 #                             JobPrompt, GenderPrompt, MoneyPrompt, Permission)
-from wuaiwow import tasks, app
+# from wuaiwow.models import Message
+from wuaiwow import tasks, app, db
 # from wuaiwow.forms import PromoteForm
 
 
@@ -32,19 +33,70 @@ bp = Blueprint('player', __name__, url_prefix='/')
 @bp.route('user/account', methods=['GET', ])
 @login_required
 def user_account():
-    # Process GET or invalid POST
-    # if request.method == 'POST':
-    #     pass
 
+    gen = (msg for msg in current_user.messages if not msg.is_read)
+    cnt = len(list(gen))
     template_name = template_by_role(current_user, 'custom/cms/player_profile.html',
                                                    'custom/cms/gm_profile.html',
                                                    'custom/cms/admin_profile.html')
     return render_template(template_name,
                            user=current_user,
+                           unread_cnt=cnt,
                            profile='class=active')
 
 
+@bp.route('user/all/message', methods=['GET', ])
+@login_required
+def user_message():
+
+
+    template_name = template_by_role(current_user, 'custom/cms/player_message.html',
+                                                   'custom/cms/gm_message.html',
+                                                   'custom/cms/admin_message.html')
+    return render_template(template_name,
+                           user=current_user,
+                           usermsg='class=active')
+
+
+@bp.route('user/message/list', methods=['GET', ])
+@login_required
+def user_message_list():
+    if request.method == 'GET':
+        message_list = current_user.messages.all()
+        return render_template('custom/cms/profile_title_message_list.html',
+                               mlist=enumerate(message_list))
+
+
+@bp.route('message/details/<int:index>', methods=['GET', ])
+@login_required
+def get_message_content(index):
+
+    index -= 1
+    all_message = (msg.message for msg in current_user.messages)
+    message_list = list(all_message)
+    err_handle = lambda : {'title':   u'索引无效',
+                           'content': u'不是有效的索引，请返回重新查询',
+                           'created': datetime.datetime.now()
+                           }
+    if index < 0 or index >= len(message_list):
+        message = err_handle()
+    else:
+        try:
+            message = message_list[index]
+        except IndexError:
+            message = err_handle()
+        else:
+            associate = message.users_assocs[0]
+            associate.is_read = True
+            db.session.add(associate)
+            db.session.commit()
+
+    template_name = 'custom/cms/profile_title_message_content.html'
+    return render_template(template_name, message=message)
+
+
 @bp.route('upgrade-table', methods=['GET', ])
+@login_required
 def upgrade_online():
 
     user = current_user
@@ -93,6 +145,7 @@ def upgrade_online():
 
 
 @bp.route('permission-table', methods=['GET', ])
+@login_required
 def permission_table():
 
     user = current_user

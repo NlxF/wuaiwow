@@ -1,4 +1,4 @@
-# --* coding:utf-8 *--
+# coding:utf-8
 from flask import (render_template, Blueprint, request, url_for,
                    make_response, jsonify)
 from flask_user import current_user, login_required

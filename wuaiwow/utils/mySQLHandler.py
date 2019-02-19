@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 '''
 Created on 02/01/2014
 '''
@@ -52,7 +52,7 @@ class mySQLHandler(logging.Handler):
     Thread text,
     ThreadName text
     )"""
- 
+
     insertion_sql = """INSERT INTO log(
     Created,
     Name,
@@ -69,19 +69,19 @@ class mySQLHandler(logging.Handler):
     ThreadName
     )
     VALUES (
-    '%(dbtime)s',
-    '%(name)s',
-    %(levelno)d,
-    '%(levelname)s',
-    '%(msg)s',
-    '%(args)s',
-    '%(module)s',
-    '%(funcName)s',
-    %(lineno)d,
-    '%(exc_text)s',
-    %(process)d,
-    '%(thread)s',
-    '%(threadName)s'
+    "%(dbtime)s",
+    "%(name)s",
+    "%(levelno)s",
+    "%(levelname)s",
+    "%(msg)s",
+    "%(args)s",
+    "%(module)s",
+    "%(funcName)s",
+    "%(lineno)s",
+    "%(exc_text)s",
+    "%(process)s",
+    "%(thread)s",
+    "%(threadName)s"
     );
     """
  
@@ -167,7 +167,7 @@ class mySQLHandler(logging.Handler):
         else:
             record.exc_text = ""
         # Insert log record:
-        sql = mySQLHandler.insertion_sql % record.__dict__
+        # sql = mySQLHandler.insertion_sql % record.__dict__
         try:
             conn=MySQLdb.connect(host=self.db['host'],port=self.db['port'],user=self.db['dbuser'],passwd=self.db['dbpassword'],db=self.db['dbname'])
         except _mysql_exceptions, e:
@@ -178,7 +178,9 @@ class mySQLHandler(logging.Handler):
             exit(-1)
         cur = conn.cursor()
         try:
-            cur.execute(sql)
+            # cur.execute(sql)
+            args = record.__dict__
+            cur.execute(mySQLHandler.insertion_sql, args)
         except _mysql_exceptions.ProgrammingError as e:
             errno, errstr = e.args
             if not errno == 1146:

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 
 ADMINS = frozenset(['wuaiwow@gmail.com'])
 
@@ -7,6 +7,7 @@ DATABASE_NAME = 'wuaiwow_test_2'
 # SQLAlchemy settings
 SQLALCHEMY_DATABASE_URI = 'mysql://root:lxf@localhost/'+DATABASE_NAME
 SQLALCHEMY_NATIVE_UNICODE = True
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 THREADS_PER_PAGE = 1
 
@@ -16,12 +17,12 @@ SECRET_KEY = 'R\x8f@\x93\x9e\x08\xbe6+\x98\x7f^\xaf\xe4\x03\xb09jk>Hvn\xac'
 
 # Flask-Mail settings
 MAIL_USERNAME = 'it1780@sina.com'
-MAIL_PASSWORD = 'luxiaofei3517'
+MAIL_PASSWORD = 'luffy,20170116!'
 MAIL_DEFAULT_SENDER = '"吾爱魔兽" <it1780@sina.com>'
 MAIL_SERVER = 'smtp.sina.com'
-MAIL_PORT = 587       #25
+MAIL_PORT = 587        #25
 # MAIL_USE_SSL = True  #465
-MAIL_USE_TLS = True   #587
+MAIL_USE_TLS = True    #587
 
 
 # mySQLHandler settings
@@ -29,13 +30,14 @@ DB = {'host': '127.0.0.1',
       'port': 3306,
       'dbuser': 'root',
       'dbpassword': 'lxf',
-      'dbname': DATABASE_NAME}
+      'dbname': DATABASE_NAME,
+      'charset':'utf8',
+      'use_unicode':True
+      }
 
 
 # lserver setting
-LSERVER_HOST = '192.168.1.101'
-# LSERVER_HOST = '172.16.130.147'
-# LSERVER_HOST = '192.168.1.138'
+LSERVER_HOST = '192.168.1.7'
 LSERVER_PORT = 8083
 
 # 与lserver 通信是否需要加密

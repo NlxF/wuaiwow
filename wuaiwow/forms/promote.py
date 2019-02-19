@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+# coding:utf-8
 
 class PromoteForm(object):
     def __init__(self, **kwargs):
@@ -25,7 +24,7 @@ class PromoteForm(object):
                 ret_val = self.value in [1, 2]
             else:
                 ret_val = False
-        except Exception, e:
+        except Exception as e:
             ret_val = False
 
         return ret_val

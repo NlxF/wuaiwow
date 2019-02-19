@@ -11,9 +11,9 @@
 						<!--<label for="exampleTextarea">{{result}}</label>-->
 						{% if result %}
 							{% if result.retCode %}
-							<script>$.toast({heading: 'Success', text: '{{ result|safe }}', position: 'top-center',icon: 'Error'}); </script>
+							<script>$.toast({heading: 'Success', text: "{{ result|safe }}", position: 'top-center',icon: 'Error'}); </script>
 							{% else %}
-							<script>$.toast({heading: 'Error', text: '{{ result|safe }}', position: 'top-center',icon: 'Error'}); </script>
+							<script>$.toast({heading: 'Error', text: "{{ result|safe }}", position: 'top-center',icon: 'Error'}); </script>
 							{% endif %}
 						{% endif %}
 						<textarea class="form-control ckeditor" id="exampleTextarea" rows="40" name="guildinfotext">{{guild_info|safe}}</textarea>

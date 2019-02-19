@@ -1,0 +1,56 @@
+{% from "flask_user/_macros.html" import render_field, render_submit_field %}
+
+<html>
+    <head>
+        <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+        <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="/static/js/bootstrap-table.min.js"></script>
+        <script src="/static/js/bootstrap-table-zh-CN.min.js"></script>
+        <script>
+
+        </script>
+
+        <!--<link rel="stylesheet" href="/static/css/filter-table.css">-->
+        <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/bootstrap-table.min.css">
+        <style>
+            .break-text p {
+                word-break: break-all;
+                word-wrap: break-word;
+                text-indent:2em
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container break-text">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="pannel-head">
+                        <hr style="margin-top: 10px; margin-bottom: 10px" />
+                        <div class="container">
+                            <button type="button" class="btn btn-default span4" onclick="window.location.replace('{{ url_for("player.user_message_list") }}');">
+                                <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <hr style="margin-top: 10px; margin-bottom: 10px" />
+                    </div>
+                    <div class="panel-body" style="height: 450px">
+                        <div id="layout-middle">
+                            <div id="content" style="background-color:transparent">
+                                <div align="center">
+                                    <h4 class="u-title">{{ message.title|safe }}</h4>
+                                </div>
+                                <p>{{ message.content|safe }}</p>
+                                <br/>
+                                <div class="container">
+                                    <span class="pull-right" >{{ message.created|safe }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

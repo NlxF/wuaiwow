@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 import StringIO
 from PIL import Image
 from werkzeug.datastructures import FileStorage
@@ -23,9 +23,15 @@ def create_users():
     # Create all tables
     db.create_all()
 
+    # Save to DB
+    db.session.commit()
+
+
+def init_all_permission():
+    """ init permission """
     perms = create_all_permissions()
 
-    # add default users
+     # add default users
     user = find_or_create_user(u'luffy', u'wuaiwow@gmail.com', '123456', perms[-1].value)
     user = find_or_create_user(u'gm', u'825518250@qq.com', '123456', perms[-3].value)
     user = find_or_create_user(u'Zoro', u'it1780@sina.com', '123456', perms[0].value)

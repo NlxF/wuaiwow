@@ -1,0 +1,15 @@
+# Use the standard Nginx image from Docker Hub
+FROM nginx
+
+# install python, uwsgi, and supervisord
+RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps vim && \
+    /usr/bin/pip install uwsgi==2.0.17 flask==0.10.1 Flask-Bootstrap Flask-SQLAlchemy Flask-Script && \
+    Flask-migrate Flask-mail Flask-WTF Flask-Login Flask-cache Flask-debugtoolbar Flask-user && \
+    Flask-babel passlib Pillow cffi MySQL-python SQLAlchemy redis gevent celery[gevent,redis]
+
+# setup NGINX config
+RUN mkdir -p /spool/nginx /run/pid && \
+    chmod -R 777 /var/log/nginx /var/cache/nginx /etc/nginx /var/run /run /run/pid /spool/nginx && \
+    chgrp -R 0 /var/log/nginx /var/cache/nginx /etc/nginx /var/run /run /run/pid /spool/nginx && \
+    chmod -R g+rwX /var/log/nginx /var/cache/nginx /etc/nginx /var/run /run /run/pid /spool/nginx && \
+    rm /etc/nginx/conf.d/default.conf

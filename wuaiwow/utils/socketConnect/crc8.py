@@ -1,4 +1,4 @@
-#!_*_coding:utf-8_*_
+# coding:utf-8
 # !/usr/bin/python
 
 
@@ -48,7 +48,7 @@ class crc8(object):
 
 
 	def is_data_integrity(self, msg):
-		return self._crc8(msg)==0
+		return self._crc8(msg)==0 if msg else False
 
 	def crc8_data(self, msg):
 		return msg+chr(self._crc8(msg))

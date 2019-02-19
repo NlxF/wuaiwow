@@ -1,4 +1,4 @@
-# --* coding:utf-8 *--
+# coding:utf-8
 from flask import render_template, Blueprint, request, jsonify, url_for
 from flask_user import current_user, login_required
 from wuaiwow import db, app, tasks

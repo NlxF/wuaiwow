@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 import os
 
 
@@ -11,20 +11,20 @@ CSRF_ENABLED = True
 
 # Flask-User Features settings
 USER_APP_NAME = APP_NAME
-USER_ENABLE_CHANGE_PASSWORD = True  # Allow users to change their password
-USER_ENABLE_CHANGE_USERNAME = False  # Allow users to change their username
-USER_ENABLE_CONFIRM_EMAIL = True  # Force users to confirm their email
-USER_ENABLE_FORGOT_PASSWORD = True  # Allow users to reset their passwords
-USER_ENABLE_EMAIL = True  # Register with Email
-USER_ENABLE_REGISTRATION = True  # Allow new users to register
-USER_ENABLE_RETYPE_PASSWORD = True  # Prompt for `retype password` in:
-USER_ENABLE_USERNAME = True  # Register and Login with username
+USER_ENABLE_CHANGE_PASSWORD = True         # Allow users to change their password
+USER_ENABLE_CHANGE_USERNAME = False        # Allow users to change their username
+USER_ENABLE_CONFIRM_EMAIL = True           # Force users to confirm their email
+USER_ENABLE_FORGOT_PASSWORD = True         # Allow users to reset their passwords
+USER_ENABLE_EMAIL = True                   # Register with Email
+USER_ENABLE_REGISTRATION = True            # Allow new users to register
+USER_ENABLE_RETYPE_PASSWORD = True         # Prompt for `retype password` in:
+USER_ENABLE_USERNAME = True                # Register and Login with username
 USER_ENABLE_LOGIN_WITHOUT_CONFIRM = False  # Allow users to login without a confirmed email address Protect views using @confirm_email_required
-USER_ENABLE_MULTIPLE_EMAILS = False     # Users may register multiple emails Requires USER_ENABLE_EMAIL=True
+USER_ENABLE_MULTIPLE_EMAILS = False        # Users may register multiple emails Requires USER_ENABLE_EMAIL=True
 USER_CONFIRM_EMAIL_EXPIRATION = 1*24*3600  # 1 days
-USER_INVITE_EXPIRATION = 7*24*3600  # 7 days
-USER_RESET_PASSWORD_EXPIRATION = 1*24*3600   # 1 days
-USER_ENABLE_INVITATION = True    # Allow users to invite Friends
+USER_INVITE_EXPIRATION = 7*24*3600         # 7 days
+USER_RESET_PASSWORD_EXPIRATION = 1*24*3600 # 1 days
+USER_ENABLE_INVITATION = True              # Allow users to invite Friends
 
 USER_AFTER_LOGIN_ENDPOINT = 'wuaiwow.home_page'
 USER_AFTER_LOGOUT_ENDPOINT = 'wuaiwow.home_page'
@@ -59,7 +59,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 CACHE_TYPE = 'simple'
 
 # socksPool的初始化数量
-SOCKSPOOL_SIZE = 5
+SOCKSPOOL_SIZE = 2
 
 # 两次刷新的有效时间间隔
 PAGE_REFRESH_MIN_TIME = 15

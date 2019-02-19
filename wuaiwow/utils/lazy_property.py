@@ -1,3 +1,4 @@
+# coding:utf-8
 class LazyProperty(object):
     """
     A descriptor protocol implementation used for wrapping a lambda

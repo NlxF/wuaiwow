@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 import time
 import datetime
 from wuaiwow import app
@@ -22,3 +22,26 @@ def _jinja2_filter_timespan(date):
     else:
         return 'Need datetime type provide %s' % type(date)
 
+
+@app.template_filter('struct')
+def _jinja2_filter_struct(msg):
+    if msg.is_read:
+        return "openenvelope"
+    else:
+        return "closenvelope"
+
+
+@app.template_filter('isread')
+def _jinja2_filter_isread(msg):
+    if msg.is_read:
+        return "glyphicon glyphicon-eye-open"
+    else:
+        return "glyphicon glyphicon-eye-close"
+
+
+@app.template_filter('summary')
+def _jinja2_filter_summary(content):
+    content_len = len(content)
+    summary_len = 20 if content_len < 20 else content_len
+
+    return content[:summary_len]

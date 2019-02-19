@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 from wuaiwow import db
 
 
@@ -27,3 +27,4 @@ class Sidebar(db.Model):
     content = db.Column(db.Text, nullable=True)
     created = db.Column(db.DateTime, default=db.func.now())
     update = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+

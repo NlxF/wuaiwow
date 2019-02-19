@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
 from sqlalchemy import literal
 from wuaiwow import db, app
 

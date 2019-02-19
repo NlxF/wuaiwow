@@ -147,7 +147,10 @@ def get_role_by_name(role):  # need_update
         根据role的name,查找Role实例
         @param role 权限名
     """
-    role_obj = Role.query.filter(Role.role == role).first()
+    try:
+        role_obj = Role.query.filter(Role.role == role).first()
+    except Exception as e:
+        role_obj = None
 
     return role_obj
 
