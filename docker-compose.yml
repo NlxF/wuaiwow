@@ -6,13 +6,13 @@ services:
         image: wuaiwow/www-database
         build:
             context: .
-            dockerfile: ./docker/database/Dockerfile
+            dockerfile: ./deployment/docker/database/Dockerfile
         networks:
             - www-network
         ports:
             - 3306:3306
         environment:
-            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_ROOT_PASSWORD=password2
         volumes:
             - ./volume/var/lib/mysql:/var/lib/mysql
 
@@ -21,12 +21,10 @@ services:
         tty: true
         image: wuaiwow/www-server
         build:
-            context: ./docker/www/worldserver
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: ./deployment/docker/www/Dockerfile
         networks:
             - www-network
-        ports:
-            - 80:8080
         depends_on:
             - www-database
 

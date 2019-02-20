@@ -126,10 +126,10 @@ function base(){
     done
 
     echo "    "${idx}".构建database服务基础镜像"
-    docker build --no-cache --build-arg HTTP_PROXY=http://127.0.0.1:1087 --build-arg HTTPS_PROXY=http://127.0.0.1:1087 -f ./deployment/docker/database/Dockerfile.Base -t wuaiwow/database:base .
+    docker build --no-cache -f ./deployment/docker/database/Dockerfile.Base -t wuaiwow/database:base .
     ((idx+=1))
     echo "    "${idx}".构建server基础镜像"
-    docker build --no-cache --build-arg HTTP_PROXY=http://127.0.0.1:1087 --build-arg HTTPS_PROXY=http://127.0.0.1:1087 -f ./deployment/docker/www/Dockerfile.Base -t wuaiwow/server:base .
+    docker build --no-cache -f ./deployment/docker/www/Dockerfile.Base -t wuaiwow/server:base .
 }
 
 if [[ ${argc} > 0 ]]; then

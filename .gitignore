@@ -65,3 +65,4 @@ env/
 *.pot
 *.pot.bak
 wuaiwow/static/uploads/
+volume/

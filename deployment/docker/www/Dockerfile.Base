@@ -2,10 +2,11 @@
 FROM nginx
 
 # install python, uwsgi, and supervisord
-RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server && \
-    /usr/bin/pip install uwsgi==2.0.17 flask==0.10.1 Flask-Bootstrap Flask-SQLAlchemy Flask-Script && \
-    Flask-migrate Flask-mail Flask-WTF Flask-Login Flask-cache Flask-debugtoolbar Flask-user && \
-    Flask-babel passlib Pillow cffi MySQL-python SQLAlchemy redis gevent celery[gevent,redis]
+RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server default-libmysqlclient-dev
+
+RUN /usr/bin/pip install uwsgi flask==1.0.2 Flask-Bootstrap Flask-SQLAlchemy Flask-Script Flask-mail Flask-WTF Flask-Login 
+RUN /usr/bin/pip install Flask-cache Flask-debugtoolbar Flask-user 
+RUN /usr/bin/pip install passlib Pillow cffi MySQL-python SQLAlchemy redis gevent celery[gevent,redis]
 
 # setup NGINX config
 RUN mkdir -p /spool/nginx /run/pid && \

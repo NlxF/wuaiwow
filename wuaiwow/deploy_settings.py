@@ -9,7 +9,7 @@ ADMINS = frozenset(['wuaiwow@gmail.com'])
 DATABASE_NAME = 'wuaiwow'
 
 # SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = 'mysql://root:lxf@localhost/'+DATABASE_NAME
+SQLALCHEMY_DATABASE_URI = 'mysql://root:password@www-database/'+DATABASE_NAME
 #SQLALCHEMY_NATIVE_UNICODE = False
 
 THREADS_PER_PAGE = 8
@@ -29,7 +29,7 @@ MAIL_USE_TLS = True   #587
 
 
 # mySQLHandler settings
-DB = {'host': '127.0.0.1',
+DB = {'host': 'www-database',
       'port': 3306,
       'dbuser': 'root',
       'dbpassword': 'lxf',
