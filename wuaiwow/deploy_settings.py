@@ -32,7 +32,7 @@ MAIL_USE_TLS = True   #587
 DB = {'host': 'www-database',
       'port': 3306,
       'dbuser': 'root',
-      'dbpassword': 'lxf',
+      'dbpassword': 'password',
       'dbname': DATABASE_NAME}
 
 #WTF_CSRF_ENABLED = True

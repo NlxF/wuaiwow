@@ -2,8 +2,8 @@ FROM wuaiwow/server:base
 
 ENV HOME=/www/wuaiwow-www
 
-# install python, uwsgi, and supervisord, redis-server
-RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server && \
+# install python, and supervisord, redis-server
+RUN apt-get update && apt-get install -y supervisor python python-pip procps redis-server && \
     /usr/bin/pip install uwsgi flask==0.10.1
 
 # Source code file
@@ -11,8 +11,8 @@ COPY ./runserver.py ${HOME}/
 COPY ./wuaiwow ${HOME}/wuaiwow
 
 COPY ./requirements.txt ${HOME}/
-#RUN cd ${HOME} && \
-#    /usr/bin/pip install -r requirements.txt
+RUN cd ${HOME} && \
+   /usr/bin/pip install -r requirements.txt
 
 # Copy the configuration file from the current directory and paste 
 # it inside the container to use it as Nginx's default config.
