@@ -26,6 +26,8 @@ COPY ./deployment/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN touch /var/log/supervisor/supervisord.log
 # RUN touch /www/app/wuaiwow/supervisor.log && touch /www/app/wuaiwow/supervisor.log
 
+COPY ./deployment/redis.conf /etc/redis/redis.conf
+
 EXPOSE 80:8080
 
 # setup entrypoint

@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # coding:utf-8
 
+from wuaiwow import create_app, celery
+app = create_app()
 from wuaiwow import db
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
-from wuaiwow import create_app, celery
 
-app = create_app()
 app.app_context().push()
-manager = Manager(app)
 migrate = Migrate(app, db)
+manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 

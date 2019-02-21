@@ -8,7 +8,7 @@ Flask-WTF
 Flask-Login
 Flask-cache
 Flask-debugtoolbar
-Flask-user
+Flask-user<0.7
 Flask-babel
 passlib
 Pillow

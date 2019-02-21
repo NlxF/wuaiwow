@@ -20,10 +20,10 @@ app = create_app(debug=False)
 app.app_context().push()
 
 
-def main():
+# def main():
 
-    app.run(debug=app.debug, port=5001, host='0.0.0.0')
+#     app.run(debug=app.debug, port=5001, host='0.0.0.0')
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
