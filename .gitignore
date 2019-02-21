@@ -66,3 +66,4 @@ env/
 *.pot.bak
 wuaiwow/static/uploads/
 volume/
+dump.rdb

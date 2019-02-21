@@ -4,7 +4,7 @@ ENV HOME=/www/wuaiwow-www
 
 # install python, uwsgi, and supervisord, redis-server
 RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server && \
-    /usr/bin/pip install uwsgi flask==1.0.2
+    /usr/bin/pip install uwsgi flask==0.10.1
 
 # Source code file
 COPY ./runserver.py ${HOME}/
