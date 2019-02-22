@@ -5,7 +5,7 @@ FROM nginx
 RUN apt-get update && apt-get install -y supervisor python python-pip procps redis-server default-libmysqlclient-dev
 
 RUN /usr/bin/pip install uwsgi flask==0.10.1 Flask-Bootstrap Flask-SQLAlchemy Flask-Script Flask-mail Flask-WTF Flask-Login 
-RUN /usr/bin/pip install Flask-cache Flask-debugtoolbar Flask-user<0.7 Flask-babel
+RUN /usr/bin/pip install Flask-cache Flask-debugtoolbar "Flask-user<0.7" Flask-babel Flask-migrate
 RUN /usr/bin/pip install passlib Pillow cffi MySQL-python SQLAlchemy redis gevent celery[gevent,redis]
 
 # setup NGINX config
