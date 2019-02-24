@@ -14,4 +14,7 @@ mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS wuaiwow"
 
 #mysqldump -u root -p --add-drop-table --all-databases --force > data-for-upgrade.sql
 
+crontab -u $(whoami) /etc/cronjobs
+/etc/init.d/cron restart
+
 echo "Done!"

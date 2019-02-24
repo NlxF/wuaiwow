@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+HOME=/www/wuaiwow-www
+
+echo "init db..."
+python ${HOME}/manager.py db init
+python ${HOME}/manager.py db migrate -m "initdb"
+python ${HOME}/manager.py db upgrade
+
+
+echo "start supervisord..."
 # if the running user is an Arbitrary User ID
 if ! whoami &> /dev/null; then
     # make sure we have read/write access to /etc/passwd

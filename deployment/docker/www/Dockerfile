@@ -3,35 +3,36 @@ FROM wuaiwow/server:base
 ENV HOME=/www/wuaiwow-www
 
 # install python, and supervisord, redis-server
-RUN apt-get update && apt-get install -y supervisor python python-pip procps redis-server && \
-    /usr/bin/pip install uwsgi flask==0.10.1
+RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server && \
+    /usr/bin/pip install uwsgi flask==1.0.2
 
 # Source code file
+COPY ./manager.py ${HOME}/
 COPY ./runserver.py ${HOME}/
 COPY ./wuaiwow ${HOME}/wuaiwow
+COPY ./deployment/data ${HOME}/sql/
 
 COPY ./requirements.txt ${HOME}/
 RUN cd ${HOME} && \
    /usr/bin/pip install -r requirements.txt
 
-# Copy the configuration file from the current directory and paste 
-# it inside the container to use it as Nginx's default config.
-COPY ./deployment/nginx.conf /etc/nginx/nginx.conf
+# Copy the nginx configuration file from the current directory and paste 
+COPY ./deployment/config/nginx.conf /etc/nginx/nginx.conf
 
 # Copy the base uWSGI ini file to enable default dynamic uwsgi process number
-COPY ./deployment/uwsgi.ini /etc/uwsgi/apps-available/uwsgi.ini
+COPY ./deployment/config/uwsgi.ini /etc/uwsgi/apps-available/uwsgi.ini
 RUN ln -s /etc/uwsgi/apps-available/uwsgi.ini /etc/uwsgi/apps-enabled/uwsgi.ini
 
-COPY ./deployment/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./deployment/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN touch /var/log/supervisor/supervisord.log
 # RUN touch /www/app/wuaiwow/supervisor.log && touch /www/app/wuaiwow/supervisor.log
 
-COPY ./deployment/redis.conf /etc/redis/redis.conf
+COPY ./deployment/config/redis.conf /etc/redis/redis.conf
 
 EXPOSE 80:8080
 
 # setup entrypoint
-COPY ./deployment/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY ./deployment/docker/www/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 # https://github.com/moby/moby/issues/31243#issuecomment-406879017
 RUN ln -s /usr/local/bin/docker-entrypoint.sh / && \

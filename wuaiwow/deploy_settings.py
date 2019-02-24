@@ -7,9 +7,10 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 ADMINS = frozenset(['wuaiwow@gmail.com'])
 
 DATABASE_NAME = 'wuaiwow'
+DB_PASSWORD = 'password2'
 
 # SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = 'mysql://root:password@www-database/'+DATABASE_NAME
+SQLALCHEMY_DATABASE_URI = 'mysql://root:'+DB_PASSWORD+'@www-database/'+DATABASE_NAME
 #SQLALCHEMY_NATIVE_UNICODE = False
 
 THREADS_PER_PAGE = 8
@@ -32,8 +33,23 @@ MAIL_USE_TLS = True   #587
 DB = {'host': 'www-database',
       'port': 3306,
       'dbuser': 'root',
-      'dbpassword': 'password',
+      'dbpassword': DB_PASSWORD,
       'dbname': DATABASE_NAME}
+
+# lserver setting
+LSERVER_HOST = '127.0.0.1'
+LSERVER_PORT = 8083
+
+# 与lserver 通信是否需要加密
+NEEDENCRYPTION = False
+
+# toolbar setting
+DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+# celery setting
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'db+mysql://root:'+DB_PASSWORD+'@www-database/celery_rst_test'
+CELERY_TASK_RESULT_EXPIRES = 120
 
 #WTF_CSRF_ENABLED = True
 #WTF_CSRF_SECRET_KEY = "a!sd@adfg2~34^f%s&$#po45weqwe"

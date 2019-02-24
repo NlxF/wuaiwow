@@ -2,7 +2,7 @@
 # coding:utf-8
 
 from wuaiwow import create_app, celery
-app = create_app()
+app = create_app(debug=False)
 from wuaiwow import db
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
