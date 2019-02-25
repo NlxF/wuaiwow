@@ -25,7 +25,6 @@ RUN ln -s /etc/uwsgi/apps-available/uwsgi.ini /etc/uwsgi/apps-enabled/uwsgi.ini
 
 COPY ./deployment/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN touch /var/log/supervisor/supervisord.log
-# RUN touch /www/app/wuaiwow/supervisor.log && touch /www/app/wuaiwow/supervisor.log
 
 COPY ./deployment/config/redis.conf /etc/redis/redis.conf
 
