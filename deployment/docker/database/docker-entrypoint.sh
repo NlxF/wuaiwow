@@ -7,14 +7,14 @@ mysql -u root -p$MYSQL_ROOT_PASSWORD -e "SET GLOBAL max_allowed_packet=128*1024*
 echo "Creating DB..."
 mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS wuaiwow"
 
-#if [ -f ./thirdParty/thirdParty_build.sh ]; then
-#    echo "Importing wuaiwow base..."
-#    mysql -u root -p$MYSQL_ROOT_PASSWORD wuaiwow < /sql/wuaiwow_base.sql
-#fi
+echo "Running cron task manager..."
+echo $(whoami)
 
-#mysqldump -u root -p --add-drop-table --all-databases --force > data-for-upgrade.sql
-
-crontab -u $(whoami) /etc/cronjobs
-/etc/init.d/cron restart
+exec cron restart
+status=$?
+if [ $status -ne 0 ]; then
+    echo "Failed to start crontab: $status"
+    exit $status
+fi
 
 echo "Done!"

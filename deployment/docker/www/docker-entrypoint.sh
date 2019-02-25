@@ -3,10 +3,14 @@ set -e
 
 HOME=/www/wuaiwow-www
 
+# until mysqladmin ping >/dev/null 2>&1; do
+#     echo -n "."; sleep 0.2
+# done
+
 echo "init db..."
-python ${HOME}/manager.py db init
-python ${HOME}/manager.py db migrate -m "initdb"
-python ${HOME}/manager.py db upgrade
+# python ${HOME}/manager.py db init
+# python ${HOME}/manager.py db migrate -m "initdb"
+# python ${HOME}/manager.py db upgrade
 
 
 echo "start supervisord..."
