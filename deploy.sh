@@ -14,6 +14,9 @@ argc=$#
 argv=($@)
 
 function startServers(){
+    if [ -d ./volume/var/ ]; then
+        rm -rf ./volume/var/
+    fi
     docker-compose -f docker-compose-prod.yml up 
 }
 

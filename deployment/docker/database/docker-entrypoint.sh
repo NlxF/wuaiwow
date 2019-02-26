@@ -9,12 +9,17 @@ mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS wuaiwow"
 
 echo "Running cron task manager..."
 echo $(groups $(whoami))
+echo $(ls -la /usr/sbin/cron)
+echo $(ls -la /usr/bin/crontab)
+# echo $(ls -la /var/run/crond.pid)
 
-exec cron restart
-status=$?
-if [ $status -ne 0 ]; then
-    echo "Failed to start crontab: $status"
-    exit $status
-fi
+# crontab /etc/cron.d/cronjobs
+# touch /var/run/crond.pid
+# cron restart
+# status=$?
+# if [ $status -ne 0 ]; then
+#     echo "Failed to start crontab: $status"
+#     exit $status
+# fi
 
 echo "Done!"
