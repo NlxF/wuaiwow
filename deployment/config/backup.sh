@@ -18,6 +18,8 @@
 # CUSTOM SETTINGS
 #==============================================================================
 
+echo "start backup database"
+
 # directory to put the backup files
 BACKUP_DIR=/www/wuaiwow-www/backup
 
@@ -27,7 +29,7 @@ MYSQL_PWORD=password2
 
 # Don't backup databases with these names
 # Example: starts with mysql (^mysql) or ends with _schema (_schema$)
-IGNORE_DB="(^mysql|_schema$)"
+IGNORE_DB="(^mysql|_schema$|^sys)"
 
 # include mysql and mysqldump binaries for cron bash user
 PATH=$PATH:/usr/local/mysql/bin:/www/wuaiwow-www/config

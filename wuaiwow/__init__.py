@@ -97,15 +97,15 @@ def dated_url_for(endpoint, **values):
 
 
 # configure app
-def create_app(debug=True, test=False):
+def create_app(test=False):
 
-    app.config['DEBUG'] = debug
+    # app.config['DEBUG'] = debug
 
     # ***** Initialize app config settings *****
     app.config.from_object('wuaiwow.flask_user_settings')
 
     # Read environment-specific settings from file defined by OS environment variable 'ENV_SETTINGS_FILE'
-    if debug:
+    if app.debug:
         settings_file = 'develo_settings.py'
     else:
         settings_file = 'deploy_settings.py'

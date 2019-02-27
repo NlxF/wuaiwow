@@ -16,7 +16,8 @@ from wuaiwow import create_app, celery
 # app.app_context().push() 会推入一个 application context，后续所有操作都会在这个环境里执行，直到进程退出。
 # 因此，如果在 tasks 里用到了 current_app 或其它需要 application context 的东西，就一定需要这样做。
 
-app = create_app(debug=False)
+
+app = create_app()
 app.app_context().push()
 
 

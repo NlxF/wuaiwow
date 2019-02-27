@@ -1,3 +1,3 @@
 # cron for daily db backup @ 4:15 am UTC
 # min  hr mday month wday command
-* * * * *  echo "Hello world" >> /var/log/cron.log
+*/1 * * * *  /usr/local/bin/backup.sh > /dev/null 2>&1

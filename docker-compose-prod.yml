@@ -1,7 +1,6 @@
 version: '3.2'
 
 services:
-
     www-database:
         image: wuaiwow/www-database
         networks:
@@ -12,7 +11,8 @@ services:
             - MYSQL_ROOT_PASSWORD=password2
         volumes:
             - ./volume/var/lib/mysql:/var/lib/mysql
-
+            - ./volume/backup:/www/wuaiwow-www/backup
+            # - ./database/:/docker-entrypoint-initdb.d/schema.sql:ro
     www-server:
         image: wuaiwow/www-server
         networks:
