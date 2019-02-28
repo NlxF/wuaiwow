@@ -1,7 +1,7 @@
 # encoding:utf8
 from wuaiwow import create_app, celery
 
-# 运行 celery -A celery_worker:celery worker --loglevel=info
+# 运行 celery -A runserver:celery worker --loglevel=info
 
 # 创建一个 Flask 实例
 # 推入 Flask application context
@@ -22,7 +22,6 @@ app.app_context().push()
 
 
 # def main():
-
 #     app.run(debug=app.debug, port=5001, host='0.0.0.0')
 
 

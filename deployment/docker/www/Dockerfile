@@ -12,6 +12,9 @@ COPY ./runserver.py ${HOME}/
 COPY ./wuaiwow ${HOME}/wuaiwow
 COPY ./deployment/data ${HOME}/sql/
 
+COPY ./deployment/config/wait-for-it.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
 COPY ./requirements.txt ${HOME}/
 RUN cd ${HOME} && \
    /usr/bin/pip install -r requirements.txt
@@ -46,6 +49,6 @@ RUN chgrp -R 0 /var/log /var/cache /run/pid /spool/nginx /var/run /run /tmp /etc
     chmod -R 777 ${HOME} /etc/passwd
 
 # enter
-WORKDIR ${HOME}
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["supervisord"]
+# WORKDIR ${HOME}
+# ENTRYPOINT ["docker-entrypoint.sh"]
+# CMD ["supervisord"]

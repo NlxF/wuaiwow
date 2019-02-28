@@ -21,6 +21,7 @@ services:
             - 80:8080
         depends_on:
             - www-database
+        command: ["wait-for-it.sh", "-t", "90", "www-database:3306", "--", "docker-entrypoint.sh", "supervisord"]
 
 networks:
     www-network:

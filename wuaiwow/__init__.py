@@ -1,6 +1,6 @@
 # coding:utf-8
 import os
-# import time
+import time
 from uuid import uuid4
 from flask import Flask, request, g, session, url_for, render_template
 from flask_wtf.csrf import CSRFProtect, CSRFError
@@ -12,6 +12,7 @@ from utils.plugHelper import register_blueprints
 from utils.onlineHelper import Online
 from utils.factory import make_celery
 from utils.mySqlalchemy import UnlockedReadAlchemy
+from utils.default_data import add_default_data
 from celery.utils.log import get_task_logger
 
 # Initialize Flask app and db
@@ -29,8 +30,6 @@ celery_logger = get_task_logger(__name__)       # celery logger
 # @app.before_first_request
 # def initialize_app_on_first_request():
 #     """ Create users and roles tables on first HTTP request """
-#     from utils.create_users import create_users
-#     create_users()
 
 
 @app.before_request
@@ -72,7 +71,7 @@ def online_setup():
                               'visitor': len(visitor),
                               'max_num': max_online.online_user_num,
                               'occ_time': max_online.occ_time,
-                              'time_zone': u"中国标准时间"}   # time.strftime("%z")}
+                              'time_zone': time.strftime("%z")}   #u"中国标准时间" }
 
 
 # 实时更新资源文件
@@ -99,8 +98,6 @@ def dated_url_for(endpoint, **values):
 # configure app
 def create_app(test=False):
 
-    # app.config['DEBUG'] = debug
-
     # ***** Initialize app config settings *****
     app.config.from_object('wuaiwow.flask_user_settings')
 
@@ -119,9 +116,12 @@ def create_app(test=False):
     # Setup an CRITICAL logger to send emails to app.config.ADMINS
     init_email_error_handler(app=app, level=logging.CRITICAL)
 
-    # Mysql setting
+    # mysql setting
     global  db
     db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
+
+    # add default data
+    add_default_data()
 
     # onlineHelper setting
     global onlineHelper

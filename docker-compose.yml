@@ -13,9 +13,6 @@ services:
                 noproxy: "localhost,127.0.0.1,$LOCAL_DOMAIN"
         networks:
             - www-network
-        ports:
-            - 3306:3306
-        
 
     www-server:
         stdin_open: true

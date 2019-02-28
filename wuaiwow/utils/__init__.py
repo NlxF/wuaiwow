@@ -5,6 +5,7 @@ import re
 import string
 import random
 import datetime
+from PIL import Image
 from flask_mail import Mail
 from flask_cache import Cache
 from flask_babel import Babel
@@ -161,6 +162,33 @@ def save_file_avatar(img, prefix):
             return '%s/%s' % ('uploads/avatar', rnd_name)
 
 
+def resize_and_crop(img, size, position):
+    """
+    Resize and crop an image to fit the specified size.
+
+    @param img: path or stream for the image to resize.
+    @param size: `(width, height)` tuple.
+    @param position: position of the box
+
+    """
+    # If height is higher we resize vertically, if not we resize horizontally
+    img = Image.open(img)
+    # Get current and desired ratio for the images
+    img_ratio = img.size[0] / float(img.size[1])
+    ratio = size[0] / float(size[1])
+    # The image is scaled/cropped vertically or horizontally depending on the ratio
+    if ratio > img_ratio:
+        img = img.resize((size[0], int(round(size[0] * img.size[1] / img.size[0]))), Image.ANTIALIAS)
+    elif ratio < img_ratio:
+        img = img.resize((int(round(size[1] * img.size[0] / img.size[1])), size[1]), Image.ANTIALIAS)
+    else:
+        img = img.resize((size[0], size[1]), Image.ANTIALIAS)
+    # Crop
+    box = (position[0], position[1], position[0] + 100, position[1] + 100)
+    img = img.crop(box)
+    return img
+
+
 def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
     match = regex.match(uuid)
@@ -168,4 +196,5 @@ def valid_uuid(uuid):
 
 
 __all__ = ['add_blueprint', 'configure_extensions', 'init_email_error_handler',
-           'init_mysql_handler', 'gen_rnd_string', 'save_file_upload', 'save_file_avatar', 'valid_uuid']
+           'init_mysql_handler', 'gen_rnd_string', 'save_file_upload', 'save_file_avatar', 
+           'valid_uuid', 'resize_and_crop']

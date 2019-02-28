@@ -4,8 +4,8 @@
 from wuaiwow import create_app, celery
 app = create_app()
 from wuaiwow import db
-from flask.ext.script import Manager
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 app.app_context().push()
 migrate = Migrate(app, db)
@@ -28,15 +28,9 @@ def list_routes():
 
 
 @manager.command
-def init_db():
-    from wuaiwow.utils.create_users import create_users
-    create_users()
-
-
-@manager.command
-def init_permission():
-    from wuaiwow.utils.create_users import init_all_permission
-    init_all_permission()
+def init_data():
+    from wuaiwow.utils.default_data import add_default_data
+    add_default_data()
 
 
 if __name__ == '__main__':

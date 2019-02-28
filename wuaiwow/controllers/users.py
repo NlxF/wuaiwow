@@ -9,8 +9,7 @@ from flask_user.translations import gettext as _
 from datetime import datetime
 from wuaiwow import tasks
 from wuaiwow import app, db, logger
-from wuaiwow.utils.create_users import resize_and_crop
-from wuaiwow.utils import add_blueprint, save_file_avatar
+from wuaiwow.utils import add_blueprint, save_file_avatar, resize_and_crop
 from wuaiwow.utils.accountHelper import endpoint_url
 try:
     from urllib.parse import quote      # Python 3.x

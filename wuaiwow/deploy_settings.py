@@ -11,7 +11,8 @@ DB_PASSWORD = 'password2'
 
 # SQLAlchemy settings
 SQLALCHEMY_DATABASE_URI = 'mysql://root:'+DB_PASSWORD+'@www-database/'+DATABASE_NAME
-#SQLALCHEMY_NATIVE_UNICODE = False
+SQLALCHEMY_NATIVE_UNICODE = True
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 THREADS_PER_PAGE = 8
 
@@ -34,7 +35,10 @@ DB = {'host': 'www-database',
       'port': 3306,
       'dbuser': 'root',
       'dbpassword': DB_PASSWORD,
-      'dbname': DATABASE_NAME}
+      'dbname': DATABASE_NAME,
+      'charset': 'utf8',
+      'use_unicode': True
+      }
 
 # lserver setting
 LSERVER_HOST = '127.0.0.1'

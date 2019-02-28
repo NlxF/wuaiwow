@@ -3,15 +3,23 @@ set -e
 
 HOME=/www/wuaiwow-www
 
-# until mysqladmin ping >/dev/null 2>&1; do
-#     echo -n "."; sleep 0.2
-# done
+echo "flask_cache compact for flask 1.0.2"
+packages=($(python -c "import site; print(site.getsitepackages())" | tr -d "[],\'\'"))
+for package in ${packages[@]}; do
+    cache_path=${package}'/flask_cache/jinja2ext.py'
+    echo 'search flask_cache at: '${cache_path}
+    if [ -f ${cache_path} ]; then
+        echo "find flask_cache"
+        sed -i 's/^from flask.ext.cache /from flask_cache /g' ${cache_path}
+        break
+    fi
+done
 
-echo "init db..."
-# python ${HOME}/manager.py db init
-# python ${HOME}/manager.py db migrate -m "initdb"
-# python ${HOME}/manager.py db upgrade
-
+echo "Initialize DB..."
+cd ${HOME}/
+echo $(python manager.py db init)
+echo $(python manager.py db migrate -m "init")
+echo $(python manager.py db upgrade)
 
 echo "start supervisord..."
 # if the running user is an Arbitrary User ID
