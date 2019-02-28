@@ -12,7 +12,6 @@ from utils.plugHelper import register_blueprints
 from utils.onlineHelper import Online
 from utils.factory import make_celery
 from utils.mySqlalchemy import UnlockedReadAlchemy
-from utils.default_data import add_default_data
 from celery.utils.log import get_task_logger
 
 # Initialize Flask app and db
@@ -120,9 +119,6 @@ def create_app(test=False):
     global  db
     db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
 
-    # add default data
-    add_default_data()
-
     # onlineHelper setting
     global onlineHelper
     onlineHelper = Online(app=app)
@@ -143,6 +139,10 @@ def create_app(test=False):
 
     # load blueprints
     register_blueprints()
+
+    # init default data
+    from utils.default_data import add_default_data
+    add_default_data(app.config['PERMISSIONS'])
 
     return app
 

@@ -322,6 +322,7 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
                     confirmed_at=datetime.utcnow())
         created, user.permission = find_or_create_permission(permission)
         db.session.add(user)
+        db.session.commit()
     return user
 
 
