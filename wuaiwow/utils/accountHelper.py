@@ -22,6 +22,7 @@ def permission_required(permission_value):
         @wraps(func)
         def decorated_view(*args, **kwargs):
             # User must be logged
+            print("permission_value:{}".format(permission_value))
             if not _call_or_get(current_user.is_authenticated):
                 # Redirect to the unauthenticated page
                 return current_app.user_manager.unauthenticated_view_function()

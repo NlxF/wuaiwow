@@ -61,6 +61,7 @@ migrations/
 *.txt~
 *.xml~
 .idea/
+.vscode/
 env/
 *.pot
 *.pot.bak

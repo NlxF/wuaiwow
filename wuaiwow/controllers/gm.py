@@ -1,6 +1,7 @@
 # coding:utf-8
 from flask import (render_template, Blueprint, request, url_for,
                    make_response, jsonify)
+from werkzeug.local import LocalProxy
 from flask_user import current_user, login_required
 from wuaiwow.utils import add_blueprint, save_file_upload
 from wuaiwow.utils.accountHelper import permission_required
@@ -20,7 +21,7 @@ bp = Blueprint('GM', __name__, url_prefix='/gm')
 
 @bp.route('/add-news', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('GM'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
 def add_news():
     default_url = url_for('static', filename='images/default_title.jpg')
 
@@ -67,7 +68,7 @@ def add_news():
 
 @bp.route('/get-a-news', methods=['GET'])
 @login_required
-@permission_required(get_permission_by_role('GM'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
 def get_a_news():
     news_id = request.args.get('id', '')
     news = get_all_news()
@@ -82,7 +83,7 @@ def get_a_news():
 
 @bp.route('/add-tutorial', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('GM'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
 def add_tutorial():
     if request.method == 'POST':
         guild_info = request.form['guildinfotext']
@@ -113,7 +114,7 @@ def add_tutorial():
 @csrf.exempt
 @bp.route('upload/images', methods=['POST', 'OPTIONS'])
 @login_required
-@permission_required(get_permission_by_role('GM'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
 def upload_images():
     """CKEditor images upload"""
     error = ''
@@ -141,7 +142,7 @@ def upload_images():
 
 @bp.route('/change-user-role/', methods=['GET', ])
 @login_required
-@permission_required(get_permission_by_role('GM'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
 def change_user_role():
 
     template_name = template_by_role(current_user, 'custom/cms/gm_add_role.html',
@@ -153,7 +154,7 @@ def change_user_role():
 
 @bp.route('/user-role-list/', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('GM'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
 def role_list():
     if request.method == 'POST':
         form = request.form

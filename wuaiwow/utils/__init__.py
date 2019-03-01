@@ -99,7 +99,7 @@ def init_mysql_handler(app, level):
     import logging
     import mySQLHandler
     logger = logging.getLogger('wuaiwow')
-    logger.setLevel(logging.ERROR)
+    logger.setLevel(logging.INFO if app.debug else logging.WARNING)
     handler = mySQLHandler.mySQLHandler(db=app.config["DB"])
     handler.setLevel(level)
     app.logger.addHandler(handler)

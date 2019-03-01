@@ -1,5 +1,6 @@
 # coding:utf-8
 from flask import render_template, Blueprint, request, jsonify, url_for
+from werkzeug.local import LocalProxy
 from flask_user import current_user, login_required
 from wuaiwow import db, app, tasks
 from wuaiwow.utils import add_blueprint, save_file_upload
@@ -20,7 +21,7 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/add-donate', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def add_donate():
     result_info = ''
     if request.method == 'POST':
@@ -46,7 +47,7 @@ def add_donate():
 
 @bp.route('/add-userAgreement', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def add_user_agreement():
     result_info = ''
     if request.method == 'POST':
@@ -72,7 +73,7 @@ def add_user_agreement():
 
 @bp.route('/add-prompt', methods=[])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def add_prompt():
     if request.method == 'POST':
         form = request.get_json()
@@ -80,7 +81,7 @@ def add_prompt():
             for m in [AlivePrompt, LevelPrompt, RacePrompt, JobPrompt, GenderPrompt, MoneyPrompt]:
                 if form['id'] and form['id'] == m.class_id():
                     if form['id'] == 'alive':
-                        inst = m(prompt=form['value'], alive=True if form['type'] == '1' else False)
+                        inst = m(prompt=form['value'], alive= (form['type'] == '1') )
                     else:
                         inst = m(prompt=form['value'])
                     db.session.add(inst)
@@ -106,7 +107,7 @@ def add_prompt():
 
 @bp.route('/del-prompt', methods=[])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def del_prompt():
     if request.method == 'POST':
         form = request.get_json()
@@ -133,7 +134,7 @@ def del_prompt():
 
 @bp.route('/add-sidebar', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def add_sidebar():
     default_url = url_for('static', filename='images/default_title.jpg')
     sidebars = [sd.name for sd in Sidebar.query.order_by(Sidebar.created.asc()).all()]
@@ -176,7 +177,7 @@ def add_sidebar():
 
 @bp.route('/get-a-sidebar', methods=['GET'])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def get_a_sidebar():
     sd_id = request.args.get('id', '')
     sds = Sidebar.query.order_by(Sidebar.created.desc()).all()
@@ -191,7 +192,7 @@ def get_a_sidebar():
 
 @bp.route('/change-role-permission/', methods=['GET', 'POST'])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def change_role_permission():
     if request.method == 'POST':
         role_permission = request.form.get('newRolePerm', "")
@@ -230,7 +231,7 @@ def change_role_permission():
 
 @bp.route('/add-permission/', methods=['GET', ])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def add_permission():
     max_level = get_permission_num()
     next_permission_value = permission_value_by_level(max_level + 1)
@@ -248,7 +249,7 @@ def add_permission():
 
 @bp.route('/add-role/', methods=['POST', ])
 @login_required
-@permission_required(get_permission_by_role('UPGRADE'))
+@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
 def add_role():
     new_role = request.form.get('newRole', "")
     new_value = request.form.get('newValue', -1)

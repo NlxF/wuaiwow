@@ -95,11 +95,12 @@ def dated_url_for(endpoint, **values):
 
 
 # configure app
-def create_app(test=False):
+def create_app(need_default_data=False, test=False):
 
     # ***** Initialize app config settings *****
     app.config.from_object('wuaiwow.flask_user_settings')
-
+    print("debug mode: {}".format("YES" if app.debug else "NO"))
+    
     # Read environment-specific settings from file defined by OS environment variable 'ENV_SETTINGS_FILE'
     if app.debug:
         settings_file = 'develo_settings.py'
@@ -116,7 +117,7 @@ def create_app(test=False):
     init_email_error_handler(app=app, level=logging.CRITICAL)
 
     # mysql setting
-    global  db
+    global db
     db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
 
     # onlineHelper setting
@@ -140,9 +141,11 @@ def create_app(test=False):
     # load blueprints
     register_blueprints()
 
-    # init default data
-    from utils.default_data import add_default_data
-    add_default_data(app.config['PERMISSIONS'])
+    if need_default_data:
+        # init default data
+        from utils.default_data import add_default_data
+        add_default_data(app.config['PERMISSIONS'])
 
+    print("create app done.")
     return app
 

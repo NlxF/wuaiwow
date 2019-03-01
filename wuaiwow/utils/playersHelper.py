@@ -112,7 +112,7 @@ def update_wowaccount_characters(username, data_dict):
                 pattern = re.compile(r'\w+\W+:\s(\w+)')
                 match = pattern.search(field)
                 if match:
-                    character['char'].alive = True if match.groups()[0] == 'Yes' else False
+                    character['char'].alive = match.groups()[0] == 'Yes'
             elif 'Money' in field:
                 pattern = re.compile(r'Money:\s+(\d+g\d+s\d+c)')
                 match = pattern.search(field)

@@ -3,13 +3,13 @@ set -e
 
 HOME=/www/wuaiwow-www
 
-echo "flask_cache compact for flask 1.0.2"
+echo "edit flask_cache compatible with flask 1.0.2"
 packages=($(python -c "import site; print(site.getsitepackages())" | tr -d "[],\'\'"))
 for package in ${packages[@]}; do
     cache_path=${package}'/flask_cache/jinja2ext.py'
     echo 'search flask_cache at: '${cache_path}
     if [ -f ${cache_path} ]; then
-        echo "find flask_cache"
+        echo "find flask_cache, sed to compatible with flask 1.0.2"
         sed -i 's/^from flask.ext.cache /from flask_cache /g' ${cache_path}
         break
     fi

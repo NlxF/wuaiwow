@@ -183,7 +183,9 @@ def get_permission_by_role(role):
         @param role 权限名
     """
     role_obj = role
+    print("try to get_role_by_name: {}".format(role))
     if isinstance(role_obj, basestring):
+        print("get_role_by_name: {}".format(role))
         role_obj = get_role_by_name(role)
 
     return role_obj.permission if role_obj else None

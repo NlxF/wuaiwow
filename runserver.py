@@ -17,7 +17,7 @@ from wuaiwow import create_app, celery
 # 因此，如果在 tasks 里用到了 current_app 或其它需要 application context 的东西，就一定需要这样做。
 
 
-app = create_app()
+app = create_app(need_default_data=True)
 app.app_context().push()
 
 
