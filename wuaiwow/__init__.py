@@ -146,6 +146,5 @@ def create_app(need_default_data=False, test=False):
         from utils.default_data import add_default_data
         add_default_data(app.config['PERMISSIONS'])
 
-    print("create app done.")
     return app
 

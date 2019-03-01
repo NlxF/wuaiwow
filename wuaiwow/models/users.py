@@ -185,7 +185,9 @@ class User(db.Model, UserMixin):
             如果当前满足权限值要求则返回True
             @param permission 操作要求的权限值
         """
-        print("test user permission:{}".format(permission))
+        if permission == None:
+            return False
+            
         if hasattr(self, 'permission'):
             value = self.permission.value
         else:

@@ -172,8 +172,8 @@ class mySQLHandler(logging.Handler):
             conn=MySQLdb.connect(host=self.db['host'],port=self.db['port'],user=self.db['dbuser'],passwd=self.db['dbpassword'],db=self.db['dbname'])
         except _mysql_exceptions, e:
             from pprint import pprint
-            print("The Exception during db.connect")           
-            pprint(e)
+            # print("The Exception during db.connect")           
+            # print(e)
             raise Exception(e)
             exit(-1)
         cur = conn.cursor()
