@@ -1,48 +1,33 @@
 # coding: utf-8
 import math
 import functools
-from datetime import datetime
+from datetime import datetime, timedelta
 from wuaiwow import db, app
 from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo
-from flask_user import current_user
 
 
-def update_cache(obj):
+def memoize(ttl=600):
     """
-        配合memoize修饰符用来刷新obj的缓存
-        @param obj 函数对象
+        缓存结果ttl秒，默认10分钟
+        @param ttl 缓存秒数，如果为0，则永不过期
     """
-    if obj.cache:
-        obj.cache.clear()
+    def wrap(func):
+        cache = {}
+        delta = timedelta(seconds=ttl)
+
+        @functools.wraps(func)
+        def wrapped(*args, **kwargs):
+            now = datetime.now()
+            key = unicode(args) + unicode(kwargs)
+            if key not in cache or (ttl != 0 and now - cache[key][0] > delta):
+                value = func(*args, **kwargs)
+                cache[key] = (now, value)
+            return cache[key][1]
+        return wrapped
+    return wrap
 
 
-def memoize(obj):
-    """
-        this decorator ignores **kwargs, and None not cached
-        @param obj function object
-    """
-    cache = obj.cache = {}
-
-    @functools.wraps(obj)
-    def memoizer(*args, **kwargs):
-        # if args not in cache:
-        #     val = obj(*args, **kwargs)
-        #     if val is not None:
-        #         cache[args] = val
-        #     return val
-        # return cache[args]
-
-        key = unicode(args) + unicode(kwargs)
-        if key not in cache:
-            val = obj(*args, **kwargs)
-            if val is not None:
-                cache[key] = val
-            return val
-        return cache[key]
-    return memoizer
-
-
-@memoize
+@memoize(0)
 def time_by_level(level):
     """
         根据当前等级,计算最小升级时间, H = 0.25 * L * ( L - 1 )
@@ -55,7 +40,7 @@ def time_by_level(level):
     return hour
 
 
-@memoize
+@memoize(0)
 def level_by_time(hour):
     """
         根据在线时间(秒),返回对应的等级, H = 0.25 * L * ( L - 1 )
@@ -68,7 +53,7 @@ def level_by_time(hour):
     return level
 
 
-@memoize
+@memoize(0)
 def permission_value_by_level(level):
     """
         根据等级,返回相应的权限值, P = 5 * (L + 1)
@@ -81,6 +66,7 @@ def permission_value_by_level(level):
     return p_value
 
 
+@memoize(0)
 def level_by_permission_value(value):
     """
         根据权限值返回当前的等级
@@ -93,16 +79,16 @@ def level_by_permission_value(value):
     return level
 
 
-# @memoize
+@memoize(0)
 def get_permission_num():  # need_update
     """
-        返回能直升的permission数量(最高的三个权限不可直升)
+        返回能升级的permission数量(最高的三个权限不可直升)
     """
     num = Permission.query.count()
     return num - 3   # 最后三个权限不能直升
 
 
-# @memoize
+@memoize(0)
 def get_all_permission(need_value=True):  # need_update
     """
         返回当前所有有效权限
@@ -115,7 +101,7 @@ def get_all_permission(need_value=True):  # need_update
     return list(rst)
 
 
-# @memoize
+@memoize(0)
 def get_permission_by_value(value):  # need_update
     """
         根据权限值,返回相应的权限
@@ -134,14 +120,14 @@ def get_permission_by_level(level):
     if level > 0:
         num = get_permission_num()
         if level > num:
-            return
+            return None
 
         value = permission_value_by_level(level)
         ps = get_permission_by_value(value=value)
         return ps
 
 
-# @memoize
+@memoize(0)
 def get_role_by_name(role):  # need_update
     """
         根据role的name,查找Role实例
@@ -168,6 +154,7 @@ def create_role(role, label):
     return role
 
 
+@memoize()
 def get_user_by_name(name):
     """
         根据用户名来获取对象
@@ -238,7 +225,7 @@ def find_all_roles(need_label=False):
 
 def find_or_create_permission(value, need_created=False, role=None):
     """
-        Find existing permission or create new one
+        查找或新建权限
         @param need_created if need create new permission when not exist
         @param value Permission.value
         @param role  Role obj
@@ -270,7 +257,7 @@ def add_role_to_permission(ps, role):
     return False, u"指定角色不存在"
 
 
-# @memoize
+@memoize(0)
 def get_less_permission(value):    # need_update
     """
         获取所有比给定权限值低的权限
@@ -280,7 +267,7 @@ def get_less_permission(value):    # need_update
     return ps
 
 
-# @memoize
+@memoize()
 def get_less_permission_user(value):   # need_update
     """
         获取比给定权限值低的所有用户
@@ -306,7 +293,7 @@ def get_less_permission_user(value):   # need_update
 
 def find_or_create_user(username, email, password, permission=10, need_create=True):
     """
-        Find existing user or create new user
+        查找或新建用户
         @param username 用户名
         @param email 注册邮箱
         @param password PSD
@@ -337,10 +324,10 @@ def character_in_current_user(character):
     pass
 
 
-# @memoize
+@memoize()
 def find_or_create_news(title):     # need_update
     """
-        Find existing news or create new
+        查找或新建新闻
         @param title 新闻标题
     """
     title = title.strip(' ')
@@ -353,8 +340,8 @@ def find_or_create_news(title):     # need_update
     return one_news, exist
 
 
-# @memoize
-def get_all_news():   # need_update
+@memoize()
+def get_all_news():
     """
         返回按时间排序的所有news
     """
@@ -363,10 +350,10 @@ def get_all_news():   # need_update
     return news
 
 
-# @memoize
-def find_or_create_sidebar(name):   # need_update
+@memoize()
+def find_or_create_sidebar(name):
     """
-        Find existing sidebar or create new
+        查找或新建侧边栏，新建
         @param name 侧边栏名称
     """
 
@@ -380,7 +367,7 @@ def find_or_create_sidebar(name):   # need_update
 
 def create_guild_info(info):
     """
-        Find existing guildInfo or create new
+        新建游戏指南
         @param info 游戏指南
     """
     guild = GuildInfo(info=info)
@@ -389,7 +376,7 @@ def create_guild_info(info):
     return guild
 
 
-# @memoize
+@memoize()
 def get_latest_guild_info():     # need_update
     """
         获取最新的游戏指南
