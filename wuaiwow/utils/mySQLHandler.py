@@ -216,7 +216,8 @@ class mySQLHandler(logging.Handler):
         finally:
             cur.close()
             conn.close()
-        
+
+
 def main():
     def print_all_log(oLog):
         # Print all log levels

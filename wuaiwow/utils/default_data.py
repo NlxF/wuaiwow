@@ -24,9 +24,9 @@ def init_users(permission_config):
 
     #  add default users，
     #  roles, L1=player,L8=GM,L10=admin
-    user = find_or_create_user(u'luffy', u'wuaiwow@gmail.com', '123456', perms[-1].value)
-    user = find_or_create_user(u'gm', u'825518250@qq.com', '123456', perms[-3].value)
-    user = find_or_create_user(u'Zoro', u'it1780@sina.com', '123456', perms[0].value)
+    user = find_or_create_user(u'luffy', u'wuaiwow@gmail.com', '1l2u3f4f5y6', perms[-1].value)
+    user = find_or_create_user(u'gm', u'xxxxxx@qq.com', '12g3m456', perms[-3].value)
+    user = find_or_create_user(u'Zoro', u'xxxxxx@sina.com', '1z2o3r4o56', perms[0].value)
 
 
 def init_news():
