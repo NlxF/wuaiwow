@@ -15,6 +15,7 @@ Pillow
 cffi
 MySQL-python
 SQLAlchemy
+# uwsgi>2.0.2
 redis
 gevent
 celery[gevent,redis]
