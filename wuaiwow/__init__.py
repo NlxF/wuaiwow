@@ -1,9 +1,5 @@
 # coding:utf-8
-# from gevent import monkey
-# monkey.patch_all(thread=False, socket=False)
-from multiprocessing import Manager, current_process
-share_data_manager = Manager().dict()
-
+from gevent import monkey; monkey.patch_all()
 import os
 import time
 from uuid import uuid4
@@ -28,8 +24,6 @@ logger = None
 onlineHelper = None
 celery = make_celery(app)
 celery_logger = get_task_logger(__name__)       # celery logger
-
-print("current_process:{}-{} with share data manager: {}".format(current_process(), os.getpid(), id(share_data_manager)))
 
 
 # @app.before_first_request

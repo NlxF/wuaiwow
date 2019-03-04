@@ -13,8 +13,17 @@ DB_PASSWORD = 'password2'
 SQLALCHEMY_DATABASE_URI = 'mysql://root:'+DB_PASSWORD+'@www-database/'+DATABASE_NAME
 SQLALCHEMY_NATIVE_UNICODE = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_POOL_TIMEOUT = 300
 
-THREADS_PER_PAGE = 8
+# Cache setting
+# CACHE_TYPE = 'simple'
+CACHE_TYPE                 = 'redis'
+CACHE_KEY_PREFIX           = 'wuaiwow'
+CACHE_REDIS_HOST           = 'localhost'
+CACHE_REDIS_PORT           = 6379
+CACHE_REDIS_DB             = 0
+CACHE_REDIS_PASSWORD       = ""
+CACHE_DEFAULT_TIMEOUT      = 60 * 15          # flask_cache  15分钟缓存失效
 
 # Flask settings                     # Generated with: import os; os.urandom(24)
 SECRET_KEY = "\xcdG\xe8\xc0\x05\xfb\x87\x0f\xc6$o\xdb`k\n\x18\xebB\xeb\x0cm\xf6'\x92"

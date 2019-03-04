@@ -9,7 +9,15 @@ SQLALCHEMY_DATABASE_URI = 'mysql://root:lxf@localhost/'+DATABASE_NAME
 SQLALCHEMY_NATIVE_UNICODE = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-THREADS_PER_PAGE = 1
+# Cache setting
+# CACHE_TYPE = 'simple'
+CACHE_TYPE                 = 'redis'
+CACHE_KEY_PREFIX           = 'wuaiwow'
+CACHE_REDIS_HOST           = 'localhost'
+CACHE_REDIS_PORT           = 6379
+CACHE_REDIS_DB             = 0
+CACHE_REDIS_PASSWORD       = ""
+CACHE_DEFAULT_TIMEOUT      = 60 * 15          # flask_cache  15分钟缓存失效
 
 # Flask settings
 SECRET_KEY = 'R\x8f@\x93\x9e\x08\xbe6+\x98\x7f^\xaf\xe4\x03\xb09jk>Hvn\xac'

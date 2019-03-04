@@ -1,35 +1,19 @@
 # coding:utf-8
 import os
 import json
-import time
 import urllib2
-from multiprocessing import current_process
 from flask import Blueprint, render_template, request, redirect, url_for, render_template_string
 from flask import jsonify
 # from flask_wtf.csrf import CsrfProtect
 from flask_user import current_user, login_required
 from flask_user.signals import user_logged_in, user_logged_out
-from wuaiwow import app, db, onlineHelper, share_data_manager
+from wuaiwow import app, db, onlineHelper
 from wuaiwow.utils import add_blueprint, filters
 from wuaiwow.models import GuildInfo, Donate, UserIp, News, Sidebar, Agreement
-
-from threading import Thread, current_thread
 
 # csrf = CsrfProtect()
 bp = Blueprint('wuaiwow', __name__, template_folder='templates', static_folder='static', url_prefix='/')
 
-# test data share
-@bp.route('test/fork', methods=['GET', ])
-def fork_test():
-    print(os.getpid(), current_thread())
-    cur_process = current_process()
-    if 'test' not in share_data_manager:
-        share_data_manager['test'] = 0;
-    share_data_manager['test'] = share_data_manager['test'] + 1;
-    msg = "current_process:{}-{} with share data manager:{}-{}".format(cur_process, os.getpid(), id(share_data_manager), share_data_manager['test'])
-    print(msg)
-    time.sleep(5.)
-    return render_template_string(msg)
 
 # The Home page
 @bp.route('')
