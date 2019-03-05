@@ -21,7 +21,7 @@ bp = Blueprint('GM', __name__, url_prefix='/gm')
 
 @bp.route('/add-news', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
+@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def add_news():
     default_url = url_for('static', filename='images/default_title.jpg')
 

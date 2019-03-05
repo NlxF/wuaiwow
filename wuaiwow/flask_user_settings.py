@@ -61,7 +61,7 @@ CACHE_TYPE = 'simple'
 # socksPool的初始化数量
 SOCKSPOOL_SIZE = 2
 
-# 两次刷新的有效时间间隔
+# 两次刷新的有效时间间隔(秒)
 PAGE_REFRESH_MIN_TIME = 15
 PAGE_REFRESH_MAX_TIME = 300
 

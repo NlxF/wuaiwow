@@ -3,7 +3,7 @@ set -e
 
 HOME=/www/wuaiwow-www
 
-echo "edit flask_cache compatible with flask 1.0.2"
+echo "edit flask plugin compatible with flask 1.0.2"
 packages=($(python -c "import site; print(site.getsitepackages())" | tr -d "[],\'\'"))
 for package in ${packages[@]}; do
     cache_path=${package}'/flask_cache/jinja2ext.py'
@@ -11,6 +11,13 @@ for package in ${packages[@]}; do
     if [ -f ${cache_path} ]; then
         echo "find flask_cache, sed to compatible with flask 1.0.2"
         sed -i 's/^from flask.ext.cache /from flask_cache /g' ${cache_path}
+        break
+    fi
+    sqlalchemy_cache_path=${package}'/flask_sqlalchemy_cache/core.py'
+    echo 'search flask_sqlalchemy_cache at: '${sqlalchemy_cache_path}
+    if [ -f ${sqlalchemy_cache_path} ]; then
+        echo "find flask_sqlalchemy_cache, sed to compatible with flask 1.0.2"
+        sed -i 's/^from flask.ext.sqlalchemy /from flask_sqlalchemy /g' ${sqlalchemy_cache_path}
         break
     fi
 done

@@ -1,33 +1,37 @@
 # coding: utf-8
 import math
 import functools
+from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
-from wuaiwow import db, app
+from flask_sqlalchemy_cache import FromCache, RelationshipCache
+from wuaiwow import db, app, cache
 from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo
 
 
-def memoize(ttl=600):
+def memoize(ttl=timedelta(seconds=600)):
     """
         缓存结果ttl秒，默认10分钟
-        @param ttl 缓存秒数，如果为0，则永不过期
+        @param ttl 缓存秒数，如果为0，则永不过期；默认10分钟
     """
     def wrap(func):
         cache = {}
-        delta = timedelta(seconds=ttl)
 
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
             now = datetime.now()
             key = unicode(args) + unicode(kwargs)
-            if key not in cache or (ttl != 0 and now - cache[key][0] > delta):
+            if key not in cache or (ttl.seconds != 0 and now - cache[key][0] > ttl):
                 value = func(*args, **kwargs)
                 cache[key] = (now, value)
+                print('Cache miss for key:{}, with ttl:{}'.format(key, ttl.seconds))
+            else:
+                print('Cache get for key:{}, with ttl:{}'.format(key, ttl.seconds))
             return cache[key][1]
         return wrapped
     return wrap
 
 
-@memoize(0)
+@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def time_by_level(level):
     """
         根据当前等级,计算最小升级时间, H = 0.25 * L * ( L - 1 )
@@ -40,7 +44,7 @@ def time_by_level(level):
     return hour
 
 
-@memoize(0)
+@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def level_by_time(hour):
     """
         根据在线时间(秒),返回对应的等级, H = 0.25 * L * ( L - 1 )
@@ -53,7 +57,7 @@ def level_by_time(hour):
     return level
 
 
-@memoize(0)
+@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def permission_value_by_level(level):
     """
         根据等级,返回相应的权限值, P = 5 * (L + 1)
@@ -66,7 +70,7 @@ def permission_value_by_level(level):
     return p_value
 
 
-@memoize(0)
+@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def level_by_permission_value(value):
     """
         根据权限值返回当前的等级
@@ -79,7 +83,7 @@ def level_by_permission_value(value):
     return level
 
 
-@memoize(0)
+@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def get_permission_num():  # need_update
     """
         返回能升级的permission数量(最高的三个权限不可直升)
@@ -88,28 +92,37 @@ def get_permission_num():  # need_update
     return num - 3   # 最后三个权限不能直升
 
 
-@memoize(0)
 def get_all_permission(need_value=True):  # need_update
     """
         返回当前所有有效权限
         @param need_value 是否返回value,或者本身
     """
     num = get_permission_num()               # 有效(能升级的)的所有权限
-    ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
-    rst = (p.value for p in ps) if need_value else ps
+
+    try:
+        # query = Permission.query.order_by(Permission.value.asc()).limit(num)
+        # caching_q = query.options(FromCache(cache))
+        # ps = caching_q.all()
+        ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
+        rst = (p.value for p in ps) if need_value else ps
+    except Exception as e:
+        rst = list()
 
     return list(rst)
 
 
-@memoize(0)
 def get_permission_by_value(value):  # need_update
     """
         根据权限值,返回相应的权限
         @param value 权限值
     """
-    p = Permission.query.filter(Permission.value == value).first()
+    try:
+        # ps = Permission.query.filter(Permission.value == value).options(FromCache(cache)).first()
+        ps = Permission.query.filter(Permission.value == value).first()
+    except Exception as e:
+        ps = None
 
-    return p
+    return ps
 
 
 def get_permission_by_level(level):
@@ -125,15 +138,16 @@ def get_permission_by_level(level):
         value = permission_value_by_level(level)
         ps = get_permission_by_value(value=value)
         return ps
+    return None
 
 
-@memoize(0)
 def get_role_by_name(role):  # need_update
     """
         根据role的name,查找Role实例
         @param role 权限名
     """
     try:
+        # role_obj = Role.query.filter(Role.role == role).options(FromCache(cache)).first()
         role_obj = Role.query.filter(Role.role == role).first()
     except Exception as e:
         role_obj = None
@@ -154,13 +168,17 @@ def create_role(role, label):
     return role
 
 
-@memoize()
 def get_user_by_name(name):
     """
         根据用户名来获取对象
         @param name  用户名
     """
-    user = User.query.filter_by(username=name).first()
+    try:
+        # user = User.query.filter_by(username=name).options(FromCache(cache)).first()
+        user = User.query.filter_by(username=name).first()
+    except Exception as e:
+        user = None
+
     return user
 
 
@@ -223,6 +241,7 @@ def find_all_roles(need_label=False):
     return list(rst)
 
 
+# need update
 def find_or_create_permission(value, need_created=False, role=None):
     """
         查找或新建权限
@@ -240,15 +259,17 @@ def find_or_create_permission(value, need_created=False, role=None):
         return True, p
     return False, p
 
-
+# need update
 def add_role_to_permission(ps, role):
-    """添加角色到指定权限
-    @param ps 指定权限
-    @param role 要添加的角色
+    """
+        添加角色到指定权限
+        @param ps 指定权限
+        @param role 要添加的角色
     """
     role_obj = role
     if isinstance(role, basestring):
         role_obj = get_role_by_name(role=role)
+
     if role_obj:
         ps.roles.append(role_obj)
         db.session.add(ps)
@@ -257,23 +278,31 @@ def add_role_to_permission(ps, role):
     return False, u"指定角色不存在"
 
 
-@memoize(0)
-def get_less_permission(value):    # need_update
+def get_less_permission(value):
     """
         获取所有比给定权限值低的权限
         @param value 给定的权限值
     """
-    ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).all()
+    try:
+        # ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).options(FromCache(cache)).all()
+        ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).all()
+    except Exception as e:
+        ps = None
+
     return ps
 
 
-@memoize()
 def get_less_permission_user(value):   # need_update
     """
         获取比给定权限值低的所有用户
         @param value 给定的权限值
     """
-    users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).all()
+    try:
+        # users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).options(FromCache(cache)).all()
+        users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).all()
+    except Exception as e:
+        users = None
+
     return users
 
 
@@ -290,7 +319,7 @@ def get_less_permission_user(value):   # need_update
 #
 #     return False, 'Permission not exist'
 
-
+# need update
 def find_or_create_user(username, email, password, permission=10, need_create=True):
     """
         查找或新建用户
@@ -300,7 +329,12 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
         @param permission Permission.value
         @param need_create 如果不存在,是否创建新的
     """
-    user = User.query.filter(User.email == email).first()
+    try:
+        # user = User.query.filter(User.email == email).options(FromCache(cache)).first()
+        user = User.query.filter(User.email == email).first()
+    except Exception as e:
+        user = None
+
     if not user and need_create:
         user = User(email=email,
                     username=username,
@@ -310,6 +344,7 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
         created, user.permission = find_or_create_permission(permission)
         db.session.add(user)
         db.session.commit()
+
     return user
 
 
@@ -324,33 +359,42 @@ def character_in_current_user(character):
     pass
 
 
-@memoize()
-def find_or_create_news(title):     # need_update
+# need_update
+def find_or_create_news(title):
     """
         查找或新建新闻
         @param title 新闻标题
     """
     title = title.strip(' ')
     exist = True
-    one_news = News.query.filter(News.title == title).first()
+    try:
+        # one_news = News.query.filter(News.title == title).options(FromCache(cache)).first()
+        one_news = News.query.filter(News.title == title).first()
+    except Exception as e:
+        one_news = None
+
     if not one_news:
+        exist = False
         one_news = News(title=title)
         db.session.add(one_news)
-        exist = False
+
     return one_news, exist
 
 
-@memoize()
 def get_all_news():
     """
         返回按时间排序的所有news
     """
-    news = News.query.order_by(News.created.desc()).all()
+    try:
+        # all_news = News.query.order_by(News.created.desc()).options(FromCache(cache)).all()
+        all_news = News.query.order_by(News.created.desc()).all()
+    except Exception as e:
+        all_news = None
 
-    return news
+    return all_news
 
 
-@memoize()
+# need update
 def find_or_create_sidebar(name):
     """
         查找或新建侧边栏，新建
@@ -358,13 +402,19 @@ def find_or_create_sidebar(name):
     """
 
     name = name.strip(' ')
-    sd = Sidebar.query.filter(Sidebar.name == name).first()
+
+    try:
+        # sd = Sidebar.query.filter(Sidebar.name == name).options(FromCache(cache)).first()
+        sd = Sidebar.query.filter(Sidebar.name == name).first()
+    except Exception as e:
+        sd = None
+
     if not sd:
         sd = Sidebar(name=name)
         db.session.add(sd)
     return sd
 
-
+# need_update
 def create_guild_info(info):
     """
         新建游戏指南
@@ -376,11 +426,23 @@ def create_guild_info(info):
     return guild
 
 
-@memoize()
-def get_latest_guild_info():     # need_update
+def get_latest_guild_info():
     """
         获取最新的游戏指南
     """
-    guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
+    try:
+        # guild = GuildInfo.query.order_by(GuildInfo.date.desc()).options(FromCache(cache)).first()
+        guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
+    except Exception as e:
+        guild = None
+
     return guild
 
+
+def invalidate_cache(cache_query):
+    """
+        设置缓存失效
+        @param cache_query 缓存查询对象
+    """
+    if cache_query:
+        cache_query.invalidate()

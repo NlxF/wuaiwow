@@ -1,11 +1,13 @@
 # coding:utf-8
-from gevent import monkey; monkey.patch_all()
+# from gevent import monkey; monkey.patch_all()
 import os
 import time
 from uuid import uuid4
 from flask import Flask, request, g, session, url_for, render_template
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_user import current_user
+from flask_cache import Cache
+# from flask_sqlalchemy_cache import CachingQuery
 from utils import (init_email_error_handler,
                    init_mysql_handler,
                    configure_extensions, valid_uuid)
@@ -20,6 +22,7 @@ app = Flask("wuaiwow")
 
 db = None
 csrf = None
+cache = None
 logger = None
 onlineHelper = None
 celery = make_celery(app)
@@ -41,13 +44,14 @@ def online_setup():
             nameless = session.get("_expires_name", None)
             if nameless:
                 onlineHelper.make_user_offline(nameless)        # 如果用户登入前以游客身份在浏览,此时要将对应的游客设为离线,防止重复统计
+                del session['_expires_name']
             key = current_user.username
             user_last_activity = onlineHelper.get_user_last_activity(user_id=key)
             if user_last_activity:
                 elapse_time = onlineHelper.get_valid_elapse_time(user_last_activity)
                 if app.config['PAGE_REFRESH_MIN_TIME'] < elapse_time < app.config['PAGE_REFRESH_MAX_TIME']:  # 有效刷新
                     current_user.online_time += elapse_time     # 更新用户总在线时间(可能会升级!!!)
-                    db.session.add(current_user)                # block
+                    db.session.add(current_user)                # will block
         else:                                                   # 游客更新最新在线时间
             key = session.get("_expires_name", None)
             if not key:
@@ -56,15 +60,18 @@ def online_setup():
 
         onlineHelper.make_current_user_online(user_id=key)      # 设置为在线状态
         all_online_users = onlineHelper.get_online_users()      # 获取所有在线用户,包括游客
-        visitor = [x for x in all_online_users if valid_uuid(x)]
+
+        visitor = (x for x in all_online_users if valid_uuid(x))
         register = all_online_users - set(visitor)
+
+
         user_on = UserOnline(visitor=",".join(visitor),
                              register=",".join(register),
                              online_user_num=len(all_online_users))
         db.session.add(user_on)
         db.session.commit()
-
         max_online = UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()
+
         g.online_users_msg = {'all': len(all_online_users),
                               'register': len(register),
                               'visitor': len(visitor),
@@ -118,7 +125,11 @@ def create_app(need_default_data=False, test=False):
 
     # mysql setting
     global db
-    db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
+    db = UnlockedReadAlchemy(app, use_native_unicode='utf8')  #, query_class=CachingQuery)
+
+    # redis cache setting
+    # global cache
+    # cache = Cache(app)
 
     # onlineHelper setting
     global onlineHelper
