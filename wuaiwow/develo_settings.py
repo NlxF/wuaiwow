@@ -23,7 +23,13 @@ CACHE_DEFAULT_TIMEOUT      = 60 * 15          # flask_cache  15分钟缓存失�
 ONLINE_DB = 1
 ONLINE_LAST_MINUTES = 5
 # ONLINE_USER_PREFIX = ''
-# ONLINE_ALL_PREFIX = ''
+# ONLINE_VISITOR_PREFIX = ''
+# ONLINE_ALL_USER_PREFIX = ''
+# ONLINE_ALL_VISITOR_PREFIX = ''
+# 两次刷新的有效时间间隔(秒)
+ONLINE_PAGE_REFRESH_MIN = 15
+ONLINE_PAGE_REFRESH_MAX = ONLINE_LAST_MINUTES * 60
+
 
 # Flask settings
 SECRET_KEY = 'R\x8f@\x93\x9e\x08\xbe6+\x98\x7f^\xaf\xe4\x03\xb09jk>Hvn\xac'

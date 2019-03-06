@@ -1,6 +1,5 @@
 # coding:utf-8
 import os
-import re
 # import math
 import string
 import random
@@ -189,12 +188,6 @@ def resize_and_crop(img, size, position):
     return img
 
 
-def valid_uuid(uuid):
-    regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
-    match = regex.match(uuid)
-    return bool(match)
-
-
 __all__ = ['add_blueprint', 'configure_extensions', 'init_email_error_handler',
            'init_mysql_handler', 'gen_rnd_string', 'save_file_upload', 'save_file_avatar', 
-           'valid_uuid', 'resize_and_crop']
+           'resize_and_crop']

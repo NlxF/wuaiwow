@@ -2,6 +2,7 @@
 # from gevent import monkey; monkey.patch_all()
 import os
 import time
+from datetime import datetime
 from uuid import uuid4
 from flask import Flask, request, g, session, url_for, render_template
 from flask_wtf.csrf import CSRFProtect, CSRFError
@@ -10,7 +11,7 @@ from flask_cache import Cache
 # from flask_sqlalchemy_cache import CachingQuery
 from utils import (init_email_error_handler,
                    init_mysql_handler,
-                   configure_extensions, valid_uuid)
+                   configure_extensions)
 from utils.plugHelper import register_blueprints
 from utils.onlineHelper import Online
 from utils.factory import make_celery
@@ -27,7 +28,7 @@ logger = None
 onlineHelper = None
 celery = make_celery(app)
 celery_logger = get_task_logger(__name__)       # celery logger
-
+max_online_record = None
 
 # @app.before_first_request
 # def initialize_app_on_first_request():
@@ -43,40 +44,45 @@ def online_setup():
         if current_user.is_authenticated:
             nameless = session.get("_expires_name", None)
             if nameless:
-                onlineHelper.make_user_offline(nameless)        # 如果用户登入前以游客身份在浏览,此时要将对应的游客设为离线,防止重复统计
-                del session['_expires_name']
+                onlineHelper.make_visitor_offline(nameless)     # 如果用户登入前以游客身份在浏览,此时要将对应的游客设为离线,防止重复统计
+                session.pop('_expires_name')
             key = current_user.username
             user_last_activity = onlineHelper.get_user_last_activity(user_id=key)
             if user_last_activity:
-                elapse_time = onlineHelper.get_valid_elapse_time(user_last_activity)
-                if app.config['PAGE_REFRESH_MIN_TIME'] < elapse_time < app.config['PAGE_REFRESH_MAX_TIME']:  # 有效刷新
-                    current_user.online_time += elapse_time     # 更新用户总在线时间(可能会升级!!!)
-                    db.session.add(current_user)                # will block
+                # elapse_time = onlineHelper.get_valid_elapse_time(user_last_activity)
+                elapse_time = time.time() - user_last_activity
+                if app.config['ONLINE_PAGE_REFRESH_MIN'] < elapse_time < app.config['ONLINE_PAGE_REFRESH_MAX']:  # 有效刷新
+                    current_user.online_time += elapse_time  # user_last_activity     # 更新用户总在线时间(可能会升级!!!)
+                    db.session.add(current_user)                       # will block
+
+            onlineHelper.make_user_online(user_id=key)          # 设置会员为在线状态
         else:                                                   # 游客更新最新在线时间
             key = session.get("_expires_name", None)
             if not key:
                 key = str(uuid4())
                 session["_expires_name"] = key
 
-        onlineHelper.make_current_user_online(user_id=key)      # 设置为在线状态
-        all_online_users = onlineHelper.get_online_users()      # 获取所有在线用户,包括游客
+            onlineHelper.make_visitor_online(user_id=key)         # 设置游客为在线状态
 
-        visitor = (x for x in all_online_users if valid_uuid(x))
-        register = all_online_users - set(visitor)
+        # 获取（在线游客, 在线会员）及记录
+        visitor, register, need_refresh, number, occ_time, member = onlineHelper.get_online_users_record()
+        all_online_users = visitor + register
+        if need_refresh:
+            user_on = UserOnline(member=",".join(member),
+                                 occ_time=datetime.fromtimestamp(int(occ_time)),
+                                 online_user_num=all_online_users)
+            db.session.add(user_on)
+            db.session.commit()
 
+        global max_online_record
+        if need_refresh or max_online_record==None:
+            max_online_record = UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()
 
-        user_on = UserOnline(visitor=",".join(visitor),
-                             register=",".join(register),
-                             online_user_num=len(all_online_users))
-        db.session.add(user_on)
-        db.session.commit()
-        max_online = UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()
-
-        g.online_users_msg = {'all': len(all_online_users),
-                              'register': len(register),
-                              'visitor': len(visitor),
-                              'max_num': max_online.online_user_num,
-                              'occ_time': max_online.occ_time,
+        g.online_users_msg = {'all': all_online_users,
+                              'register' : register,
+                              'visitor'  : visitor,
+                              'max_num'  : max_online_record.online_user_num,
+                              'occ_time' : max_online_record.occ_time,
                               'time_zone': time.strftime("%z")}   #u"中国标准时间" }
 
 

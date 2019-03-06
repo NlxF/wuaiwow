@@ -126,7 +126,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Unicode(255), nullable=False, default=u'', unique=True)
     confirmed_at = db.Column(db.DateTime())
     _online_time = db.Column(db.Integer, nullable=False, default=literal(10))            # 总在线时间 单位s
-    update_time = db.Column(db.Integer, nullable=False, default=literal(10))             # 升级完后的在线时间
+    update_time = db.Column(db.Integer, nullable=False, default=literal(1))              # 升级完后的在线时间
 
     # User Profile information
     active = db.Column('is_active', db.Boolean, nullable=False, default=literal(False))
@@ -152,15 +152,15 @@ class User(db.Model, UserMixin):
     def online_time(self, value):
         from wuaiwow.utils.modelHelper import change_permission_by_time
         elapse_time = value - self._online_time
-        level_time = self.update_time if self.update_time else 0
+        level_time = self.update_time
         need_change, new_p = change_permission_by_time(level_time, level_time+elapse_time)
         if need_change and new_p > self.permission:
             self.change_user_permission(new_p)
             self.update_time = 0
 
             # 同步game server端的account-permission表
-            from wuaiwow import tasks
-            tasks.update_account_permission.delay([(self.username, new_p.value)])
+            # from wuaiwow import tasks
+            # tasks.update_account_permission.delay([(self.username, new_p.value)])
         else:
             self.update_time += elapse_time
         self._online_time = value
@@ -261,8 +261,9 @@ class UserOnline(db.Model):
     """
     __tablename__ = 'user_online'
     id = db.Column(db.Integer, primary_key=True)
-    visitor = db.Column(db.Text, default='')
-    register = db.Column(db.Text, default='')
+    # visitor = db.Column(db.Text, default='')
+    # register = db.Column(db.Text, default='')
+    member = db.Column(db.Text, default='')
     online_user_num = db.Column(db.Integer, default=literal(0))
     occ_time = db.Column(db.DateTime, default=db.func.now())
 
