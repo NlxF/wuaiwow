@@ -265,6 +265,7 @@ class UserOnline(db.Model):
     # register = db.Column(db.Text, default='')
     member = db.Column(db.Text, default='')
     online_user_num = db.Column(db.Integer, default=literal(0))
+    interval = db.Column(db.Integer, default=literal(0))
     occ_time = db.Column(db.DateTime, default=db.func.now())
 
 

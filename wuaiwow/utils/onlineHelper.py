@@ -19,15 +19,13 @@ class Online(object):
         db = app.config.get('ONLINE_DB', 1)
         kwargs = {}
         self.redis = Redis(host=host, port=port, password=password, db=db, **kwargs)
-        self.last_min = app.config.get('ONLINE_LAST_MINUTES', 5)
-        self.user_prefix = app.config.get('ONLINE_USER_PREFIX', "user-activity")
-        self.visitor_prefix = app.config.get('ONLINE_VISITOR_PREFIX', "visitor-activity")
-        self.all_users_prefix = app.config.get('ONLINE_ALL_USER_PREFIX', "online-users")
-        self.all_visitor_prefix = app.config.get('ONLINE_ALL_VISITOR_PREFIX', "online-visitors")
-        self.online_max_flag = "online-max-flag"
-        self.online_max_number = "online-max-number"
-        self.online_max_member = "online-max-member"
-        self.online_max_online_occ_time = "online-max-occ-time"
+        self.online_interval = app.config.get('ONLINE_LAST_MINUTES', 5)
+        self.record_interval = app.config.get('ONLINE_RECORD_INTERVAL', 10)
+        self.user_prefix = app.config.get('ONLINE_USER_PREFIX', "online-user-alive")
+        self.visitor_prefix = app.config.get('ONLINE_VISITOR_PREFIX', "online-visitor-alive")
+        self.all_users_prefix = app.config.get('ONLINE_ALL_USER_PREFIX', "online-user-collection-at")
+        self.all_visitor_prefix = app.config.get('ONLINE_ALL_VISITOR_PREFIX', "online-visitor-collection-at")
+        self.online_record_flag = "online-record-flag"
 
     def _suitable_prefix(self, visitor, in_set):
         if in_set:
@@ -37,7 +35,8 @@ class Online(object):
 
     def _make_online(self, user_id, visitor):
         now = int(time.time())
-        expires = now + self.last_min * 60 + 1
+        # expires = now + self.online_interval * 60
+        expires = now + self.record_interval * 60
         all_users_key = "{0}:{1:d}".format(self._suitable_prefix(visitor, True), (now // 60))
         user_key = "{0}:{1}".format(self._suitable_prefix(visitor, False), user_id)
         with self.redis.pipeline(transaction=False) as pipe:
@@ -48,17 +47,18 @@ class Online(object):
             pipe.execute()
 
     def _make_offline(self, user_id, visitor):
-        last = self.get_user_last_activity(user_id)
+        last = self.get_user_last_activity(user_id, visitor)
         if last:
-            minutes = xrange(self.last_min)
-            all_users_keys = ["{}:{:d}".format(self._suitable_prefix(visitor, True), (last // 60 - x)) for x in minutes]
+            # minutes = xrange(self.online_interval)
+            interval = xrange(self.record_interval)
+            all_users_keys = ("{}:{:d}".format(self._suitable_prefix(visitor, True), (last // 60 - x)) for x in interval)
             with self.redis.pipeline(transaction=False) as pipe:
                 [pipe.srem(all_users_key, user_id) for all_users_key in all_users_keys]
                 pipe.delete("{0}:{1}".format(self.user_prefix, user_id))
                 pipe.execute()
 
-    def get_user_last_activity(self, user_id):
-        last_active = self.redis.get("{0}:{1}".format(self._suitable_prefix(False, False), user_id))
+    def get_user_last_activity(self, user_id, visitor):
+        last_active = self.redis.get("{0}:{1}".format(self._suitable_prefix(visitor, False), user_id))
         return int(last_active) if last_active and int(last_active) > 0 else None
 
     def get_online_users_record(self):
@@ -66,11 +66,13 @@ class Online(object):
             返回所有在线用户,包括游客
             @return（游客在线，会员在线）
         """
-        current = int(time.time()) // 60
-        minutes = xrange(self.last_min)
-        user_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in minutes)
+        current_second = time.time()
+        current = int(current_second) // 60
+        # minutes = xrange(self.online_interval)
+        interval = xrange(self.online_interval)
+        user_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in interval)
         all_online_users = self.redis.sunion(user_keys)
-        visitor_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in minutes)
+        visitor_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in interval)
         all_online_visitors = self.redis.sunion(visitor_keys)
 
         online_visitors = len(all_online_visitors)
@@ -78,32 +80,21 @@ class Online(object):
         total_online = online_visitors + online_users
 
         # 更新在线用户统计信息
-        number = 0
-        member = []
-        occ_time = 0
         need_refresh = False
-        exist_flag = self.redis.get(self.online_max_flag)
-        if exist_flag:
+        exist = self.redis.get(self.online_record_flag)
+        if not exist:
             need_refresh = True
-            self.redis.set(self.online_max_flag, 1, ex=30 * 60)  # 每30分钟保存一次
-            self.redis.set(self.online_max_number, 0)
-        else:
-            with self.redis.pipeline() as pipe:
-                number = pipe.get(self.online_max_number)
-                if number < total_online:
-                    pipe.multi()
-                    pipe.set(self.online_max_number, total_online)
-                    member = all_online_visitors + all_online_users
-                    pipe.sadd(self.online_max_member, member)
-                    occ_time = time.time()
-                    pipe.set(self.online_max_online_occ_time, occ_time)
-                    pipe.execute()
-                    number = total_online
-                else:
-                    member = self.redis.get(self.online_max_member)
-                    occ_time = self.redis.get(self.online_max_online_occ_time)
+            self.redis.set(self.online_record_flag, 1, ex=self.record_interval * 60)  # 每30分钟保存一次
 
-        return online_visitors, online_users, need_refresh, number, occ_time, member
+        interval = xrange(self.record_interval)
+        user_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in interval)
+        all_record_users = self.redis.sunion(user_keys)
+        visitor_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in interval)
+        all_record_visitors = self.redis.sunion(visitor_keys)
+        member = all_record_users | all_record_visitors
+        number = len(member)
+
+        return online_visitors, online_users, need_refresh, number, member, current_second, self.record_interval
 
     def make_user_online(self, user_id):
         self._make_online(user_id, False)
@@ -115,7 +106,7 @@ class Online(object):
         self._make_online(user_id, True)
 
     def make_visitor_offline(self, user_id):
-        self._make_online(user_id, True)
+        self._make_offline(user_id, True)
 
 
 

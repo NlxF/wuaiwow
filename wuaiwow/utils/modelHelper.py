@@ -19,7 +19,7 @@ def memoize(ttl=timedelta(seconds=600)):
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
             now = datetime.now()
-            key = unicode(args) + unicode(kwargs)
+            key = func.__name__ + unicode(args) + unicode(kwargs)
             if key not in cache or (ttl.seconds != 0 and now - cache[key][0] > ttl):
                 value = func(*args, **kwargs)
                 cache[key] = (now, value)
@@ -100,11 +100,14 @@ def get_all_permission(need_value=True):  # need_update
     num = get_permission_num()               # 有效(能升级的)的所有权限
 
     try:
-        # query = Permission.query.order_by(Permission.value.asc()).limit(num)
-        # caching_q = query.options(FromCache(cache))
-        # ps = caching_q.all()
-        ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
+        ps = Permission.query.order_by(Permission.value.asc()).limit(num).options(FromCache(cache, "people_on_range")).all()
+        Permission.query.options(FromCache(cache, "people_on_range")).invalidate()
+        # ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
         rst = (p.value for p in ps) if need_value else ps
+
+        print(Permission.query.order_by(Permission.value.asc()).limit(2).key_from_query())
+        print(Permission.query.limit(num).key_from_query())
+        print(Permission.query.key_from_query())
     except Exception as e:
         rst = list()
 
@@ -117,8 +120,8 @@ def get_permission_by_value(value):  # need_update
         @param value 权限值
     """
     try:
-        # ps = Permission.query.filter(Permission.value == value).options(FromCache(cache)).first()
-        ps = Permission.query.filter(Permission.value == value).first()
+        ps = Permission.query.filter(Permission.value == value).options(FromCache(cache)).first()
+        # ps = Permission.query.filter(Permission.value == value).first()
     except Exception as e:
         ps = None
 
@@ -174,8 +177,8 @@ def get_user_by_name(name):
         @param name  用户名
     """
     try:
-        # user = User.query.filter_by(username=name).options(FromCache(cache)).first()
-        user = User.query.filter_by(username=name).first()
+        user = User.query.filter_by(username=name).options(FromCache(cache)).first()
+        # user = User.query.filter_by(username=name).first()
     except Exception as e:
         user = None
 
@@ -284,8 +287,8 @@ def get_less_permission(value):
         @param value 给定的权限值
     """
     try:
-        # ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).options(FromCache(cache)).all()
-        ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).all()
+        ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).options(FromCache(cache)).all()
+        # ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).all()
     except Exception as e:
         ps = None
 
@@ -298,8 +301,8 @@ def get_less_permission_user(value):   # need_update
         @param value 给定的权限值
     """
     try:
-        # users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).options(FromCache(cache)).all()
-        users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).all()
+        users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).options(FromCache(cache)).all()
+        # users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).all()
     except Exception as e:
         users = None
 
@@ -330,8 +333,8 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
         @param need_create 如果不存在,是否创建新的
     """
     try:
-        # user = User.query.filter(User.email == email).options(FromCache(cache)).first()
-        user = User.query.filter(User.email == email).first()
+        user = User.query.filter(User.email == email).options(FromCache(cache)).first()
+        # user = User.query.filter(User.email == email).first()
     except Exception as e:
         user = None
 
@@ -368,8 +371,8 @@ def find_or_create_news(title):
     title = title.strip(' ')
     exist = True
     try:
-        # one_news = News.query.filter(News.title == title).options(FromCache(cache)).first()
-        one_news = News.query.filter(News.title == title).first()
+        one_news = News.query.filter(News.title == title).options(FromCache(cache)).first()
+        # one_news = News.query.filter(News.title == title).first()
     except Exception as e:
         one_news = None
 
@@ -386,8 +389,8 @@ def get_all_news():
         返回按时间排序的所有news
     """
     try:
-        # all_news = News.query.order_by(News.created.desc()).options(FromCache(cache)).all()
-        all_news = News.query.order_by(News.created.desc()).all()
+        all_news = News.query.order_by(News.created.desc()).options(FromCache(cache)).all()
+        # all_news = News.query.order_by(News.created.desc()).all()
     except Exception as e:
         all_news = None
 
@@ -404,8 +407,8 @@ def find_or_create_sidebar(name):
     name = name.strip(' ')
 
     try:
-        # sd = Sidebar.query.filter(Sidebar.name == name).options(FromCache(cache)).first()
-        sd = Sidebar.query.filter(Sidebar.name == name).first()
+        sd = Sidebar.query.filter(Sidebar.name == name).options(FromCache(cache)).first()
+        # sd = Sidebar.query.filter(Sidebar.name == name).first()
     except Exception as e:
         sd = None
 
@@ -431,8 +434,8 @@ def get_latest_guild_info():
         获取最新的游戏指南
     """
     try:
-        # guild = GuildInfo.query.order_by(GuildInfo.date.desc()).options(FromCache(cache)).first()
-        guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
+        guild = GuildInfo.query.order_by(GuildInfo.date.desc()).options(FromCache(cache)).first()
+        # guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
     except Exception as e:
         guild = None
 

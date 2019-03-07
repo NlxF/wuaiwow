@@ -1,5 +1,5 @@
 # coding:utf-8
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, Model
 
 
 class UnlockedReadAlchemy(SQLAlchemy):

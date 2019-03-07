@@ -8,14 +8,14 @@ from flask import Flask, request, g, session, url_for, render_template
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_user import current_user
 from flask_cache import Cache
-# from flask_sqlalchemy_cache import CachingQuery
+from flask_sqlalchemy_cache import CachingQuery
 from utils import (init_email_error_handler,
                    init_mysql_handler,
                    configure_extensions)
 from utils.plugHelper import register_blueprints
 from utils.onlineHelper import Online
 from utils.factory import make_celery
-from utils.mySqlalchemy import UnlockedReadAlchemy
+from utils.mySqlalchemy import UnlockedReadAlchemy, Model
 from celery.utils.log import get_task_logger
 
 # Initialize Flask app and db
@@ -47,13 +47,13 @@ def online_setup():
                 onlineHelper.make_visitor_offline(nameless)     # 如果用户登入前以游客身份在浏览,此时要将对应的游客设为离线,防止重复统计
                 session.pop('_expires_name')
             key = current_user.username
-            user_last_activity = onlineHelper.get_user_last_activity(user_id=key)
+            user_last_activity = onlineHelper.get_user_last_activity(key, False)
             if user_last_activity:
                 # elapse_time = onlineHelper.get_valid_elapse_time(user_last_activity)
                 elapse_time = time.time() - user_last_activity
                 if app.config['ONLINE_PAGE_REFRESH_MIN'] < elapse_time < app.config['ONLINE_PAGE_REFRESH_MAX']:  # 有效刷新
-                    current_user.online_time += elapse_time  # user_last_activity     # 更新用户总在线时间(可能会升级!!!)
-                    db.session.add(current_user)                       # will block
+                    current_user.online_time += elapse_time     # user_last_activity     # 更新用户总在线时间(可能会升级!!!)
+                    db.session.add(current_user)                # will block
 
             onlineHelper.make_user_online(user_id=key)          # 设置会员为在线状态
         else:                                                   # 游客更新最新在线时间
@@ -62,27 +62,32 @@ def online_setup():
                 key = str(uuid4())
                 session["_expires_name"] = key
 
-            onlineHelper.make_visitor_online(user_id=key)         # 设置游客为在线状态
+            onlineHelper.make_visitor_online(user_id=key)       # 设置游客为在线状态
 
-        # 获取（在线游客, 在线会员）及记录
-        visitor, register, need_refresh, number, occ_time, member = onlineHelper.get_online_users_record()
+        # 获取（在线游客,在线会员,是否保存,数量,发生时间,成员）
+        visitor, register, need_refresh, number, member, occ_time, interval = onlineHelper.get_online_users_record()
         all_online_users = visitor + register
+
+        global max_online_record
+        if max_online_record and max_online_record.online_user_num < all_online_users:
+            need_refresh = True
+
         if need_refresh:
             user_on = UserOnline(member=",".join(member),
                                  occ_time=datetime.fromtimestamp(int(occ_time)),
-                                 online_user_num=all_online_users)
+                                 interval=interval,
+                                 online_user_num=number)
             db.session.add(user_on)
             db.session.commit()
 
-        global max_online_record
-        if need_refresh or max_online_record==None:
+        if need_refresh or not max_online_record:
             max_online_record = UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()
 
         g.online_users_msg = {'all': all_online_users,
                               'register' : register,
                               'visitor'  : visitor,
-                              'max_num'  : max_online_record.online_user_num,
-                              'occ_time' : max_online_record.occ_time,
+                              'max_num'  : max_online_record.online_user_num if max_online_record else register+visitor,
+                              'occ_time' : max_online_record.occ_time if max_online_record else datetime.fromtimestamp(int(occ_time)),
                               'time_zone': time.strftime("%z")}   #u"中国标准时间" }
 
 
@@ -131,11 +136,12 @@ def create_app(need_default_data=False, test=False):
 
     # mysql setting
     global db
-    db = UnlockedReadAlchemy(app, use_native_unicode='utf8')  #, query_class=CachingQuery)
+    # Model.query_class = CachingQuery
+    db = UnlockedReadAlchemy(app, use_native_unicode='utf8', query_class=CachingQuery) #  session_options={'query_cls': CachingQuery}
 
     # redis cache setting
-    # global cache
-    # cache = Cache(app)
+    global cache
+    cache = Cache(app)
 
     # onlineHelper setting
     global onlineHelper
