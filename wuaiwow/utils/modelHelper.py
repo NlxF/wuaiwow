@@ -1,37 +1,56 @@
 # coding: utf-8
+import __builtin__
+import timeit
+import time
 import math
 import functools
 from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
-from flask_sqlalchemy_cache import FromCache, RelationshipCache
+# from flask_sqlalchemy_cache import FromCache, RelationshipCache
 from wuaiwow import db, app, cache
-from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo
+from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo, UserOnline
 
 
-def memoize(ttl=timedelta(seconds=600)):
-    """
-        缓存结果ttl秒，默认10分钟
-        @param ttl 缓存秒数，如果为0，则永不过期；默认10分钟
-    """
-    def wrap(func):
-        cache = {}
+# def memoize(ttl=timedelta(seconds=600)):
+#     """
+#         缓存结果ttl秒，默认10分钟
+#         @param ttl 缓存秒数，如果为0，则永不过期；默认10分钟
+#     """
+#     def wrap(func):
+#         cache = {}
+#
+#         @functools.wraps(func)
+#         def wrapped(*args, **kwargs):
+#             now = datetime.now()
+#             key = func.__name__ + unicode(args) + unicode(kwargs)
+#             if key not in cache or (ttl.seconds != 0 and now - cache[key][0] > ttl):
+#                 value = func(*args, **kwargs)
+#                 cache[key] = (now, value)
+#                 # print('Cache miss for key:{}, with ttl:{}'.format(key, ttl.seconds))
+#             else:
+#                 pass
+#                 # print('Cache get for key:{}, with ttl:{}'.format(key, ttl.seconds))
+#             return cache[key][1]
+#         return wrapped
+#     return wrap
 
-        @functools.wraps(func)
-        def wrapped(*args, **kwargs):
-            now = datetime.now()
-            key = func.__name__ + unicode(args) + unicode(kwargs)
-            if key not in cache or (ttl.seconds != 0 and now - cache[key][0] > ttl):
-                value = func(*args, **kwargs)
-                cache[key] = (now, value)
-                print('Cache miss for key:{}, with ttl:{}'.format(key, ttl.seconds))
-            else:
-                print('Cache get for key:{}, with ttl:{}'.format(key, ttl.seconds))
-            return cache[key][1]
-        return wrapped
-    return wrap
+
+# def memoize(obj):
+#     """
+#         Local cache of the function return value
+#     """
+#     cache = obj.cache = {}
+#
+#     @functools.wraps(obj)
+#     def memoizer(*args, **kwargs):
+#         key = str(args) + str(kwargs)
+#         if key not in cache:
+#             cache[key] = obj(*args, **kwargs)
+#         return cache[key]
+#     return memoizer
 
 
-@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
+# @memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def time_by_level(level):
     """
         根据当前等级,计算最小升级时间, H = 0.25 * L * ( L - 1 )
@@ -44,7 +63,7 @@ def time_by_level(level):
     return hour
 
 
-@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
+# @memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def level_by_time(hour):
     """
         根据在线时间(秒),返回对应的等级, H = 0.25 * L * ( L - 1 )
@@ -57,7 +76,7 @@ def level_by_time(hour):
     return level
 
 
-@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
+# @memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def permission_value_by_level(level):
     """
         根据等级,返回相应的权限值, P = 5 * (L + 1)
@@ -70,7 +89,7 @@ def permission_value_by_level(level):
     return p_value
 
 
-@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
+# @memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
 def level_by_permission_value(value):
     """
         根据权限值返回当前的等级
@@ -83,8 +102,8 @@ def level_by_permission_value(value):
     return level
 
 
-@memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
-def get_permission_num():  # need_update
+# @memoize(ttl=LocalProxy(lambda: timedelta(seconds=0)))
+def get_permission_num():
     """
         返回能升级的permission数量(最高的三个权限不可直升)
     """
@@ -97,17 +116,31 @@ def get_all_permission(need_value=True):  # need_update
         返回当前所有有效权限
         @param need_value 是否返回value,或者本身
     """
+
     num = get_permission_num()               # 有效(能升级的)的所有权限
 
     try:
-        ps = Permission.query.order_by(Permission.value.asc()).limit(num).options(FromCache(cache, "people_on_range")).all()
-        Permission.query.options(FromCache(cache, "people_on_range")).invalidate()
-        # ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
+        # for i in range(5):
+        #
+        #
+        #     print('')
+        # Permission.query.order_by(Permission.value.asc()).limit(num).options(FromCache(cache)).key_from_query()
+
+
+        # print(timeit.timeit('Permission.query.order_by(Permission.value.asc()).options(FromCache(cache)).limit(7).all()', number=1000))
+        print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).options(Permission.cache.from_cache()).first()', number=1000))
+        print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()', number=1000))
+        # now = time.time()
+        # [Permission.query.order_by(Permission.value.asc()).limit(7).options(FromCache(cache)).all() for i in xrange(1000)]
+        # print(time.time()-now)
+        #
+        # now = time.time()
+        # [Permission.query.order_by(Permission.value.asc()).limit(7).all() for i in xrange(1000)]
+        # print(time.time() - now)
+
+        ps = Permission.query.order_by(Permission.value.asc()).limit(7).options(FromCache(cache)).all()
         rst = (p.value for p in ps) if need_value else ps
 
-        print(Permission.query.order_by(Permission.value.asc()).limit(2).key_from_query())
-        print(Permission.query.limit(num).key_from_query())
-        print(Permission.query.key_from_query())
     except Exception as e:
         rst = list()
 
@@ -449,3 +482,6 @@ def invalidate_cache(cache_query):
     """
     if cache_query:
         cache_query.invalidate()
+
+
+__builtin__.__dict__.update(locals())

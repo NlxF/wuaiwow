@@ -137,7 +137,7 @@ def create_app(need_default_data=False, test=False):
     # mysql setting
     global db
     # Model.query_class = CachingQuery
-    db = UnlockedReadAlchemy(app, use_native_unicode='utf8', query_class=CachingQuery) #  session_options={'query_cls': CachingQuery}
+    db = UnlockedReadAlchemy(app, use_native_unicode='utf8') # , query_class=CachingQuery) #  session_options={'query_cls': CachingQuery}
 
     # redis cache setting
     global cache

@@ -4,6 +4,8 @@ from sqlalchemy.orm import synonym
 from flask_user import UserMixin
 from wuaiwow import db, app
 
+from wuaiwow.utils.sqlalchemy_cache import CacheableMixin, regions, query_callable
+
 
 def _mapping_race(race):
     try:
@@ -58,8 +60,15 @@ class Role(db.Model):
         return "<Role: {0}>".format(self.role)
 
 
-class Permission(db.Model):
+class Permission(CacheableMixin, db.Model):
     __tablename__ = 'permission'
+
+    cache_label = "default"
+    cache_regions = regions
+    cache_pk = "username" # for custom pk
+    query_class = query_callable(regions)
+
+
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.Integer, nullable=False, unique=True)               # for @permission_required()
     roles = db.relationship('Role', backref='permission', lazy='dynamic')    # one permission have many role
