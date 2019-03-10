@@ -9,7 +9,9 @@ from flask_user import current_user, login_required
 from flask_user.signals import user_logged_in, user_logged_out
 from wuaiwow import app, db, onlineHelper
 from wuaiwow.utils import add_blueprint, filters
-from wuaiwow.models import GuildInfo, Donate, UserIp, News, Sidebar, Agreement
+from wuaiwow.models import UserIp, News
+from wuaiwow.utils.modelHelper import (get_news_by_index_num, get_all_sidebar, get_latest_guild_info,
+                                       get_latest_donate_info, get_latest_agreement_info)
 
 # csrf = CsrfProtect()
 bp = Blueprint('wuaiwow', __name__, template_folder='templates', static_folder='static', url_prefix='/')
@@ -19,32 +21,37 @@ bp = Blueprint('wuaiwow', __name__, template_folder='templates', static_folder='
 @bp.route('')
 def home_page():
     user = current_user
-    all_news = News.query.order_by(News.update.desc()).limit(10).all()
-    all_sidebar = Sidebar.query.order_by(Sidebar.id.asc()).all()
+    first_10_news = get_news_by_index_num(index=0, number=1)
+    all_sidebar = get_all_sidebar()
     return render_template('custom/home.html',
                            user=user,
-                           all_news=all_news,
+                           all_news=first_10_news,
                            all_sidebar=all_sidebar*2)
 
 
 @bp.route('blog-load-more/<int:index>/<int:count>')
 def more_blog(index, count):
-    l = []
-    url = '/wow/zh/blog/17406774/%E9%AD%94%E5%85%BD%E4%B8%96%E7%95%8C%E5%8A%A8%E6%80%81-2015%E5%B9%B410%E6%9C%88-2015%E5%B9%B410%E6%9C%881%E6%97%A5'
-    title = '魔兽世界动态——2015年10月'
-    content = '10月节庆，欢乐多多！美酒节的饕餮盛宴过后迎来了万圣节的趣味游戏。赶快来计划一下怎么度过你的10月，因为稍不留神，幸福的时光就会匆匆离去！'
-    image = '//cms-origin-cn.battle.net/cms/blog_thumbnail/dt/DTBMVIX5O6T41438245811789.jpg'
-    date = '1 day age'
-    dic = {'url': url, 'title': title, 'content': content, 'image': image, 'date': date}
-    l.append(dic)
-    l.append(dic)
+    # l = []
+    # url = '/wow/zh/blog/17406774/%E9%AD%94%E5%85%BD%E4%B8%96%E7%95%8C%E5%8A%A8%E6%80%81-2015%E5%B9%B410%E6%9C%88-2015%E5%B9%B410%E6%9C%881%E6%97%A5'
+    # title = '魔兽世界动态——2015年10月'
+    # content = '10月节庆，欢乐多多！美酒节的饕餮盛宴过后迎来了万圣节的趣味游戏。赶快来计划一下怎么度过你的10月，因为稍不留神，幸福的时光就会匆匆离去！'
+    # image = '//cms-origin-cn.battle.net/cms/blog_thumbnail/dt/DTBMVIX5O6T41438245811789.jpg'
+    # date = '1 day age'
+    # dic = {'url': url, 'title': title, 'content': content, 'image': image, 'date': date}
+    # l.append(dic)
+    # l.append(dic)
 
-    return jsonify(result=l)
+    rst = []
+    if index > 0 and count > 0:
+        more_news = get_news_by_index_num(index, count)
+        [rst.append({'url': news.url, 'title': news.title, 'content': news.content, 'image': news.image, 'date': news.date}) for news in more_news]
+
+    return jsonify(result=rst)
 
 
 @bp.route('tutorial', methods=['GET', ])
 def tutorial():
-    guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
+    guild = get_latest_guild_info()
     if not guild:
         tutorial_info = u'还未更新教程'
     else:
@@ -55,7 +62,7 @@ def tutorial():
 
 @bp.route('donate', methods=['GET', ])
 def donate():
-    _donate = Donate.query.order_by(Donate.date.desc()).first()
+    _donate = get_latest_donate_info()
     if not _donate:
         donate_info = u'还未更新捐赠信息'
     else:
@@ -83,7 +90,7 @@ def sidebar(index, name):
 
 @bp.route('user-agreement/')
 def user_agreement():
-    agreement = Agreement.query.order_by(Agreement.update.desc()).first()
+    agreement = get_latest_agreement_info()
     if not agreement:
         content = u'还未更新用户协议'
     else:
@@ -101,6 +108,7 @@ def _track_login(sender, user, **extra):
         ip = UserIp()
     ip.user = user
     ip.address = request.remote_addr
+    # noinspection PyBroadException
     try:
         url = app.config['URL_QUERY'] + ip.address
         resp = urllib2.urlopen(url, timeout=5)
@@ -115,7 +123,6 @@ def _track_login(sender, user, **extra):
                 ip.district = address_detail['district'] if len(address_detail['district']) else u'未知'
                 ip.street = address_detail['street'] if len(address_detail['street']) else u'未知'
     except Exception as e:
-        # pass
         ip.province = ip.city = ip.district = ip.street = u'未知'
 
     user.ips.append(ip)

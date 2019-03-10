@@ -11,8 +11,8 @@ from wuaiwow.utils.modelHelper import (find_or_create_news,
                                        find_or_create_permission,
                                        get_permission_by_value, get_user_by_name,
                                        get_less_permission, get_less_permission_user,
-                                       create_guild_info, get_latest_guild_info, get_all_news,
-                                       get_role_by_name)
+                                       create_guild_info, get_latest_guild_info, get_news_by_id,
+                                       get_all_news_titles, get_role_by_name)
 from wuaiwow import app, db, csrf
 
 
@@ -33,7 +33,7 @@ def add_news():
                 try:
                     file_name = save_file_upload(f, app.config['ALLOWED_EXTENSIONS'], app.static_folder)
                     photo_url = url_for('static', filename=file_name)
-                except Exception, e:
+                except Exception:
                     photo_url = default_url
             else:
                 photo_url = default_url
@@ -44,10 +44,12 @@ def add_news():
             db.session.add(one_news)
             db.session.commit()
 
-            titles = [one.title for one in get_all_news()]
+            titles = list(get_all_news_titles())
             titles.insert(0, u"选择新闻编辑或新建新闻" if titles else u"还未添加新闻")
-            result = {'status': 'Ok', 'msg': u'修改成功' if exist else u'添加成功', 'photo_url': one_news.image_url,
-                      'titles': titles, 'selected': titles.index(one_news.title)}
+            result = {'status': 'Ok', 'msg': u'修改成功' if exist else u'添加成功',
+                      'photo_url': one_news.image_url,
+                      'titles': titles,
+                      'selected': titles.index(one_news.title)}
         else:
             result = {'status': 'Err', 'msg': u'标题不能为空', 'photo_url': default_url}
         return jsonify(result)
@@ -57,10 +59,11 @@ def add_news():
     template_name = template_by_role(current_user, 'custom/cms/gm_add_news.html',
                                                    'custom/cms/admin_add_news.html')
 
-    titles = [one.title for one in get_all_news()]
+    titles = list(get_all_news_titles())
     titles.insert(0, u"选择新闻编辑或新建新闻" if titles else u"还未添加新闻")
 
-    return render_template(template_name, user=current_user,
+    return render_template(template_name,
+                           user=current_user,
                            addnews='class=active',
                            titles=enumerate(titles),
                            photo=photo_url)
@@ -68,11 +71,10 @@ def add_news():
 
 @bp.route('/get-a-news', methods=['GET'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
+@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def get_a_news():
     news_id = request.args.get('id', '')
-    news = get_all_news()
-    selected = news[int(news_id)-1] if len(news) >= int(news_id) else None
+    selected = get_news_by_id(key_id=news_id)
     if selected:
         result = {'status': 'Ok', 'msg': u'OK', 'news_title': selected.title,
                   'news_content': selected.content, 'news_photo': selected.image_url}
@@ -83,7 +85,7 @@ def get_a_news():
 
 @bp.route('/add-tutorial', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
+@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def add_tutorial():
     if request.method == 'POST':
         guild_info = request.form['guildinfotext']
@@ -114,7 +116,7 @@ def add_tutorial():
 @csrf.exempt
 @bp.route('upload/images', methods=['POST', 'OPTIONS'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
+@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def upload_images():
     """CKEditor images upload"""
     error = ''
@@ -142,7 +144,7 @@ def upload_images():
 
 @bp.route('/change-user-role/', methods=['GET', ])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
+@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def change_user_role():
 
     template_name = template_by_role(current_user, 'custom/cms/gm_add_role.html',
@@ -154,7 +156,7 @@ def change_user_role():
 
 @bp.route('/user-role-list/', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('GM')))
+@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def role_list():
     if request.method == 'POST':
         form = request.form

@@ -8,7 +8,6 @@ from flask import Flask, request, g, session, url_for, render_template
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_user import current_user
 from flask_cache import Cache
-from flask_sqlalchemy_cache import CachingQuery
 from utils import (init_email_error_handler,
                    init_mysql_handler,
                    configure_extensions)
@@ -91,15 +90,26 @@ def online_setup():
                               'time_zone': time.strftime("%z")}   #u"中国标准时间" }
 
 
+@app.after_request
+def add_header(response):
+    response.cache_control.max_age = 15552000
+    return response
+
+
 # 实时更新资源文件
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
 @app.errorhandler(CSRFError)
 def csrf_error(error):
-    return render_template('csrf_error.html', reason=error.description), 400
+    return render_template('error.html', reason=error.description), 400
 
 
 def dated_url_for(endpoint, **values):
@@ -116,7 +126,7 @@ def dated_url_for(endpoint, **values):
 def create_app(need_default_data=False, test=False):
 
     # ***** Initialize app config settings *****
-    app.config.from_object('wuaiwow.flask_user_settings')
+    app.config.from_object('wuaiwow.flask_settings')
     print("debug mode: {}".format("YES" if app.debug else "NO"))
     
     # Read environment-specific settings from file defined by OS environment variable 'ENV_SETTINGS_FILE'
@@ -136,8 +146,7 @@ def create_app(need_default_data=False, test=False):
 
     # mysql setting
     global db
-    # Model.query_class = CachingQuery
-    db = UnlockedReadAlchemy(app, use_native_unicode='utf8') # , query_class=CachingQuery) #  session_options={'query_cls': CachingQuery}
+    db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
 
     # redis cache setting
     global cache

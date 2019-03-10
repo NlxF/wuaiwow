@@ -1,3 +1,8 @@
+html{
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden; /* Chrome and Safari */
+    -moz-backface-visibility: hidden; /* Firefox */
+}
 /**** element styles ****/
 hr { border-color: #cccccc; margin: 0px; }
 

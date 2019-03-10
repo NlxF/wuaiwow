@@ -64,3 +64,4 @@ SOCKSPOOL_SIZE = 2
 # 包头长度 byte
 PACKAGE_HEAD_SIZE = 2
 
+

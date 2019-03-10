@@ -7,7 +7,7 @@ Flask-mail
 Flask-WTF
 Flask-Login
 Flask-cache
-Flask-SQLAlchemy-Cache
+# Flask-SQLAlchemy-Cache
 Flask-debugtoolbar
 Flask-user<0.7
 Flask-babel

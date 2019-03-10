@@ -1,14 +1,13 @@
 # coding: utf-8
-import __builtin__
-import timeit
+# import __builtin__
+# import timeit
 import time
 import math
 import functools
 from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
-# from flask_sqlalchemy_cache import FromCache, RelationshipCache
 from wuaiwow import db, app, cache
-from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo, UserOnline
+from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo, Donate, Agreement
 
 
 # def memoize(ttl=timedelta(seconds=600)):
@@ -118,29 +117,11 @@ def get_all_permission(need_value=True):  # need_update
     """
 
     num = get_permission_num()               # 有效(能升级的)的所有权限
-
+    # noinspection PyBroadException
     try:
-        # for i in range(5):
-        #
-        #
-        #     print('')
-        # Permission.query.order_by(Permission.value.asc()).limit(num).options(FromCache(cache)).key_from_query()
-
-
-        # print(timeit.timeit('Permission.query.order_by(Permission.value.asc()).options(FromCache(cache)).limit(7).all()', number=1000))
-        print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).options(Permission.cache.from_cache()).first()', number=1000))
-        print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()', number=1000))
-        # now = time.time()
-        # [Permission.query.order_by(Permission.value.asc()).limit(7).options(FromCache(cache)).all() for i in xrange(1000)]
-        # print(time.time()-now)
-        #
-        # now = time.time()
-        # [Permission.query.order_by(Permission.value.asc()).limit(7).all() for i in xrange(1000)]
-        # print(time.time() - now)
-
-        ps = Permission.query.order_by(Permission.value.asc()).limit(7).options(FromCache(cache)).all()
+        # print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).options(UserOnline.cache.from_cache('cache_key')).first()', number=1000))
+        ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
         rst = (p.value for p in ps) if need_value else ps
-
     except Exception as e:
         rst = list()
 
@@ -152,9 +133,10 @@ def get_permission_by_value(value):  # need_update
         根据权限值,返回相应的权限
         @param value 权限值
     """
+    # noinspection PyBroadException
     try:
-        ps = Permission.query.filter(Permission.value == value).options(FromCache(cache)).first()
-        # ps = Permission.query.filter(Permission.value == value).first()
+        # ps = Permission.query.filter(Permission.value == value).options(Permission.cache.from_cache()).first()
+        ps = Permission.query.filter(Permission.value == value).first()
     except Exception as e:
         ps = None
 
@@ -182,8 +164,9 @@ def get_role_by_name(role):  # need_update
         根据role的name,查找Role实例
         @param role 权限名
     """
+    # noinspection PyBroadException
     try:
-        # role_obj = Role.query.filter(Role.role == role).options(FromCache(cache)).first()
+        # role_obj = Role.query.filter(Role.role == role).options(Role.cache.from_cache()).first()
         role_obj = Role.query.filter(Role.role == role).first()
     except Exception as e:
         role_obj = None
@@ -209,9 +192,10 @@ def get_user_by_name(name):
         根据用户名来获取对象
         @param name  用户名
     """
+    # noinspection PyBroadException
     try:
-        user = User.query.filter_by(username=name).options(FromCache(cache)).first()
-        # user = User.query.filter_by(username=name).first()
+        # user = User.query.filter_by(username=name).options(User.cache.from_cache()).first()
+        user = User.query.filter_by(username=name).first()
     except Exception as e:
         user = None
 
@@ -295,6 +279,7 @@ def find_or_create_permission(value, need_created=False, role=None):
         return True, p
     return False, p
 
+
 # need update
 def add_role_to_permission(ps, role):
     """
@@ -319,9 +304,10 @@ def get_less_permission(value):
         获取所有比给定权限值低的权限
         @param value 给定的权限值
     """
+    # noinspection PyBroadException
     try:
-        ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).options(FromCache(cache)).all()
-        # ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).all()
+        # ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).options(Permission.cache.from_cache()).all()
+        ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).all()
     except Exception as e:
         ps = None
 
@@ -333,9 +319,10 @@ def get_less_permission_user(value):   # need_update
         获取比给定权限值低的所有用户
         @param value 给定的权限值
     """
+    # noinspection PyBroadException
     try:
-        users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).options(FromCache(cache)).all()
-        # users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).all()
+        # users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).options(User.cache.from_cache()).all()
+        users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).all()
     except Exception as e:
         users = None
 
@@ -365,9 +352,10 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
         @param permission Permission.value
         @param need_create 如果不存在,是否创建新的
     """
+    # noinspection PyBroadException
     try:
-        user = User.query.filter(User.email == email).options(FromCache(cache)).first()
-        # user = User.query.filter(User.email == email).first()
+        # user = User.query.filter(User.email == email).options(User.cache.from_cache()).first()
+        user = User.query.filter(User.email == email).first()
     except Exception as e:
         user = None
 
@@ -403,9 +391,10 @@ def find_or_create_news(title):
     """
     title = title.strip(' ')
     exist = True
+    # noinspection PyBroadException
     try:
-        one_news = News.query.filter(News.title == title).options(FromCache(cache)).first()
-        # one_news = News.query.filter(News.title == title).first()
+        # one_news = News.query.filter(News.title == title).options(News.cache.from_cache()).first()
+        one_news = News.query.filter(News.title == title).first()
     except Exception as e:
         one_news = None
 
@@ -417,17 +406,42 @@ def find_or_create_news(title):
     return one_news, exist
 
 
-def get_all_news():
+def get_news_by_index_num(index=0, number=0):
     """
-        返回按时间排序的所有news
+        返回按时间排序的从index索引开始的number个news
     """
+    # noinspection PyBroadException
     try:
-        all_news = News.query.order_by(News.created.desc()).options(FromCache(cache)).all()
-        # all_news = News.query.order_by(News.created.desc()).all()
+        # all_news = News.query.order_by(News.created.desc()).options(News.cache.from_cache()).all()
+        if index == 0 and number == 0:
+            all_news = News.query.order_by(News.created.desc()).all()
+        else:
+            all_news = News.query.order_by(News.created.desc()).filter(News.id >= index).limit(number).all()
     except Exception as e:
-        all_news = None
+        all_news = tuple()
 
     return all_news
+
+
+def get_news_by_id(key_id):
+    """
+        根据key_id返回news
+    """
+    # noinspection PyBroadException
+    try:
+        specify_news = News.query.filter_by(News.id == key_id).first()
+    except Exception as e:
+        specify_news = None
+
+    return specify_news
+
+
+def get_all_news_titles():
+    """
+        返回按时间排序的所有news's title
+    """
+
+    return (one.title for one in get_news_by_index_num())
 
 
 # need update
@@ -436,12 +450,11 @@ def find_or_create_sidebar(name):
         查找或新建侧边栏，新建
         @param name 侧边栏名称
     """
-
     name = name.strip(' ')
-
+    # noinspection PyBroadException
     try:
-        sd = Sidebar.query.filter(Sidebar.name == name).options(FromCache(cache)).first()
-        # sd = Sidebar.query.filter(Sidebar.name == name).first()
+        # sd = Sidebar.query.filter(Sidebar.name == name).options(Sidebar.cache.from_cache()).first()
+        sd = Sidebar.query.filter(Sidebar.name == name).first()
     except Exception as e:
         sd = None
 
@@ -449,6 +462,14 @@ def find_or_create_sidebar(name):
         sd = Sidebar(name=name)
         db.session.add(sd)
     return sd
+
+
+def get_all_sidebar():
+    """
+        返回所有的sidebar
+    """
+    return Sidebar.query.order_by(Sidebar.id.asc()).all()
+
 
 # need_update
 def create_guild_info(info):
@@ -466,22 +487,42 @@ def get_latest_guild_info():
     """
         获取最新的游戏指南
     """
+    # noinspection PyBroadException
     try:
-        guild = GuildInfo.query.order_by(GuildInfo.date.desc()).options(FromCache(cache)).first()
-        # guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
+        # guild = GuildInfo.query.order_by(GuildInfo.date.desc()).options(GuildInfo.cache.from_cache()).first()
+        guild = GuildInfo.query.order_by(GuildInfo.date.desc()).first()
     except Exception as e:
         guild = None
 
     return guild
 
 
-def invalidate_cache(cache_query):
+def get_latest_donate_info():
     """
-        设置缓存失效
-        @param cache_query 缓存查询对象
+        获取最新的捐赠信息
     """
-    if cache_query:
-        cache_query.invalidate()
+    # noinspection PyBroadException
+    try:
+        donate = Donate.query.order_by(Donate.date.desc()).first()
+    except Exception as e:
+        donate = None
+
+    return donate
 
 
-__builtin__.__dict__.update(locals())
+def get_latest_agreement_info():
+    """
+        获取最新的用户协议
+    """
+    # noinspection PyBroadException
+    try:
+        agreement = Agreement.query.order_by(Agreement.update.desc()).first()
+    except Exception as e:
+        agreement = None
+
+    return agreement
+
+
+
+
+# __builtin__.__dict__.update(locals())
