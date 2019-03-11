@@ -29,8 +29,9 @@ def list_routes():
 
 @manager.command
 def init_data():
-    from wuaiwow.utils.default_data import add_default_data
-    add_default_data()
+    from wuaiwow.utils.default_data import add_default_data, add_test_data
+    # add_default_data()
+    add_test_data()
 
 
 if __name__ == '__main__':

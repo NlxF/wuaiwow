@@ -42,8 +42,8 @@
 					</ul>
 				</div>
                 <span class="clear"><!-- --></span>
-                {% for news in all_news[3:] %}
                     <div id="blog-articles" class="blog-articles" itemscope="itemscope">
+                        {% for news in all_news[3:] %}
                         <div class="article-wrapper">
                             <a href="/wuaiwow/news/{{news.id}}/{{news.title}}" itemprop="url">
                                 <div class="article-image" style="background-image:url(//cms-origin-cn.battle.net/cms/blog_thumbnail/ix/IXV7EDHUJBD61444359129597.jpg)">
@@ -65,11 +65,11 @@
                             </div>
                             <span class="clear"><!-- --></span>
                         </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
 				<span class="clear"><!-- --></span>
 				<div class="blog-load-more">
-					<a class="load-more" id="load-more" href="javascript:;">查看更多</a>
+					<a class="load-more" id="load-more" href="javascript:;" data-index="{{ all_news|length }}" data-count="5">查看更多</a>
 					<span class="clear"><!-- --></span>
 				</div>			
 			</div>	

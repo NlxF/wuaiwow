@@ -1,8 +1,10 @@
 # coding:utf-8
 import os
 import json
+import time
 import urllib2
-from flask import Blueprint, render_template, request, redirect, url_for, render_template_string
+import datetime
+from flask import Blueprint, render_template, request, redirect, url_for, session
 from flask import jsonify
 # from flask_wtf.csrf import CsrfProtect
 from flask_user import current_user, login_required
@@ -18,33 +20,34 @@ bp = Blueprint('wuaiwow', __name__, template_folder='templates', static_folder='
 
 
 # The Home page
-@bp.route('')
+@bp.route('', methods=['GET', ])
 def home_page():
-    user = current_user
-    first_10_news = get_news_by_index_num(index=0, number=1)
+    start_idx, length = 0, session.pop("scount", 5)
+    first_10_news = get_news_by_index_num(index=start_idx, number=length)
+    session.setdefault("scount", len(first_10_news))
+    # session.permanent = False
     all_sidebar = get_all_sidebar()
     return render_template('custom/home.html',
-                           user=user,
+                           user=current_user,
                            all_news=first_10_news,
                            all_sidebar=all_sidebar*2)
 
 
 @bp.route('blog-load-more/<int:index>/<int:count>')
 def more_blog(index, count):
-    # l = []
-    # url = '/wow/zh/blog/17406774/%E9%AD%94%E5%85%BD%E4%B8%96%E7%95%8C%E5%8A%A8%E6%80%81-2015%E5%B9%B410%E6%9C%88-2015%E5%B9%B410%E6%9C%881%E6%97%A5'
-    # title = '魔兽世界动态——2015年10月'
-    # content = '10月节庆，欢乐多多！美酒节的饕餮盛宴过后迎来了万圣节的趣味游戏。赶快来计划一下怎么度过你的10月，因为稍不留神，幸福的时光就会匆匆离去！'
-    # image = '//cms-origin-cn.battle.net/cms/blog_thumbnail/dt/DTBMVIX5O6T41438245811789.jpg'
-    # date = '1 day age'
-    # dic = {'url': url, 'title': title, 'content': content, 'image': image, 'date': date}
-    # l.append(dic)
-    # l.append(dic)
-
     rst = []
-    if index > 0 and count > 0:
+    if index >= 0 and count > 0:
         more_news = get_news_by_index_num(index, count)
-        [rst.append({'url': news.url, 'title': news.title, 'content': news.content, 'image': news.image, 'date': news.date}) for news in more_news]
+        session.setdefault("scount", len(more_news)+index)
+        readable_date = lambda past_days: u"今天" if past_days == 0 else u"昨天" if past_days == 1 else u"前天" if past_days == 2 else str(past_days)+u" 天前"
+        now = datetime.datetime.fromtimestamp(time.time())
+        [rst.append({'id': one_news.id,
+                     'title': one_news.title,
+                     'content': one_news.content,
+                     'image': one_news.image_url,
+                     'date': one_news.update,
+                     'readable_date': readable_date((now-one_news.update).days) if isinstance(one_news.update, datetime.datetime) else u'时间未知' })
+         for one_news in more_news]
 
     return jsonify(result=rst)
 

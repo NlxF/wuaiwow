@@ -28,7 +28,7 @@ a:hover { color: #006000 }
 
 body{
     font: 12px/1.5 Arial,Verdana,sans-serif;
-    background: #000 url("/static/images/wuaiwow/body-bg-baked.jpg") no-repeat scroll 50% 45px;
+    /*background: #000 url("/static/images/wuaiwow/body-bg-baked.jpg") no-repeat scroll 50% 45px;*/
     min-width: 1024px;
 }
 
@@ -57,7 +57,7 @@ body{
 #header .user-plate .character-name.name-small { font-size: 20px; }
 #header .user-plate .character-name.context-open,
 #header .user-plate .character-name:hover { color: white; }
-#header .user-plate .character-name:after { background: url("../images/layout/cms/char-arrow.png") 0 3px no-repeat; display: inline-block; width: 11px; height: 15px; content:''; }
+/*#header .user-plate .character-name:after { background: url("../images/layout/cms/char-arrow.png") 0 3px no-repeat; display: inline-block; width: 11px; height: 15px; content:''; }*/
 #header .user-plate .character-name:hover:after { background-position: 0 -145px; }
 
 #header .user-plate .avatar-frame { position:absolute; right:0; top:0; border:solid 1px #c3ff00; pointer-events:none; }
@@ -65,13 +65,13 @@ body{
 #header .user-plate .meta-alliance .avatar-frame { border-color: #00bbf6; }
 #header .user-plate .avatar-frame, #header .user-plate .avatar-wow { width:58px; height:58px; }
 
-#header .user-plate .card-character { width: 326px; height: 84px; padding:0 0 0 30px; display: block; color: #EEE; font-size: 20px; background: url("/static/images/wuaiwow/charcard-neutral.jpg") 0 0 no-repeat; position: absolute; bottom:-1px; left: 0px; text-overflow: ellipsis; line-height: 1.4em; z-index:1; }
+/*#header .user-plate .card-character { width: 326px; height: 84px; padding:0 0 0 30px; display: block; color: #EEE; font-size: 20px; background: url("/static/images/wuaiwow/charcard-neutral.jpg") 0 0 no-repeat; position: absolute; bottom:-1px; left: 0px; text-overflow: ellipsis; line-height: 1.4em; z-index:1; }*/
 #header .user-plate .card-character strong { color: #ffb100; }
 #header .user-plate .card-character .login-msg { display:block; float:left; width:210px; margin-top:18px; text-align:center; text-shadow:1px 1px 1px #555 }
-#header .user-plate .card-character .wow-login-key { display:block; position:absolute; right:50px; top:31px; width:50px; height:42px; background:url("/static/images/wuaiwow/key.png") no-repeat }
+/*#header .user-plate .card-character .wow-login-key { display:block; position:absolute; right:50px; top:31px; width:50px; height:42px; background:url("/static/images/wuaiwow/key.png") no-repeat }*/
 #header .user-plate a.card-character:hover { color: #fff; background-position: 0 -84px; }
 #header .user-plate a.card-character:hover strong { color: white; }
-#header .user-plate .card-character .card-portrait { width:58px; height:58px; display:block; float:right; border:1px solid #c3ff00; background:url("/static/images/wuaiwow/avatar-neutral.jpg") no-repeat 50% 50%; margin-top:7px; margin-right:21px }
+/*#header .user-plate .card-character .card-portrait { width:58px; height:58px; display:block; float:right; border:1px solid #c3ff00; background:url("/static/images/wuaiwow/avatar-neutral.jpg") no-repeat 50% 50%; margin-top:7px; margin-right:21px }*/
 .ie6 #header .user-plate .card-character .card-portrait { margin-right:10px }
 
 #header .user-plate .meta-wrapper { position:relative; padding:10px 15px 10px 30px; z-index:1; pointer-events:none; }
@@ -119,12 +119,12 @@ body{
 #content .content-header { padding: 25px; padding-top: 35px; }
 #content .content-header .header { color: #efe3d2; font: 52px/85% "Palatino Linotype", Georgia, Times, sans-serif; letter-spacing: -1.5px; text-shadow: #241209 0 0 5px; }
 #content .content-header .desc { width: 50%; margin-top: 25px; color: #A4704E; }
-#content .content-box-w434 { background: url("../images/content/box-w434-top.jpg") 0 0 no-repeat #21130a; width:434px; }
-#content .content-box-w434 .wrapper { background: url("../images/content/box-w434-bottom.jpg") 0 100% no-repeat; width:100%; padding:16px 0 19px 0; letter-spacing:-0.5px;}
+/*#content .content-box-w434 { background: url("../images/content/box-w434-top.jpg") 0 0 no-repeat #21130a; width:434px; }*/
+/*#content .content-box-w434 .wrapper { background: url("../images/content/box-w434-bottom.jpg") 0 100% no-repeat; width:100%; padding:16px 0 19px 0; letter-spacing:-0.5px;}*/
 #content .content-box-w434 .inner-wrapper {margin:0 45px 0 19px;}
 #content .content-box-w434 .box-title {font-size:12px; color:#efe3d2; display:block; padding-bottom:21px; text-transform:uppercase;}
 #content .content-box-w434 .wrapper p {font-size:12px; line-height:20px; color:#967648; margin-bottom:15px;}
-.ui-slideshow .mask { background: url("../images/layout/slideshow-mask.png") 0 0 no-repeat; }
+/*.ui-slideshow .mask { background: url("../images/layout/slideshow-mask.png") 0 0 no-repeat; }*/
 .ui-slideshow .caption h3 { color: #f3e6d0; font-size: 20px; font-weight:bold; letter-spacing: -0.05em; line-height:1em; }
 .ui-slideshow .paging a { -moz-border-radius:2px; border-radius:2px }
 .ui-slideshow .caption h3 a { color: #f3e6d0; }
@@ -136,12 +136,12 @@ body{
 #footer a:hover { color: #f5ebd1 }
 #footer h3 { color: #70523d }
 #footer h3 a { color: #70523d }
-#sitemap h3 { border-color: #20140d; background: url("../images/icons/footer.gif") 0 0 no-repeat }
+/*#sitemap h3 { border-color: #20140d; background: url("../images/icons/footer.gif") 0 0 no-repeat }*/
 #copyright { border-color: #20140d; color: #433A2E }
 #copyright a { color: #70523D }
-#international { border-color: #20140d; background: url("../images/layout/world-map.gif") 50% 50% no-repeat }
-#change-language { background-image: url("../images/icons/arrows.gif") }
-#change-language span { background-image:url("../images/icons/map-small.gif") }
+/*#international { border-color: #20140d; background: url("../images/layout/world-map.gif") 50% 50% no-repeat }*/
+/*#change-language { background-image: url("../images/icons/arrows.gif") }*/
+/*#change-language span { background-image:url("../images/icons/map-small.gif") }*/
 #footer-promotions { font-size: 12px; font-weight:bold; font-family: Arial, Helvetica, sans-serif; }
 #footer-promotions a { color: #BD8100 }
 #footer-promotions .desc { padding: 5px 0; }
@@ -213,7 +213,7 @@ a.upgrade-level:link{
 a.upgrade-level:hover {
   color: black !important;
   text-decoration: none;
-  font-weight: none
+  font-weight: normal;
   background-color:yellow;
 }
 
@@ -300,7 +300,7 @@ a.unknown{
   background-color:transparent;
   color: #222;
   border:1px solid #aaa;
-}*/
+}
 /* Set options to normal weight */
 .custom-select option {
   font-weight:normal;

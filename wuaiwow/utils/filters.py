@@ -20,7 +20,7 @@ def _jinja2_filter_timespan(date):
         days = (now-date).days
         return u"今天" if days == 0 else u"昨天" if days == 1 else u"前天" if days == 2 else str(days)+u" 天前"
     else:
-        return 'Need datetime type provide %s' % type(date)
+        return u'时间未知'
 
 
 @app.template_filter('struct')

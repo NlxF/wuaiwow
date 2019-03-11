@@ -1,36 +1,42 @@
 
 $(function(){$("#load-more").click(function()
 {
-	url = '/blog-load-more/'+ $("#blog-articles").find('div.article-wrapper').length +'/'+ 5;
+    var load_more_btn = $(this);
+    var start_idx = load_more_btn.attr('data-index')
+	url = '/blog-load-more/'+ start_idx +'/'+ load_more_btn.attr('data-count');
 	$.getJSON($SCRIPT_ROOT + url, {}, function(data) {
-		var blogs = data.result;
-      for(var i=0; i<blogs.length; i++)
-      {
-      	var html = '<div class="article-wrapper">'+
-						'<a href="'+ blogs[i].url +'" itemprop="url">'+
-							'<div class="article-image" style="background-image:url('+ blogs[i].image +')">'+
-								'<div class="article-image-frame"></div>'+
-							'</div>'+
-							'<div class="article-content" itemprop="blogPost" itemscope="itemscope">'+	
-								'<h2 class="header-2">'+								
-									'<span class="article-title" itemprop="headline">'+
-										blogs[i].title
-									+'</span>'+
-								'</h2>'+
-								'<span class="clear"><!-- --></span>'+
-								'<div class="article-summary" itemprop="description">'+blogs[i].content+'</div>'+
-								'<span class="clear"><!-- --></span>'+
-							'</div>'+
-						'</a>'+
-						'<div class="article-meta">'+
-							'<span class="publish-date" title="2015年10月9日 13:51 CST">'+
-									blogs[i].date
-							+'</span>'+
-						'</div>'+
-						'<span class="clear"><!-- --></span>'+
-					'</div>';
-			$("#blog-articles").append(html); 	
-      }
+	    var blogs = data.result;
+        for(var i=0; i<blogs.length; i++)
+        {
+            var html = '<div class="article-wrapper">'+
+                            '<a href="'+ '/wuaiwow/news/'+blogs[i].id+'/'+blogs[i].title +'" itemprop="url">'+
+                                '<div class="article-image" style="background-image:url('+ blogs[i].image +')">'+
+                                    '<div class="article-image-frame"></div>'+
+                                '</div>'+
+                                '<div class="article-content" itemprop="blogPost" itemscope="itemscope">'+
+                                    '<h2 class="header-2">'+
+                                        '<span class="article-title" itemprop="headline">'+
+                                            blogs[i].title
+                                        +'</span>'+
+                                    '</h2>'+
+                                    '<span class="clear"><!-- --></span>'+
+                                    '<div class="article-summary" itemprop="description">'+blogs[i].content+'</div>'+
+                                    '<span class="clear"><!-- --></span>'+
+                                '</div>'+
+                            '</a>'+
+                            '<div class="article-meta">'+
+                                '<span class="publish-date" title='+blogs[i].date+'"CST">'+
+                                        blogs[i].readable_date
+                                +'</span>'+
+                            '</div>'+
+                            '<span class="clear"><!-- --></span>'+
+                        '</div>';
+            load_more_btn.attr('data-index', start_idx+blogs.length)
+            // if (window.sessionStorage) {
+            //     sessionStorage.setItem("scount", start_idx+blogs.length);
+            // }
+            $("#blog-articles").append(html);
+        }
    });
 });
 })
@@ -180,6 +186,7 @@ $('.add-prompt').click(function(){
         });
      }
 });
+
 //删除提示语
 $(".deletetablerow").on("click", function(){
     var btn = $(this)

@@ -92,7 +92,12 @@ def online_setup():
 
 @app.after_request
 def add_header(response):
-    response.cache_control.max_age = 15552000
+    if '/static/' in request.path:
+        response.cache_control.max_age = 15552000
+    elif response.content_type == 'application/json':
+        response.cache_control.no_cache = True
+        response.cache_control.no_store = True
+        response.cache_control.must_revalidate = True
     return response
 
 

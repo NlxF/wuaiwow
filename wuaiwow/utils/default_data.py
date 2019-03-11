@@ -1,9 +1,9 @@
 # coding:utf-8
 # import StringIO
 # from werkzeug.datastructures import FileStorage
-
+from wuaiwow.models.news import News
 from wuaiwow.utils.modelHelper import (find_or_create_permission, find_or_create_user, 
-                                       get_role_by_name, create_role)
+                                       get_role_by_name, create_role, db)
 
 
 def create_all_permissions(permission_config):
@@ -38,3 +38,10 @@ def add_default_data(permission_config):
     """ 初始化数据 """
     init_users(permission_config)
     init_news()
+
+
+def add_test_data():
+    """添加测试数据"""
+
+    [db.session.add(News(title=u'标题:{}'.format(i), summary=u'概要:{}'.format(i), image_url='/static/images/default_title.jpg')) for i in range(10)]
+    db.session.commit()

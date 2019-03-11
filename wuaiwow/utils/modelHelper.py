@@ -416,7 +416,7 @@ def get_news_by_index_num(index=0, number=0):
         if index == 0 and number == 0:
             all_news = News.query.order_by(News.created.desc()).all()
         else:
-            all_news = News.query.order_by(News.created.desc()).filter(News.id >= index).limit(number).all()
+            all_news = News.query.order_by(News.created.desc()).all()[index:index+number]
     except Exception as e:
         all_news = tuple()
 
