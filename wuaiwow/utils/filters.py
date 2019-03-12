@@ -4,6 +4,17 @@ import datetime
 from wuaiwow import app
 
 
+def readable_elapse(past):
+    now = datetime.datetime.fromtimestamp(time.time())
+    try:
+        elapse = now - past
+    except TypeError:
+        return u'时间未知'
+
+    return str(elapse.seconds // 3600) + u" 小时前" if elapse.days == 0 else u"昨天" if elapse.days == 1 else u"前天" if elapse.days == 2 else str(
+        elapse.days) + u" 天前" if isinstance(elapse, datetime.datetime) else u'时间未知'
+
+
 @app.template_filter('strftime')
 def _jinja2_filter_datetime(date, fmt=None):
     _format = '%Y-%m-%d' if not fmt else fmt
@@ -15,12 +26,7 @@ def _jinja2_filter_datetime(date, fmt=None):
 
 @app.template_filter('timespan')
 def _jinja2_filter_timespan(date):
-    now = datetime.datetime.fromtimestamp(time.time())
-    if isinstance(date, datetime.datetime):
-        days = (now-date).days
-        return u"今天" if days == 0 else u"昨天" if days == 1 else u"前天" if days == 2 else str(days)+u" 天前"
-    else:
-        return u'时间未知'
+    return readable_elapse(date)
 
 
 @app.template_filter('struct')

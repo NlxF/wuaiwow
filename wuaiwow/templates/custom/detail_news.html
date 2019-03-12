@@ -14,24 +14,18 @@
 					                    近期文章
                                     </h3>
 			                    </div>
-		                        <div class="sidebar-content">
+		                        <div class="sidentebar-cont">
 	                            <ul id="recent-articles" class="articles-list-plain">
-				                    <li>
-					                    <a class="article-block on-view" href="http://www.battlenet.com.cn/wow/zh/blog/17433025/%E5%8A%A0%E5%85%A5%E4%BC%8A%E5%88%A9%E8%BE%BE%E9%9B%B7%EF%BC%9A%E6%81%B6%E9%AD%94%E7%8C%8E%E6%89%8B%E5%89%8D%E7%9E%BB-2016%E5%B9%B48%E6%9C%889%E6%97%A5">
-                                            <span class="image" style="background-image: url('//cms-origin-cn.battle.net/cms/blog_thumbnail/fv/FVNFW74O4HBN1470709398571.jpg');"></span>
-                                            <span class="title">加入伊利达雷：恶魔猎手前瞻</span>
-                                            <span class="date">3 小时前</span>
+                                    {% for news in recent_news %}
+                                    <li>
+					                    <a class="article-block on-view" href="{{ url_for('wuaiwow.news', index=news.id, title=news.title) }}">
+                                            <span class="image" style="background-image: url('{{news.image_url}}');"></span>
+                                            <span class="title">{{ news.title }}</span>
+                                            <span class="date">{{news.update|timespan}}</span>
                                             <span class="clear"><!-- --></span>
 					                    </a>
 				                    </li>
-                                    <li>
-                                    <a class="article-block" href="http://www.battlenet.com.cn/wow/zh/blog/17430668/703%E8%A1%A5%E4%B8%81%E5%9C%A8%E7%BA%BF%E4%BF%AE%E6%AD%A3%EF%BC%888%E6%9C%889%E6%97%A5%E6%9B%B4%E6%96%B0%EF%BC%89-2016%E5%B9%B48%E6%9C%889%E6%97%A5">
-                                        <span class="image" style="background-image: url('//cms-origin-cn.battle.net/cms/blog_thumbnail/7t/7TM3CUB0HS6T1469611359320.png');"></span>
-                                        <span class="title">7.0.3补丁在线修正（8月9日更新）</span>
-                                        <span class="date">8 小时前</span>
-                                        <span class="clear"><!-- --></span>
-                                    </a>
-                                    </li>
+                                    {% endfor %}
                                 </ul>
 		                    </div>
 	                    </div>
@@ -42,34 +36,18 @@
 	</div>
 	<div class="left-content" itemscope="itemscope">
         <div id="blog" class="article-wrapper" itemscope="itemscope">
-            <h2 class="header-2"> <span itemprop="headline">加入伊利达雷：恶魔猎手前瞻</span></h2>
+            <h2 class="header-2"> <span itemprop="headline">{{ current_news.title }}</span></h2>
             <div class="article-meta">
-                <a class="article-author" href="/wow/zh/search?a=%E9%AD%94%E5%85%BD%E4%B8%96%E7%95%8C%E8%BF%90%E8%90%A5%E5%9B%A2%E9%98%9F&amp;f=article">
+                <a class="article-author" href="{{ url_for('wuaiwow.news', index=current_news.id, title=current_news.title) }}">
                     <span class="author-icon"></span>
-                    <span itemprop="author">魔兽世界运营团队</span>
+                    <span itemprop="author">wuaiwow运营团队</span>
                 </a>
-                <span class="publish-date" title="2016年8月9日 19:12&nbsp;CST">
-                    2016年8月9日
+                <span class="publish-date" title="{{current_news.update|strftime}} CST">
+                    {{current_news.update|strftime}}
                 </span>
             </div>
             <div class="article-content">
-                <div class="header-image"><img itemprop="image" alt="加入伊利达雷：恶魔猎手前瞻" src="//cms-origin-cn.battle.net/cms/blog_header/2p/2P93LNKR4DAI1470709428512.jpg" /></div>
-                <div class="detail" itemprop="articleBody">
-                    <p>8月4日起至《军团再临》正式上线之前，凡购买过季卡、半年卡或一次性转换过90天及以上游戏时间，且所在服务器中有70级以上角色的玩家，将可以从8月11日起体验全新职业：恶魔猎手。为了帮助大家更好地扮演伊利达雷的新角色，我们向玛顿派去了斥候，提前了解了一下这个强大的英雄职业。</p>
-                    <p>在这部职业预览视频中，游戏设计者Eric Maloof和Graham Berger会一起为大家讲解恶魔猎手这个全新的英雄职业。</p>
-                    <div class="video-container center">
-                        <p style="text-align: center;"><object data="http://v.163.com/swf/video/NetEaseFlvPlayerV3.swf" height="351" id="FPlayer" type="application/x-shockwave-flash" width="600"><param name="allowFullScreen" value="true" /><param name="allowscriptaccess" value="always" /><param allownetworking="false" name="movie" value="http://v.163.com/swf/video/NetEaseFlvPlayerV3.swf" /><param name="flashvars" value="topicid=0031&amp;vid=VBT3B1QQJ&amp;sid=VAVEEQJ2H &amp;threadListPath=&amp;coverpic=https://cms-origin-cn.battle.net/cms/connect_spotlight/u7/U7UBTCFOMXOL1470708978255.jpg&amp;autoplay=false" /></object></p>
-                    </div>
-                    <p>作为伊利达雷中最新的士兵，你的旅程将从被恶魔污染的玛顿开始。作为一名98级的恶魔猎手，你将一路穿过这片危机四伏的土地，学习恶魔猎手的种种技能，了解他们的历史。你必须熟练地掌握新的力量，因为它们将伴随你走上你所选择的道路。<em>要小心，不是每个伊利达雷都可以完成这段试炼。</em>你要回答这样一个问题：为了将艾泽拉斯从燃烧军团的魔掌中拯救出来，你愿意牺牲些什么？</p>
-                    <p>在建立角色前，你需要对这个英雄职业有更多一些的了解。为了创建恶魔猎手，你需要在服务器中拥有至少一个70级或以上的角色。在角色建立界面下你需要在两个种族之间选择：暗夜精灵或血精灵。</p>
-                    <p>8月4日起至《军团再临》正式上线之前，凡是购买过季卡、半年卡或一次性转换过90天及以上游戏天数，且所在服务器中有70级以上角色的玩家，均可从8月11日开始抢先体验全新职业：恶魔猎手。此外，在《军团再临》正式上线后，所有玩家都可以玩到恶魔猎手。</p>
-                    <p><strong><span style="color:#FFFFFF;">特别提醒：想在第一时间体验恶魔猎手的玩家，我们建议您：请尽量在</span><span style="color:#FF0000;">8月11日前</span><span style="color:#FFFFFF;">，完成季卡、半年卡的购买，或将游戏时间一次性转换为游戏天数。</span></strong></p>
-                    <p>当你选择伊利达雷的道路之后，将会学会以下这些强大的技能：</p>
-                    <p><strong>幽灵视觉：</strong>恶魔猎手灼瞎了自己的双眼，以获得真正的感知能力。他们被魔法强化了的视觉可以侦测到敌人，哪怕他们隐藏在障碍物后面也是一样。</p>
-                    <p><strong>恶魔变形：</strong>恶魔猎手变身成地狱般的形态，强化他们可怖的力量：专注于伤害的伊利达雷获得无法想象的迅捷与力量，可以终结他们的猎物；而那些更注重防御的伊利达雷在恶魔形态下将变得不可侵犯。</p>
-                    <p>恶魔猎手可以使用<strong>二段跳</strong>，在战斗中来去自如，甚至可以展开双翼滑翔，从天而降对敌人实施突袭。</p>
-                    <p>为了成为艾泽拉斯所需要的、能够抵抗燃烧军团的英雄，你现在已经做了一些准备。我们期待着在战场上见证你的身影。</p>
-                </div>
+                {{ current_news.content }}
             </div>
             <div class="keyword-list"></div>
         </div>

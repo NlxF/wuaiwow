@@ -23,13 +23,13 @@ class Online(object):
         self.record_interval = app.config.get('ONLINE_RECORD_INTERVAL', 10)
         self.user_prefix = app.config.get('ONLINE_USER_PREFIX', "online-user-alive")
         self.visitor_prefix = app.config.get('ONLINE_VISITOR_PREFIX', "online-visitor-alive")
-        self.all_users_prefix = app.config.get('ONLINE_ALL_USER_PREFIX', "online-user-collection-at")
-        self.all_visitor_prefix = app.config.get('ONLINE_ALL_VISITOR_PREFIX', "online-visitor-collection-at")
+        self.user_collection_prefix = app.config.get('ONLINE_ALL_USER_PREFIX', "online-user-collection-at")
+        self.visitor_collection_prefix = app.config.get('ONLINE_ALL_VISITOR_PREFIX', "online-visitor-collection-at")
         self.online_record_flag = "online-record-flag"
 
     def _suitable_prefix(self, visitor, in_set):
         if in_set:
-            return self.all_visitor_prefix if visitor else self.all_users_prefix
+            return self.visitor_collection_prefix if visitor else self.user_collection_prefix
         else:
             return self.visitor_prefix if visitor else self.user_prefix
 
@@ -37,13 +37,13 @@ class Online(object):
         now = int(time.time())
         # expires = now + self.online_interval * 60
         expires = now + self.record_interval * 60
-        all_users_key = "{0}:{1:d}".format(self._suitable_prefix(visitor, True), (now // 60))
-        user_key = "{0}:{1}".format(self._suitable_prefix(visitor, False), user_id)
+        user_collection_key = "{0}:{1:d}".format(self._suitable_prefix(visitor, True), (now // 60))
+        user_online_key = "{0}:{1}".format(self._suitable_prefix(visitor, False), user_id)
         with self.redis.pipeline(transaction=False) as pipe:
-            pipe.sadd(all_users_key, user_id)
-            pipe.set(user_key, now)
-            pipe.expireat(all_users_key, expires)
-            pipe.expireat(user_key, expires)
+            pipe.sadd(user_collection_key, user_id)
+            pipe.set(user_online_key, now)
+            pipe.expireat(user_collection_key, expires)
+            pipe.expireat(user_online_key, expires)
             pipe.execute()
 
     def _make_offline(self, user_id, visitor):
@@ -51,9 +51,9 @@ class Online(object):
         if last:
             # minutes = xrange(self.online_interval)
             interval = xrange(self.record_interval)
-            all_users_keys = ("{}:{:d}".format(self._suitable_prefix(visitor, True), (last // 60 - x)) for x in interval)
+            user_collection_keys = ("{}:{:d}".format(self._suitable_prefix(visitor, True), (last // 60 - x)) for x in interval)
             with self.redis.pipeline(transaction=False) as pipe:
-                [pipe.srem(all_users_key, user_id) for all_users_key in all_users_keys]
+                [pipe.srem(users_collection_key, user_id) for users_collection_key in user_collection_keys]
                 pipe.delete("{0}:{1}".format(self.user_prefix, user_id))
                 pipe.execute()
 
@@ -70,10 +70,10 @@ class Online(object):
         current = int(current_second) // 60
         # minutes = xrange(self.online_interval)
         interval = xrange(self.online_interval)
-        user_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in interval)
-        all_online_users = self.redis.sunion(user_keys)
-        visitor_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in interval)
-        all_online_visitors = self.redis.sunion(visitor_keys)
+        user_collection_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in interval)
+        all_online_users = self.redis.sunion(user_collection_keys)
+        visitor_collection_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in interval)
+        all_online_visitors = self.redis.sunion(visitor_collection_keys)
 
         online_visitors = len(all_online_visitors)
         online_users = len(all_online_users)
@@ -87,10 +87,10 @@ class Online(object):
             self.redis.set(self.online_record_flag, 1, ex=self.record_interval * 60)  # 每30分钟保存一次
 
         interval = xrange(self.record_interval)
-        user_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in interval)
-        all_record_users = self.redis.sunion(user_keys)
-        visitor_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in interval)
-        all_record_visitors = self.redis.sunion(visitor_keys)
+        user_collection_keys = ("{0}:{1:d}".format(self._suitable_prefix(False, True), (current - x)) for x in interval)
+        all_record_users = self.redis.sunion(user_collection_keys)
+        visitor_collection_keys = ("{0}:{1:d}".format(self._suitable_prefix(True, True), (current - x)) for x in interval)
+        all_record_visitors = self.redis.sunion(visitor_collection_keys)
         member = all_record_users | all_record_visitors
         number = len(member)
 

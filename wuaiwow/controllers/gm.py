@@ -73,8 +73,8 @@ def add_news():
 @login_required
 @permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
 def get_a_news():
-    news_id = request.args.get('id', '')
-    selected = get_news_by_id(key_id=news_id)
+    news_title = request.args.get('title', '')
+    selected, exist = find_or_create_news(title=news_title)
     if selected:
         result = {'status': 'Ok', 'msg': u'OK', 'news_title': selected.title,
                   'news_content': selected.content, 'news_photo': selected.image_url}

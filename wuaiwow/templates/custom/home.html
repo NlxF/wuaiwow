@@ -46,7 +46,7 @@
                         {% for news in all_news[3:] %}
                         <div class="article-wrapper">
                             <a href="/wuaiwow/news/{{news.id}}/{{news.title}}" itemprop="url">
-                                <div class="article-image" style="background-image:url(//cms-origin-cn.battle.net/cms/blog_thumbnail/ix/IXV7EDHUJBD61444359129597.jpg)">
+                                <div class="article-image" style="background-image:url('{{news.image_url}}')">
                                     <div class="article-image-frame"></div>
                                 </div>
                                 <div class="article-content" itemprop="blogPost" itemscope="itemscope">

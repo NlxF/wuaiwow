@@ -164,6 +164,8 @@ def get_role_by_name(role):  # need_update
         根据role的name,查找Role实例
         @param role 权限名
     """
+    if not role:
+        return None
     # noinspection PyBroadException
     try:
         # role_obj = Role.query.filter(Role.role == role).options(Role.cache.from_cache()).first()
@@ -192,6 +194,8 @@ def get_user_by_name(name):
         根据用户名来获取对象
         @param name  用户名
     """
+    if not name:
+        return None
     # noinspection PyBroadException
     try:
         # user = User.query.filter_by(username=name).options(User.cache.from_cache()).first()
@@ -304,6 +308,8 @@ def get_less_permission(value):
         获取所有比给定权限值低的权限
         @param value 给定的权限值
     """
+    if value <= 0:
+        return None
     # noinspection PyBroadException
     try:
         # ps = Permission.query.filter(Permission.value < value).order_by(Permission.value.asc()).options(Permission.cache.from_cache()).all()
@@ -319,6 +325,8 @@ def get_less_permission_user(value):   # need_update
         获取比给定权限值低的所有用户
         @param value 给定的权限值
     """
+    if value <= 0:
+        return None
     # noinspection PyBroadException
     try:
         # users = User.query.join(Permission).filter(Permission.value < value).order_by(User.confirmed_at.asc()).options(User.cache.from_cache()).all()
@@ -390,6 +398,8 @@ def find_or_create_news(title):
         @param title 新闻标题
     """
     title = title.strip(' ')
+    if not title:
+        return None, False
     exist = True
     # noinspection PyBroadException
     try:
@@ -410,6 +420,8 @@ def get_news_by_index_num(index=0, number=0):
     """
         返回按时间排序的从index索引开始的number个news
     """
+    if index < 0 or number < 0:
+        return tuple()
     # noinspection PyBroadException
     try:
         # all_news = News.query.order_by(News.created.desc()).options(News.cache.from_cache()).all()
@@ -427,9 +439,11 @@ def get_news_by_id(key_id):
     """
         根据key_id返回news
     """
+    if key_id < 0:
+        return None
     # noinspection PyBroadException
     try:
-        specify_news = News.query.filter_by(News.id == key_id).first()
+        specify_news = News.query.filter_by(id=key_id).first()
     except Exception as e:
         specify_news = None
 
@@ -451,6 +465,8 @@ def find_or_create_sidebar(name):
         @param name 侧边栏名称
     """
     name = name.strip(' ')
+    if not name:
+        return None
     # noinspection PyBroadException
     try:
         # sd = Sidebar.query.filter(Sidebar.name == name).options(Sidebar.cache.from_cache()).first()

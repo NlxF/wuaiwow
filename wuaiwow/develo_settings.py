@@ -21,7 +21,9 @@ CACHE_DEFAULT_TIMEOUT      = 60 * 15          # flask_cache  15分钟缓存失�
 
 # OnlineHelper setting
 ONLINE_DB = 1
+# 在线状态持续间隔
 ONLINE_LAST_MINUTES = 5
+# 在线记录间隔
 ONLINE_RECORD_INTERVAL = 10
 # ONLINE_USER_PREFIX = ''
 # ONLINE_VISITOR_PREFIX = ''

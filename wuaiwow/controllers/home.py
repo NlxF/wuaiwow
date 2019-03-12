@@ -4,7 +4,7 @@ import json
 import time
 import urllib2
 import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, make_response, abort
 from flask import jsonify
 # from flask_wtf.csrf import CsrfProtect
 from flask_user import current_user, login_required
@@ -12,7 +12,7 @@ from flask_user.signals import user_logged_in, user_logged_out
 from wuaiwow import app, db, onlineHelper
 from wuaiwow.utils import add_blueprint, filters
 from wuaiwow.models import UserIp, News
-from wuaiwow.utils.modelHelper import (get_news_by_index_num, get_all_sidebar, get_latest_guild_info,
+from wuaiwow.utils.modelHelper import (get_news_by_index_num, get_news_by_id, get_all_sidebar, get_latest_guild_info,
                                        get_latest_donate_info, get_latest_agreement_info)
 
 # csrf = CsrfProtect()
@@ -22,15 +22,18 @@ bp = Blueprint('wuaiwow', __name__, template_folder='templates', static_folder='
 # The Home page
 @bp.route('', methods=['GET', ])
 def home_page():
-    start_idx, length = 0, session.pop("scount", 5)
+    try:
+        start_idx, length = 0, int(request.cookies.get("scount", '5'))
+    except TypeError as e:
+        start_idx, length = 0, 5
     first_10_news = get_news_by_index_num(index=start_idx, number=length)
-    session.setdefault("scount", len(first_10_news))
-    # session.permanent = False
     all_sidebar = get_all_sidebar()
-    return render_template('custom/home.html',
-                           user=current_user,
-                           all_news=first_10_news,
-                           all_sidebar=all_sidebar*2)
+    rsp = make_response(render_template('custom/home.html',
+                                       user=current_user,
+                                       all_news=first_10_news,
+                                       all_sidebar=all_sidebar*2))
+    rsp.set_cookie("scount", str(len(first_10_news)))
+    return rsp
 
 
 @bp.route('blog-load-more/<int:index>/<int:count>')
@@ -38,15 +41,13 @@ def more_blog(index, count):
     rst = []
     if index >= 0 and count > 0:
         more_news = get_news_by_index_num(index, count)
-        session.setdefault("scount", len(more_news)+index)
-        readable_date = lambda past_days: u"今天" if past_days == 0 else u"昨天" if past_days == 1 else u"前天" if past_days == 2 else str(past_days)+u" 天前"
         now = datetime.datetime.fromtimestamp(time.time())
         [rst.append({'id': one_news.id,
                      'title': one_news.title,
                      'content': one_news.content,
                      'image': one_news.image_url,
                      'date': one_news.update,
-                     'readable_date': readable_date((now-one_news.update).days) if isinstance(one_news.update, datetime.datetime) else u'时间未知' })
+                     'readable_date': filters.readable_elapse(one_news.update)})
          for one_news in more_news]
 
     return jsonify(result=rst)
@@ -77,12 +78,21 @@ def donate():
 @bp.route('wuaiwow/news/<int:index>/<string:title>')
 def news(index, title):
     hash_id = hash(title)
-    news = News.query.filter(News.id == index, News.title == title).first()
+    news = get_news_by_id(index)
     if news:
-        pass
+        recent_news = [one_news for one_news in get_news_by_index_num(0, 5) if one_news.id != news.id][0:4]    # 显示最新的4篇新闻
+        # [rst.append({'id': one_news.id,
+        #              'title': one_news.title,
+        #              'content': one_news.content,
+        #              'image': one_news.image_url,
+        #              'date': one_news.update,
+        #              'readable_date': filters.readable_elapse(one_news.update)})
+        #  for one_news in more_news]
     else:
-        pass
-    return render_template('custom/detail_news.html')
+        return abort(404)
+    return render_template('custom/detail_news.html',
+                           recent_news=recent_news,
+                           current_news=news)
 
 
 @bp.route('wuaiwow/sidebar/<int:index>/<string:name>')

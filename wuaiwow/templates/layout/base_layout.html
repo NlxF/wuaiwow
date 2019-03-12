@@ -148,9 +148,27 @@
         </div>
         {% endblock %}
         {% block bottom %}
+            <div id="layout-bottom">
+            <div class="wrapper">
+                <div id="nav-client-footer" class="nav-client foot-background">
+                    <div class="mobileFooterEnabled footer-content footer-desktop grid-container">
+                        <div class="nav-section">
+                            <div class="nav-left">
+                                <span>当前在线{{g.online_users_msg.all}}人: {{g.online_users_msg.register}}会员,{{g.online_users_msg.visitor}}游客. 最高记录是{{g.online_users_msg.max_num}}  发生于{{g.online_users_msg.occ_time}} {{g.online_users_msg.time_zone}}</span>
+                            </div>
+                            <div class="nav-right">
+                                <div id="nav-feedback">
+                                    <span class="nav-item nav-a nav-item-btn">吾爱魔兽  &copy; 2015</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endblock %}
 	    <!-- Application specific JS -->
-		<script src="/static/js/wuaiwow/3k.js?v=2.0"></script>
+		<script src="/static/js/wuaiwow/3k.js?v=3.0"></script>
         <!-- HTML5 boilerplate JS -->
         <script src="/static/js/html5boilerplate/js/main.js"></script>
 

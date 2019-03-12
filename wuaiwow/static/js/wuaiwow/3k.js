@@ -1,3 +1,42 @@
+function createCookie(name, value, days) {
+    var expires;
+
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    } else {
+        expires = "";
+    }
+    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = encodeURIComponent(name) + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ')
+            c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0)
+            return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name, "expires", -1);
+}
+
+// $(window).unload(function() {
+//     eraseCookie("scount")
+// });
+// window.addEventListener("beforeunload", function (e) {
+//   var confirmationMessage = "\o/";
+//
+//   (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+//   return confirmationMessage;                            //Webkit, Safari, Chrome
+// });
 
 $(function(){$("#load-more").click(function()
 {
@@ -31,12 +70,10 @@ $(function(){$("#load-more").click(function()
                             '</div>'+
                             '<span class="clear"><!-- --></span>'+
                         '</div>';
-            load_more_btn.attr('data-index', start_idx+blogs.length)
-            // if (window.sessionStorage) {
-            //     sessionStorage.setItem("scount", start_idx+blogs.length);
-            // }
             $("#blog-articles").append(html);
         }
+        load_more_btn.attr('data-index', parseInt(start_idx)+blogs.length)
+        createCookie("scount", parseInt(start_idx)+blogs.length, 0)
    });
 });
 })
@@ -291,7 +328,7 @@ $('#news-edit-selector').on('change', function(ev){
     if($(this).val()!=0){
         $.ajax({
             url: '/gm/get-a-news',
-            data: {'id': parseInt($(this).val(), 10)},
+            data: {'title': $(this).val()},
             success: function (data){
                 if (data.status == 'Ok'){
                     $('#news-title').val(data.news_title)
