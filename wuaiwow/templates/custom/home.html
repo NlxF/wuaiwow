@@ -9,7 +9,7 @@
 					<div class="sidebar-bot">
 						<div id="sidebar-links" class="sidebar-module">
                             {% for sd in all_sidebar%}
-                            <a target="_blank" class="sidebar-link" href="user/register"  <!--"/wuaiwow/sidebar/{{sd.id}}/{{sd.name}}"--> style="background-image:url('{{sd.image_url}}');"></a>
+                            <a target="_blank" class="sidebar-link" href="{{ url_for('wuaiwow.sidebar', index=sd.id, name=sd.name) }}" style="background-image:url('{{sd.image_url}}');"></a>
                             {% endfor %}
 						</div>
 					</div>
@@ -24,7 +24,7 @@
                         {% for news in all_news[:3]%}
                             <li>
                                 <div class="article-wrapper">
-                                    <a href="/wuaiwow/news/{{news.id}}/{{news.title}}" class="featured-news-link" data-category="wow" data-action="Blog_Click-Throughs">
+                                    <a href="{{ url_for('wuaiwow.news', index=news.id, title=news.title) }}" class="featured-news-link" data-category="wow" data-action="Blog_Click-Throughs">
                                         <div class="article-image" style="background-image:url('{{news.image_url}}');">
                                             <div class="article-image-frame"></div>
                                         </div>
@@ -45,7 +45,7 @@
                     <div id="blog-articles" class="blog-articles" itemscope="itemscope">
                         {% for news in all_news[3:] %}
                         <div class="article-wrapper">
-                            <a href="/wuaiwow/news/{{news.id}}/{{news.title}}" itemprop="url">
+                            <a href="{{ url_for('wuaiwow.news', index=news.id, title=news.title) }}" itemprop="url">
                                 <div class="article-image" style="background-image:url('{{news.image_url}}')">
                                     <div class="article-image-frame"></div>
                                 </div>
@@ -78,6 +78,7 @@
 	</div>	
 </div>
 {% endblock %}
+{#
 {% block bottom %}
 <div id="layout-bottom">
     <div class="wrapper">
@@ -89,7 +90,7 @@
                     </div>
                     <div class="nav-right">
                         <div id="nav-feedback">
-                            <span class="nav-item nav-a nav-item-btn">吾爱魔兽  &copy; 2015</span>
+                            <span class="nav-item nav-a nav-item-btn">吾爱魔兽  &copy; 2019</span>
                         </div>
                     </div>
                 </div>
@@ -97,4 +98,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %}#}

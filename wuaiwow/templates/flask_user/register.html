@@ -47,7 +47,7 @@
     {{ render_submit_field(form.submit, tabindex=280) }}
     <br/>
     <br/>
-    <p align="center">点击“创建账号”即表示我同意并接受<a href="/user-agreement/" rel="external">用户协议<i class="glyphicon glyphicon-new-window"></i></a></p>
+    <p align="center">点击“创建账号”即表示我同意并接受<a href="{{ url_for('wuaiwow.user_agreement') }}" rel="external">用户协议<i class="glyphicon glyphicon-new-window"></i></a></p>
 </form>
 
 {% endblock %}
