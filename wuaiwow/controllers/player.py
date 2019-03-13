@@ -16,7 +16,7 @@ from wuaiwow.utils.templateHelper import template_by_role
 # from wuaiwow.utils.templateHelper import template_by_role, random_prompt
 from wuaiwow.utils.modelHelper import (level_by_permission_value, time_by_level, get_permission_num,
                                        get_permission_by_role, get_permission_by_level, find_all_roles,
-                                       permission_value_by_level, get_message_by_index_num)
+                                       permission_value_by_level, get_user_messages, get_user_new_messages_num)
 # from wuaiwow.utils.playersHelper import (update_wowaccount, update_wowaccount_characters,
 #                                          find_or_create_character)
 # from wuaiwow.models import (Characters, AlivePrompt, LevelPrompt, RacePrompt,
@@ -34,14 +34,13 @@ bp = Blueprint('player', __name__, url_prefix='/')
 @login_required
 def user_account():
 
-    gen = (msg for msg in current_user.messages if not msg.is_read)
-    cnt = len(list(gen))
+    unread_message_num = get_user_new_messages_num(current_user)
     template_name = template_by_role(current_user, 'custom/cms/player_profile.html',
                                                    'custom/cms/gm_profile.html',
                                                    'custom/cms/admin_profile.html')
     return render_template(template_name,
                            user=current_user,
-                           unread_cnt=cnt,
+                           unread_cnt=unread_message_num,
                            profile='class=active')
 
 
@@ -49,12 +48,13 @@ def user_account():
 @login_required
 def user_message():
 
-
+    all_message = get_user_messages(current_user)
     template_name = template_by_role(current_user, 'custom/cms/player_message.html',
                                                    'custom/cms/gm_message.html',
                                                    'custom/cms/admin_message.html')
     return render_template(template_name,
                            user=current_user,
+                           msglist=enumerate(all_message),
                            usermsg='class=active')
 
 

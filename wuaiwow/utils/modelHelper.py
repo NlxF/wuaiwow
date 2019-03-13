@@ -368,7 +368,8 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
         user = None
 
     if not user and need_create:
-        user = User(email=email, username=username, password=app.user_manager.hash_password(password), active=True, confirmed_at=datetime.utcnow())
+        user = User(email=email, username=username, password=app.user_manager.hash_password(password), active=True,
+                    confirmed_at=datetime.utcnow())
         created, user.permission = find_or_create_permission(permission)
         db.session.add(user)
         db.session.commit()
@@ -535,23 +536,29 @@ def get_latest_agreement_info():
     return agreement
 
 
-def get_message_by_index_num(index=0, number=0):
+def get_user_messages(user, index=0, number=0):
     """
-        返回按时间倒序的从index索引开始的number个message
+        返回指定user按时间倒序的从index索引开始的number个message
     """
-    if index < 0 or number < 0:
+    if not user or user.is_anonymous or index < 0 or number < 0:
         return tuple()
     # noinspection PyBroadException
     try:
-        # all_news = News.query.order_by(News.created.desc()).options(News.cache.from_cache()).all()
         if index == 0 and number == 0:
-            all_news = News.query.order_by(News.created.desc()).all()
+            all_message = user.messages
         else:
-            all_news = News.query.order_by(News.created.desc()).all()[index:index+number]
+            all_message = user.messages[index:index+number]
     except Exception as e:
-        all_news = tuple()
+        all_message = tuple()
 
-    return all_news
+    return all_message
+
+
+def get_user_new_messages_num(user):
+    """
+        返回用户未读消息数量
+    """
+    return len(list((new_msg for new_msg in get_user_messages(user) if not new_msg.has_read)))
 
 
 # __builtin__.__dict__.update(locals())
