@@ -144,7 +144,7 @@ class User(db.Model, UserMixin):
     money = db.Column(db.Integer, nullable=False, default=literal(100))
 
     # user permission
-    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', ondelete='CASCADE'))  # one user only one perm
+    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', ondelete='CASCADE'), default=literal(1))  # one user only one perm
 
     # user login information
     ips = db.relationship('UserIp', order_by=desc(UserIp.login_time), backref="user", lazy='dynamic')
@@ -257,6 +257,7 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Unicode(512), nullable=False, default=u'无题')
     content = db.Column(db.Text, nullable=True)
+    has_read = db.Column('has_read', db.Boolean, nullable=False, default=literal(False))
     created = db.Column(db.DateTime, default=db.func.now())
 
     def __repr__(self):

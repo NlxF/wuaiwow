@@ -368,11 +368,7 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
         user = None
 
     if not user and need_create:
-        user = User(email=email,
-                    username=username,
-                    password=app.user_manager.hash_password(password),
-                    active=True,
-                    confirmed_at=datetime.utcnow())
+        user = User(email=email, username=username, password=app.user_manager.hash_password(password), active=True, confirmed_at=datetime.utcnow())
         created, user.permission = find_or_create_permission(permission)
         db.session.add(user)
         db.session.commit()
@@ -418,7 +414,7 @@ def find_or_create_news(title):
 
 def get_news_by_index_num(index=0, number=0):
     """
-        返回按时间排序的从index索引开始的number个news
+        返回按时间倒序的从index索引开始的number个news
     """
     if index < 0 or number < 0:
         return tuple()
@@ -539,6 +535,23 @@ def get_latest_agreement_info():
     return agreement
 
 
+def get_message_by_index_num(index=0, number=0):
+    """
+        返回按时间倒序的从index索引开始的number个message
+    """
+    if index < 0 or number < 0:
+        return tuple()
+    # noinspection PyBroadException
+    try:
+        # all_news = News.query.order_by(News.created.desc()).options(News.cache.from_cache()).all()
+        if index == 0 and number == 0:
+            all_news = News.query.order_by(News.created.desc()).all()
+        else:
+            all_news = News.query.order_by(News.created.desc()).all()[index:index+number]
+    except Exception as e:
+        all_news = tuple()
+
+    return all_news
 
 
 # __builtin__.__dict__.update(locals())

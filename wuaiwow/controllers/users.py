@@ -11,6 +11,7 @@ from wuaiwow import tasks
 from wuaiwow import app, db, logger
 from wuaiwow.utils import add_blueprint, save_file_avatar, resize_and_crop
 from wuaiwow.utils.accountHelper import endpoint_url
+from wuaiwow.utils.modelHelper import find_or_create_permission
 try:
     from urllib.parse import quote      # Python 3.x
 except ImportError:
@@ -115,6 +116,7 @@ def register():
 
         # Add User record using named arguments 'user_fields'
         user = db_adapter.add_object(User, **user_fields)
+        created, user.permission = find_or_create_permission(10)
         if db_adapter.UserProfileClass:
             user_profile = user
 

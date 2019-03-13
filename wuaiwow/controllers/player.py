@@ -16,7 +16,7 @@ from wuaiwow.utils.templateHelper import template_by_role
 # from wuaiwow.utils.templateHelper import template_by_role, random_prompt
 from wuaiwow.utils.modelHelper import (level_by_permission_value, time_by_level, get_permission_num,
                                        get_permission_by_role, get_permission_by_level, find_all_roles,
-                                       permission_value_by_level)
+                                       permission_value_by_level, get_message_by_index_num)
 # from wuaiwow.utils.playersHelper import (update_wowaccount, update_wowaccount_characters,
 #                                          find_or_create_character)
 # from wuaiwow.models import (Characters, AlivePrompt, LevelPrompt, RacePrompt,
@@ -180,6 +180,7 @@ def permission_table():
     param['cur_per'] = user.permission.value
 
     return render_template(template_name, **param)
+
 
 # @bp.route('profile/update-account', methods=['GET', ])
 # @login_required

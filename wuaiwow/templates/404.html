@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
+{% extends "layout/base_layout.html" %}
 
 {% block title %}
-<title>BanYG360|Not-Found</title>
+<title>吾爱魔兽|Not-Found</title>
 {% endblock %}
 
-{% block custom_css %}
+{% block headstyle %}
     <style type=text/css>
     body, html {
       height: 100%;
@@ -54,6 +54,5 @@
     <p>{%trans%} Return to {%endtrans%}<a href=/>{%trans%}home page{%endtrans%}</a>
 {% endblock %}
 
-{% block footer %}
-{% include "footer.html" %}
+{% block bottom %}
 {% endblock %}

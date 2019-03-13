@@ -25,6 +25,20 @@ CACHE_REDIS_DB             = 0
 CACHE_REDIS_PASSWORD       = ""
 CACHE_DEFAULT_TIMEOUT      = 60 * 15          # flask_cache  15分钟缓存失效
 
+# OnlineHelper setting
+ONLINE_DB = 1
+# 在线状态持续间隔
+ONLINE_LAST_MINUTES = 5
+# 在线记录间隔
+ONLINE_RECORD_INTERVAL = 10
+# ONLINE_USER_PREFIX = ''
+# ONLINE_VISITOR_PREFIX = ''
+# ONLINE_ALL_USER_PREFIX = ''
+# ONLINE_ALL_VISITOR_PREFIX = ''
+# 两次刷新的有效时间间隔(秒)
+ONLINE_PAGE_REFRESH_MIN = 15
+ONLINE_PAGE_REFRESH_MAX = ONLINE_LAST_MINUTES * 60
+
 # Flask settings                     # Generated with: import os; os.urandom(24)
 SECRET_KEY = "\xcdG\xe8\xc0\x05\xfb\x87\x0f\xc6$o\xdb`k\n\x18\xebB\xeb\x0cm\xf6'\x92"
 # PLEASE USE A DIFFERENT KEY FOR PRODUCTION ENVIRONMENTS!
@@ -32,7 +46,7 @@ SECRET_KEY = "\xcdG\xe8\xc0\x05\xfb\x87\x0f\xc6$o\xdb`k\n\x18\xebB\xeb\x0cm\xf6'
 # Flask-Mail settings
 MAIL_USERNAME = 'it1780@sina.com' #'wuaiwow@gmail.com'
 MAIL_PASSWORD = 'luxiaofei3517'
-MAIL_DEFAULT_SENDER = '"wuaiWow" <it1780@sina.com>'
+MAIL_DEFAULT_SENDER = '"吾爱魔兽" <it1780@sina.com>'
 MAIL_SERVER = 'smtp.sina.com'
 MAIL_PORT = 587       #25
 #MAIL_USE_SSL = True  #465
@@ -50,7 +64,7 @@ DB = {'host': 'www-database',
       }
 
 # lserver setting
-LSERVER_HOST = '127.0.0.1'
+LSERVER_HOST = 'docker.for.mac.localhost'
 LSERVER_PORT = 8083
 
 # 与lserver 通信是否需要加密

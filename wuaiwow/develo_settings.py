@@ -60,7 +60,7 @@ DB = {'host': '127.0.0.1',
 
 
 # lserver setting
-LSERVER_HOST = '192.168.1.7'
+LSERVER_HOST = '127.0.0.1'
 LSERVER_PORT = 8083
 
 # 与lserver 通信是否需要加密

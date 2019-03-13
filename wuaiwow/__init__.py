@@ -152,6 +152,7 @@ def create_app(need_default_data=False, test=False):
     # mysql setting
     global db
     db = UnlockedReadAlchemy(app, use_native_unicode='utf8')
+    db.session.expire_on_commit = False
 
     # redis cache setting
     global cache

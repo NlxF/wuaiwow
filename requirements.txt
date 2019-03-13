@@ -16,8 +16,8 @@ Pillow
 cffi
 MySQL-python
 SQLAlchemy
-dogpile.cache==0.5.4
-dogpile.core==0.4.1
+# dogpile.cache==0.5.4
+# dogpile.core==0.4.1
 # uwsgi>2.0.2
 redis
 gevent

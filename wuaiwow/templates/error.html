@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout/base_layout.html" %}
 
 {% block title %}
 {% include "title.html" %}
@@ -9,6 +9,5 @@
     {{ error_message }}
 {% endblock %}
 
-{% block footer %}
-{% include "footer.html" %}
+{% block bottom %}
 {% endblock %}

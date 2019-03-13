@@ -22,15 +22,15 @@ class SocksPool(object):
         return self.queue.empty()
 
     def put(self, item, block=True, timeout=None):
-        # if not item.broken:
-        #     logger.info('Put sock(%d) into queue(%d).' % (item.sock.fileno(), id(self.queue)))
-        #     item.connected = False
-        #     self.queue.put(item=item, block=block, timeout=timeout)
-        # else:
-        #     item.close()
-        #     del item
-        item.close()
-        del item
+        if not item.broken:
+            logger.info('Put sock(%d) into queue(%d).' % (item.sock.fileno(), id(self.queue)))
+            item.connected = False
+            self.queue.put(item=item, block=block, timeout=timeout)
+        else:
+            item.close()
+            del item
+        # item.close()
+        # del item
 
     def get(self, block=True, timeout=None):
         try:

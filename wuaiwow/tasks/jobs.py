@@ -47,7 +47,7 @@ class JobTask(celery.Task):
             db.session.commit()
 
 
-@celery.task(base=JobTask, max_retries=1)
+# @celery.task(base=JobTask, max_retries=1)
 def create_account(username, password):
     """
     创建wow账号但是没有激活,
@@ -81,7 +81,7 @@ def create_account(username, password):
     return rst
 
 
-@celery.task(base=JobTask, max_retries=1)
+# @celery.task(base=JobTask, max_retries=1)
 def delete_account(username):
     """
     删除指定账号
@@ -112,7 +112,7 @@ def delete_account(username):
     return rst
 
 
-@celery.task(base=JobTask, max_retries=2)
+# @celery.task(base=JobTask, max_retries=2)
 def send_registered_email(user, user_email, require_email_confirmation=True):
     try:
         user_manager = current_app.user_manager
@@ -128,13 +128,14 @@ def send_registered_email(user, user_email, require_email_confirmation=True):
 
             return 'send successfully.'
     except Exception as exc:
-        raise send_registered_email.retry(exc=exc, countdown=retry_delay(send_registered_email.request.retries))
+        raise
+        # raise send_registered_email.retry(exc=exc, countdown=retry_delay(send_registered_email.request.retries))
 
     return 'ok'
 
 
-@celery.task(base=JobTask, bind=True, max_retries=2)
-def active_account(self, username):
+# @celery.task(base=JobTask, bind=True, max_retries=2)
+def active_account(username):
     """
     激活wow账号
 
@@ -159,14 +160,15 @@ def active_account(self, username):
             rst = _result_handler(1)
     except Exception as exc:
         socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
 
     socksPool.put(sock)
     return rst
 
 
-@celery.task(base=JobTask, bind=True, max_retries=1)
-def change_pwd(self, username, password):
+# @celery.task(base=JobTask, bind=True, max_retries=1)
+def change_pwd(username, password):
     """
     修改密码
 
@@ -192,7 +194,8 @@ def change_pwd(self, username, password):
             rst = _result_handler(1)
     except Exception as exc:
         socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
 
     socksPool.put(sock)
     return rst
@@ -230,6 +233,7 @@ def query_account(account):
     socksPool.put(sock)
     return rst
 
+
 def query_characters(guid):
     """
     查询角色信息
@@ -260,8 +264,8 @@ def query_characters(guid):
     return rst
 
 
-@celery.task(base=JobTask, bind=True)
-def level_character(self, name, level):
+# @celery.task(base=JobTask, bind=True)
+def level_character(name, level):
     """
     提升角色等级
 
@@ -286,13 +290,15 @@ def level_character(self, name, level):
             rst = _result_handler(1)
     except Exception as exc:
         socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
 
     socksPool.put(sock)
     return rst
 
-@celery.task(base=JobTask, bind=True)
-def change_gender(self, name):
+
+# @celery.task(base=JobTask, bind=True)
+def change_gender(name):
     """
     自定义角色,主要是更改性别
 
@@ -316,14 +322,15 @@ def change_gender(self, name):
             rst = _result_handler(1)
     except Exception as exc:
         socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
 
     socksPool.put(sock)
     return rst
 
 
-@celery.task(base=JobTask, bind=True)
-def change_race(self, name):
+# @celery.task(base=JobTask, bind=True)
+def change_race(name):
     """
     更换种族,(同一阵营的)
 
@@ -347,14 +354,15 @@ def change_race(self, name):
             rst = _result_handler(1)
     except Exception as exc:
         socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
 
     socksPool.put(sock)
     return rst
 
 
-@celery.task(base=JobTask, bind=True, max_retries=1)
-def send_money(self, name, subject, text, money):
+# @celery.task(base=JobTask, bind=True, max_retries=1)
+def send_money(name, subject, text, money):
     """
     以邮件形式送钱
 
@@ -382,13 +390,15 @@ def send_money(self, name, subject, text, money):
             rst = _result_handler(1)
     except Exception as exc:
         socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
 
     socksPool.put(sock)
     return rst
 
-@celery.task(base=JobTask, bind=True)
-def update_account_by_name(self, username):
+
+# @celery.task(base=JobTask, bind=True)
+def update_account_by_name(username):
     all_success = True
     opt, json_data = query_account(username)
     if opt:
@@ -410,40 +420,7 @@ def update_account_by_name(self, username):
     return rst
 
 
-@celery.task(base=JobTask, bind=True, max_retries=3)
-def update_permission_table(self, command_list):
-    """
-    更新game server端的permission表
-
-    @param self 绑定为当前对象
-    @param command_list 命令数组, 为[(value1, role1, label1),...]
-    """
-    try:
-        sock = socksPool.get()
-
-        cmd = [[{'op': '13'}, {'role': str(l[1])}, {'label': l[2]}, {'value': str(l[0])}] for l in command_list if isinstance(l, tuple) and len(l) == 3]
-
-        json_data = _assembly_request(cmd)
-        if json_data:
-            rst = sock.send_command(json_data)
-            if rst[0]:
-                response = sock.receive_data(timeout_in_seconds=wait_for_response_time_out)
-                if response[0]:
-                    dict_resp = json.loads(response[-1])
-                    rst = _result_handler(dict_resp)
-                else:
-                    rst = response
-        else:
-            rst = _result_handler(1)
-    except Exception as exc:
-        socksPool.put(sock)
-        raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
-
-    socksPool.put(sock)
-    return rst
-
-
-@celery.task(base=JobTask, max_retries=0, name='update-account-permission')  # max_retries 为尝试的次数，不包括首次
+# @celery.task(base=JobTask, max_retries=0, name='update-account-permission')  # max_retries 为尝试的次数，不包括首次
 def update_account_permission(command_list):
     """
     更新game server端的account-permission表
@@ -472,7 +449,43 @@ def update_account_permission(command_list):
     except Exception as exc:
         socksPool.put(sock)
         logger.error('{0} raise a exception: {1}, try again'.format(update_account_permission.name, exc.message))
-        raise update_account_permission.retry(exc=exc, countdown=retry_delay(update_account_permission.request.retries))
+        raise
+        # raise update_account_permission.retry(exc=exc, countdown=retry_delay(update_account_permission.request.retries))
 
     socksPool.put(sock)
     return rst
+
+
+# @celery.task(base=JobTask, bind=True, max_retries=3)
+def update_permission_table(command_list):
+    """
+    更新game server端的permission表
+
+    @param self 绑定为当前对象
+    @param command_list 命令数组, 为[(value1, role1, label1),...]
+    """
+    try:
+        sock = socksPool.get()
+
+        cmd = [[{'op': '13'}, {'role': str(l[1])}, {'label': l[2]}, {'value': str(l[0])}] for l in command_list if isinstance(l, tuple) and len(l) == 3]
+
+        json_data = _assembly_request(cmd)
+        if json_data:
+            rst = sock.send_command(json_data)
+            if rst[0]:
+                response = sock.receive_data(timeout_in_seconds=wait_for_response_time_out)
+                if response[0]:
+                    dict_resp = json.loads(response[-1])
+                    rst = _result_handler(dict_resp)
+                else:
+                    rst = response
+        else:
+            rst = _result_handler(1)
+    except Exception as exc:
+        socksPool.put(sock)
+        raise
+        # raise self.retry(exc=exc, countdown=retry_delay(self.request.retries))
+
+    socksPool.put(sock)
+    return rst
+
