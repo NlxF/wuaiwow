@@ -1,6 +1,6 @@
 {% from "flask_user/_macros.html" import render_field, render_submit_field %}
 
-<div class="row" style="height:600px; width:auto">
+<div class="row message_frame" style="height:600px; width:auto">
     <iframe allowfullscreen style="height:570px; width:690px" src="{{ url_for('player.user_message_list') }}"
             name="messages_iframe" id="messages_iframe" frameborder=0 scrolling="auto" hidefocus="true">
 	</iframe>

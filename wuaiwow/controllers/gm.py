@@ -113,6 +113,34 @@ def add_tutorial():
                            result=result_info)
 
 
+# @bp.route('/add-message', methods=['GET', 'POST'])
+# @login_required
+# @permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+# def add_message():
+#     if request.method == 'POST':
+#         guild_info = request.form['guildinfotext']
+#         guild = create_guild_info(info=guild_info)
+#         try:
+#             db.session.add(guild)
+#             db.session.commit()
+#         except Exception, e:
+#             result_info = {'retCode': 0, 'retMsg': u'更新失败,再试下'}
+#         else:
+#             result_info = {'retCode': 1, 'retMsg': u'更新成功'}
+#     else:
+#         result_info = {}
+#         guild = get_latest_guild_info()
+#         guild_info = guild.info if guild else ' '
+#
+#     template_name = template_by_role(current_user, 'custom/cms/gm_add_message.html',
+#                                                    'custom/cms/admin_add_message.html')
+#     return render_template(template_name,
+#                            user=current_user,
+#                            addtutorial='class=active',
+#                            guild_info=guild_info,
+#                            result=result_info)
+
+
 @csrf.exempt
 @bp.route('upload/images', methods=['POST', 'OPTIONS'])
 @login_required

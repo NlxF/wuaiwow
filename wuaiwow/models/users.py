@@ -110,7 +110,7 @@ class UserMessage(db.Model):
     """
     __tablename__ = 'user_message_association'
     id = db.Column(db.Integer, primary_key=True)
-    is_read = db.Column('is_read', db.Boolean, nullable=False, default=False)
+    has_read = db.Column('has_read', db.Boolean, nullable=False, default=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     message_id = db.Column(db.Integer, db.ForeignKey('message.id'))
@@ -257,7 +257,6 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Unicode(512), nullable=False, default=u'无题')
     content = db.Column(db.Text, nullable=True)
-    has_read = db.Column('has_read', db.Boolean, nullable=False, default=literal(False))
     created = db.Column(db.DateTime, default=db.func.now())
 
     def __repr__(self):

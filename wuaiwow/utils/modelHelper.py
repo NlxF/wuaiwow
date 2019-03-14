@@ -545,9 +545,9 @@ def get_user_messages(user, index=0, number=0):
     # noinspection PyBroadException
     try:
         if index == 0 and number == 0:
-            all_message = user.messages
+            all_message = user.messages.all()
         else:
-            all_message = user.messages[index:index+number]
+            all_message = user.messages.all()[index:index+number]
     except Exception as e:
         all_message = tuple()
 

@@ -5,7 +5,7 @@ from flask_user import emails
 from wuaiwow.utils.socketConnect.socksPool import socksPool, result_handler as _result_handler
 from wuaiwow.utils.socketConnect.wowSocket import assembly_request as _assembly_request
 from wuaiwow.utils.playersHelper import update_wowaccount, update_wowaccount_characters
-from wuaiwow import celery, db, celery_logger, logger
+# from wuaiwow import celery, db, celery_logger, logger
 from wuaiwow.models import TaskResult
 
 wait_for_response_time_out = 3
@@ -21,30 +21,30 @@ def retry_delay(ts):
     return 3 * 5 ** ts      # * 60
 
 
-class JobTask(celery.Task):
-    """
-        继承的Task类,用来定义成功或者失败时的动作
-    """
-
-    def on_success(self, retval, task_id, args, kwargs):
-        celery_logger.info("task success")
-        task = TaskResult.query.filter(TaskResult.task_id == task_id).first()
-        if task:
-            task.status = True
-            db.session.add(task)
-            db.session.commit()
-
-    def on_failure(self, exc, task_id, args, kwargs, einfo):
-        celery_logger.error("task failed")   # , exc:{0}, args:{1}, kwargs:{2}".format(exc, args, kwargs))
-        if isinstance(exc, Exception):
-            task = TaskResult(task_id=task_id,
-                              task_name=self.name,
-                              args=json.dumps(args),
-                              kwargs=json.dumps(kwargs),
-                              err_code=exc.errno,
-                              exc_msg=exc.message)
-            db.session.add(task)
-            db.session.commit()
+# class JobTask(celery.Task):
+#     """
+#         继承的Task类,用来定义成功或者失败时的动作
+#     """
+#
+#     def on_success(self, retval, task_id, args, kwargs):
+#         celery_logger.info("task success")
+#         task = TaskResult.query.filter(TaskResult.task_id == task_id).first()
+#         if task:
+#             task.status = True
+#             db.session.add(task)
+#             db.session.commit()
+#
+#     def on_failure(self, exc, task_id, args, kwargs, einfo):
+#         celery_logger.error("task failed")   # , exc:{0}, args:{1}, kwargs:{2}".format(exc, args, kwargs))
+#         if isinstance(exc, Exception):
+#             task = TaskResult(task_id=task_id,
+#                               task_name=self.name,
+#                               args=json.dumps(args),
+#                               kwargs=json.dumps(kwargs),
+#                               err_code=exc.errno,
+#                               exc_msg=exc.message)
+#             db.session.add(task)
+#             db.session.commit()
 
 
 # @celery.task(base=JobTask, max_retries=1)

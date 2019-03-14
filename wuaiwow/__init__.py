@@ -25,9 +25,10 @@ csrf = None
 cache = None
 logger = None
 onlineHelper = None
-celery = make_celery(app)
-celery_logger = get_task_logger(__name__)       # celery logger
-max_online_record = None
+# celery = make_celery(app)
+# celery_logger = get_task_logger(__name__)       # celery logger
+max_online_user_num = -1
+max_online_occ_time = None
 
 # @app.before_first_request
 # def initialize_app_on_first_request():
@@ -67,8 +68,8 @@ def online_setup():
         visitor, register, need_refresh, number, member, occ_time, interval = onlineHelper.get_online_users_record()
         all_online_users = visitor + register
 
-        global max_online_record
-        if max_online_record and max_online_record.online_user_num < all_online_users:
+        global max_online_user_num, max_online_occ_time
+        if max_online_user_num < all_online_users:
             need_refresh = True
 
         if need_refresh:
@@ -79,14 +80,16 @@ def online_setup():
             db.session.add(user_on)
             db.session.commit()
 
-        if need_refresh or not max_online_record:
+        if need_refresh or max_online_user_num<0:
             max_online_record = UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).first()
+            max_online_user_num = max_online_record.online_user_num
+            max_online_occ_time = max_online_record.occ_time
 
         g.online_users_msg = {'all': all_online_users,
                               'register' : register,
                               'visitor'  : visitor,
-                              'max_num'  : max_online_record.online_user_num if max_online_record else register+visitor,
-                              'occ_time' : max_online_record.occ_time if max_online_record else datetime.fromtimestamp(int(occ_time)),
+                              'max_num'  : max_online_user_num if max_online_user_num > 0 else register+visitor,
+                              'occ_time' : max_online_occ_time if max_online_occ_time else datetime.fromtimestamp(int(occ_time)),
                               'time_zone': time.strftime("%z")}   #u"中国标准时间" }
 
 
@@ -174,7 +177,7 @@ def create_app(need_default_data=False, test=False):
     csrf = CSRFProtect(app=app)
 
     # celery setting
-    celery.conf.update(app.config)	 # 更新 celery 的配置
+    # celery.conf.update(app.config)	 # 更新 celery 的配置
 
     # load blueprints
     register_blueprints()

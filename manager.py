@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-from wuaiwow import create_app, celery
+from wuaiwow import create_app # , celery
 app = create_app()
 from wuaiwow import db
 from flask_script import Manager

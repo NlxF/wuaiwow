@@ -2,12 +2,12 @@
 	<div class="span8">
 		<div class="widget">
 			<div class="widget-header">
-				<h3>添加/编辑新闻</h3>
+				<h3>添加消息</h3>
 			</div> <!-- /widget-header -->
             <div class="widget-content">
                 <fieldset>
-                    <div class="select-button scrollable">  <!-- custom-select -->
-                    <select size="6" id="news-edit-selector" class="form-control">
+                    <div class="select-button custom-select">
+                    <select id="news-edit-selector" class="form-control">
                         {% for idx, title in  titles %}
                         <option value="{{title}}">{{title}}</option>
                         {% endfor %}

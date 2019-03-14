@@ -16,3 +16,13 @@ hr { border-color: #cccccc; margin: 0px; }
 .with-margins { margin: 10px; }
 
 .col-centered { float: none; margin: 0 auto; }
+
+.scrollable{
+   overflow: auto;
+   /*width: 70px; !* adjust this width depending to amount of text to display *!*/
+   height: 150px; /* adjust height depending on number of options to display */
+   border: 1px silver solid;
+ }
+ .scrollable select{
+   border: none;
+ }

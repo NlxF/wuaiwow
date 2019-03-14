@@ -31,7 +31,7 @@ def _jinja2_filter_timespan(date):
 
 @app.template_filter('struct')
 def _jinja2_filter_struct(msg):
-    if msg.is_read:
+    if msg.has_read:
         return "openenvelope"
     else:
         return "closenvelope"
@@ -39,7 +39,7 @@ def _jinja2_filter_struct(msg):
 
 @app.template_filter('isread')
 def _jinja2_filter_isread(msg):
-    if msg.is_read:
+    if msg.has_read:
         return "glyphicon glyphicon-eye-open"
     else:
         return "glyphicon glyphicon-eye-close"

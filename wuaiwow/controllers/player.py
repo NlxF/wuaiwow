@@ -47,14 +47,13 @@ def user_account():
 @bp.route('user/all/message', methods=['GET', ])
 @login_required
 def user_message():
-
-    all_message = get_user_messages(current_user)
+    unread_message_num = get_user_new_messages_num(current_user)
     template_name = template_by_role(current_user, 'custom/cms/player_message.html',
                                                    'custom/cms/gm_message.html',
                                                    'custom/cms/admin_message.html')
     return render_template(template_name,
                            user=current_user,
-                           msglist=enumerate(all_message),
+                           unread_cnt=unread_message_num,
                            usermsg='class=active')
 
 
@@ -62,9 +61,11 @@ def user_message():
 @login_required
 def user_message_list():
     if request.method == 'GET':
-        message_list = current_user.messages.all()
+        message_list = get_user_messages(current_user)
+        unread_message_num = len(list((new_msg for new_msg in message_list if not new_msg.has_read)))
         return render_template('custom/cms/profile_title_message_list.html',
-                               mlist=enumerate(message_list))
+                               unread_cnt=unread_message_num,
+                               msglist=enumerate(message_list))
 
 
 @bp.route('message/details/<int:index>', methods=['GET', ])
@@ -72,24 +73,19 @@ def user_message_list():
 def get_message_content(index):
 
     index -= 1
-    all_message = (msg.message for msg in current_user.messages)
-    message_list = list(all_message)
     err_handle = lambda : {'title':   u'索引无效',
                            'content': u'不是有效的索引，请返回重新查询',
                            'created': datetime.datetime.now()
                            }
-    if index < 0 or index >= len(message_list):
+    try:
+        associate = current_user.messages.all()[index]
+        message = associate.message
+    except IndexError:
         message = err_handle()
     else:
-        try:
-            message = message_list[index]
-        except IndexError:
-            message = err_handle()
-        else:
-            associate = message.users_assocs[0]
-            associate.is_read = True
-            db.session.add(associate)
-            db.session.commit()
+        associate.has_read = True
+        db.session.add(associate)
+        db.session.commit()
 
     template_name = 'custom/cms/profile_title_message_content.html'
     return render_template(template_name, message=message)
