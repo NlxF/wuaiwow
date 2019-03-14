@@ -2,52 +2,12 @@
 import re
 import datetime
 from wuaiwow import db
-from wuaiwow.models import Characters, User, Message, UserMessage
+from wuaiwow.models import Characters, User
 
 
 def get_user_by_name(name):
     user = User.query.filter(User.username == name).first()
     return user
-
-
-def find_or_create_message(title, content):
-    if not title or not content:
-        return None
-
-    try:
-        # sd = Sidebar.query.filter(Sidebar.name == name).options(Sidebar.cache.from_cache()).first()
-        msg = Message.query.filter(Message.title == title).first()
-    except Exception as e:
-        msg = None
-
-    if not msg:
-        msg = Message(title=title, content=content)
-        db.session.add(msg)
-
-    return msg
-
-
-def add_user_message(user, msgList):
-    """
-        添加消息到指定的用户
-    """
-    if not user or user.is_anonymous or not msgList:
-        return False
-
-    for msg in msgList:
-        msg_obj = None
-        if isinstance(msg, tuple) or isinstance(msg, list):
-            msg_obj = find_or_create_message(msg[0], msg[-1])
-        elif isinstance(msg, Message):
-            msg_obj = msg
-
-        if msg_obj:
-            associate = UserMessage()
-            associate.has_read = False
-            associate.message = msg_obj
-            user.messages.append(associate)
-
-    db.session.add(user)
 
 
 def find_or_create_character(user, chname):

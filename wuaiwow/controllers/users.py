@@ -12,6 +12,7 @@ from wuaiwow import app, db, logger
 from wuaiwow.utils import add_blueprint, save_file_avatar, resize_and_crop
 from wuaiwow.utils.accountHelper import endpoint_url
 from wuaiwow.utils.modelHelper import find_or_create_permission
+from wuaiwow.utils.messageHelper import add_new_register_message, add_reset_password_message, add_change_password_message
 try:
     from urllib.parse import quote      # Python 3.x
 except ImportError:
@@ -245,6 +246,7 @@ def active_use(sender, user, **extra):
         flash(_("lserver:Account activation failed"), 'error')
     else:
         flash(_('account activation succeeded'))
+        add_new_register_message(user)
 
 
 @bp.route('/reset-password/<token>', methods=['GET', 'POST'])
