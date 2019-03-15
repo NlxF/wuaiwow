@@ -89,18 +89,18 @@
                             <li>
                                 <div id="username">
                                     <div class="dropdown pull-right">
-                                        {% if user and user.is_authenticated %}
-                                            <a class="nav-link username username--loggedout needsclick dropdown-toggle" data-toggle="dropdown" rel="navbar">{{ user.username }}<b class="caret"></b></a>
+                                        {% if g.user and g.user.is_authenticated %}
+                                            <a class="nav-link username username--loggedout needsclick dropdown-toggle" data-toggle="dropdown" rel="navbar">{{ g.user.username }}<b class="caret"></b></a>
                                         {% else %}
                                             <a class="nav-link username username--loggedout needsclick dropdown-toggle" data-toggle="dropdown" rel="navbar">您的通行证<b class="caret"></b></a>
                                         {% endif %}
                                         <div class="dropdown-menu">
                                             <div class="user-profile">
-                                                {% if user and user.is_authenticated %}
+                                                {% if g.user and g.user.is_authenticated %}
                                                 <div class="dropdown-section">
                                                     <ul class="nav-list">
                                                         <li>
-                                                            <a class="nav-item nav-a nav-item-box " href="/user/account"><i class="nav-icon-24-blue nav-icon-character-cog"></i> 账号</a>
+                                                            <a class="nav-item nav-a nav-item-box " href="{{ url_for('player.user_account') }}"><i class="nav-icon-24-blue nav-icon-character-cog"></i> 账号</a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -125,7 +125,7 @@
                                 </div>
                             </li>
                             <li>
-                                <a id="nav-client-support-link" class="nav-item nav-link needsclick" href="/donate" data-analytics="global-nav" data-analytics-placement="Nav - Support"> 捐赠 </a>
+                                <a id="nav-client-support-link" class="nav-item nav-link needsclick" href="{{ url_for('wuaiwow.donate') }}" data-analytics="global-nav" data-analytics-placement="Nav - Support"> 捐赠 </a>
                             </li>
                         </ul>
                     </div>

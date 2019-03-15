@@ -12,6 +12,8 @@ def create_all_permissions(permission_config):
         role_obj = get_role_by_name(role=role[1])
         if not role_obj:
             role_obj = create_role(role=role[1], label=role[2])
+
+
         created, ps = find_or_create_permission(value=role[0], need_created=True, role=role_obj)
         permissions.append(ps)
     return permissions

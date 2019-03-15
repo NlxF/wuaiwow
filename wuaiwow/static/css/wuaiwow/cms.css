@@ -835,8 +835,8 @@ input {
 
 	position: relative;
 
-	height: 40px;
-	line-height: 40px;
+	height: 30px;
+	line-height: 30px;
 
 	background: #E9E9E9;
 	background:-moz-linear-gradient(top, #FAFAFA 0%, #E9E9E9 100%); /* FF3.6+ */

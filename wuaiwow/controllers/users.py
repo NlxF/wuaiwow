@@ -227,7 +227,8 @@ def change_password():
                 # signals.user_changed_password.send(current_app._get_current_object(), user=current_user)
 
                 # Prepare one-time system message
-                flash(_('Your password has been changed successfully.'), 'success')
+                # flash(_('Your password has been changed successfully.'), 'success')
+                add_change_password_message(current_user)
 
                 # Redirect to 'next' URL
                 return redirect(form.next.data)
@@ -245,7 +246,7 @@ def active_use(sender, user, **extra):
     except Exception, e:
         flash(_("lserver:Account activation failed"), 'error')
     else:
-        flash(_('account activation succeeded'))
+        # flash(_('account activation succeeded'))
         add_new_register_message(user)
 
 
@@ -312,7 +313,8 @@ def reset_password(token):
                 emails.send_password_changed_email(user)
 
             # Prepare one-time system message
-            flash(_("Your password has been reset successfully."), 'success')
+            # flash(_("Your password has been reset successfully."), 'success')
+            add_reset_password_message(current_user)
 
             # Auto-login after reset password or redirect to login page
             next = request.args.get('next', endpoint_url(user_manager.after_reset_password_endpoint))

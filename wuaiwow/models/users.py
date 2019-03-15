@@ -54,10 +54,27 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     role = db.Column(db.String(50), nullable=False)                          # for control
     label = db.Column(db.Unicode(50), nullable=False, default=u'')           # for display purposes
-    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', ondelete='CASCADE'))   # one role to one perm
+
+    # permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', ondelete='CASCADE'))   # one role to one perm
 
     def __repr__(self):
         return "<Role: {0}>".format(self.role)
+
+
+class PermissionRole(db.Model):
+    """
+        权限-角色关系表
+    """
+    __tablename__ = 'permission_role_association'
+    id = db.Column(db.Integer, primary_key=True)
+
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id'))
+
+    role = db.relationship('Role', backref=db.backref('permission_assocs'))
+
+    def __repr__(self):
+        return '<PermissionRole: {0}>'.format(self.id)
 
 
 class Permission(db.Model):  # CacheableMixin,
@@ -70,8 +87,11 @@ class Permission(db.Model):  # CacheableMixin,
 
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.Integer, nullable=False, unique=True)               # for @permission_required()
-    roles = db.relationship('Role', backref='permission', lazy='dynamic')    # one permission have many role
-    users = db.relationship('User', backref='permission', lazy='dynamic')    # one permission for many user
+
+    roles = db.relationship('PermissionRole', order_by=desc(PermissionRole.role_id), backref=db.backref('permission'), lazy='dynamic')
+
+    # roles = db.relationship('Role', backref='permission', lazy='dynamic')    # one permission have many role
+    # users = db.relationship('User', backref='permission', lazy='dynamic')    # one permission for many user
 
     def __lt__(self, other):  # 小于
         if isinstance(other, Permission):
@@ -106,7 +126,7 @@ class Permission(db.Model):  # CacheableMixin,
 
 class UserMessage(db.Model):
     """
-        用户消息关系表
+        用户-消息关系表
     """
     __tablename__ = 'user_message_association'
     id = db.Column(db.Integer, primary_key=True)
@@ -165,6 +185,10 @@ class User(db.Model, UserMixin):
         if need_change and new_p > self.permission:
             self.change_user_permission(new_p)
             self.update_time = 0
+
+            from wuaiwow.utils.messageHelper import add_upgrade_message
+            add_upgrade_message(self)
+            db.session.commit()
 
             # 同步game server端的account-permission表
             # from wuaiwow import tasks

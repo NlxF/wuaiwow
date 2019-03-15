@@ -85,6 +85,7 @@ def online_setup():
             max_online_user_num = max_online_record.online_user_num
             max_online_occ_time = max_online_record.occ_time
 
+        g.user = current_user
         g.online_users_msg = {'all': all_online_users,
                               'register' : register,
                               'visitor'  : visitor,

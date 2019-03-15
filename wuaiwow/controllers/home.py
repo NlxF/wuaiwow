@@ -29,7 +29,6 @@ def home_page():
     first_10_news = get_news_by_index_num(index=start_idx, number=length)
     all_sidebar = get_all_sidebar()
     rsp = make_response(render_template('custom/home.html',
-                                       user=current_user,
                                        all_news=first_10_news,
                                        all_sidebar=all_sidebar*2))
     rsp.set_cookie("scount", str(len(first_10_news)))
@@ -61,7 +60,7 @@ def tutorial():
     else:
         tutorial_info = guild.info
 
-    return render_template('custom/tutorial.html', user=current_user, tutorial=tutorial_info)
+    return render_template('custom/tutorial.html', tutorial=tutorial_info)
 
 
 @bp.route('donate', methods=['GET', ])
@@ -72,7 +71,7 @@ def donate():
     else:
         donate_info = _donate.info
 
-    return render_template('custom/donate.html', user=current_user, donate=donate_info)
+    return render_template('custom/donate.html', donate=donate_info)
 
 
 @bp.route('wuaiwow/news/<int:index>/<string:title>')
@@ -81,13 +80,6 @@ def news(index, title):
     news = get_news_by_id(index)
     if news:
         recent_news = [one_news for one_news in get_news_by_index_num(0, 5) if one_news.id != news.id][0:4]    # 显示最新的4篇新闻
-        # [rst.append({'id': one_news.id,
-        #              'title': one_news.title,
-        #              'content': one_news.content,
-        #              'image': one_news.image_url,
-        #              'date': one_news.update,
-        #              'readable_date': filters.readable_elapse(one_news.update)})
-        #  for one_news in more_news]
     else:
         return abort(404)
     return render_template('custom/detail_news.html',
@@ -109,7 +101,7 @@ def user_agreement():
     else:
         content = agreement.content
 
-    return render_template('custom/agreement.html', user=current_user, content=content)
+    return render_template('custom/agreement.html', content=content)
 
 
 @user_logged_in.connect_via(app)

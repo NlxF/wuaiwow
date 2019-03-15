@@ -149,7 +149,7 @@ def permission_table():
                                            'custom/cms/gm_permission_table.html',
                                            'custom/cms/admin_permission_table.html',)
 
-    param = {'user': user, 'profile': 'class=active'}
+    param = {'profile': 'class=active'}
     # ps = get_all_permission(need_value=False)
     rs = find_all_roles(need_label=True)
     # 一个权限有多个角色

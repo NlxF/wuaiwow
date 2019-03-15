@@ -24,14 +24,14 @@
 			<div class="span3">
                 <div class="account-container">
 					<div class="account-avatar">
-						<img src="{{user.avatar}}" alt="头像" class="thumbnail">
+						<img src="{{g.user.avatar}}" alt="头像" class="thumbnail">
 					</div> <!-- /account-avatar -->
 					<div class="account-details">
-						<span class="account-name">{{user.username}}</span>
-						<span class="account-role">{{user.role_string}}</span>
+						<span class="account-name">{{g.user.username}}</span>
+						<span class="account-role">{{g.user.role_string}}</span>
 						<span class="account-actions">
                             <span>上次登录时间:</span>
-                            <span>{{user.last_login}}</span><a href="{{ url_for('users.change_password') }}"> 有疑问?立即修改密码</a>
+                            <span>{{g.user.last_login}}</span><a href="{{ url_for('users.change_password') }}"> 有疑问?立即修改密码</a>
 						</span>
 					</div> <!-- /account-details -->
 				</div>
