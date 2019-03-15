@@ -37,8 +37,6 @@ max_online_occ_time = None
 
 @app.before_request
 def online_setup():
-    # if '/sign-out' in request.path:
-    #     pass
     if '/static/' not in request.path:                          # 浏览网页时 更新在线状态
         from models.users import UserOnline                     # 登录用户更新最新在线时间
         if current_user.is_authenticated:

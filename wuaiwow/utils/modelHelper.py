@@ -7,7 +7,7 @@ import functools
 from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
 from wuaiwow import db, app, cache
-from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo, Donate, Agreement
+from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo, Donate, Agreement, PermissionRole
 
 
 # def memoize(ttl=timedelta(seconds=600)):
@@ -110,10 +110,10 @@ def get_permission_num():
     return num - 3   # 最后三个权限不能直升
 
 
-def get_all_permission(need_value=True):  # need_update
+def get_all_permission(only_value=True):
     """
         返回当前所有有效权限
-        @param need_value 是否返回value,或者本身
+        @param only_value 只返回value,或者本身
     """
 
     num = get_permission_num()               # 有效(能升级的)的所有权限
@@ -121,7 +121,7 @@ def get_all_permission(need_value=True):  # need_update
     try:
         # print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).options(UserOnline.cache.from_cache('cache_key')).first()', number=1000))
         ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
-        rst = (p.value for p in ps) if need_value else ps
+        rst = (p.value for p in ps) if only_value else ps
     except Exception as e:
         rst = list()
 
@@ -255,7 +255,7 @@ def find_all_roles(need_label=False):
         返回当前所有角色及对应的权限值[(role,value)...]或[(role,label,value)...]
         @param need_label 是否需要返回label
     """
-    ps = get_all_permission(need_value=False)
+    ps = get_all_permission(only_value=False)
 
     if need_label:
         rst = ((role.role, role.label, p.value) for p in ps for role in p.roles)
@@ -266,19 +266,16 @@ def find_all_roles(need_label=False):
 
 
 # need update
-def find_or_create_permission(value, need_created=False, role=None):
+def find_or_create_permission(value, need_created=False):
     """
         查找或新建权限
         @param need_created if need create new permission when not exist
         @param value Permission.value
-        @param role  Role obj
     """
 
     p = get_permission_by_value(value=value)
     if not p and need_created:
         p = Permission(value=value)
-        if role:
-            p.roles.append(role)
         db.session.add(p)
         return True, p
     return False, p
@@ -295,12 +292,22 @@ def add_role_to_permission(ps, role):
     if isinstance(role, basestring):
         role_obj = get_role_by_name(role=role)
 
-    if role_obj:
-        ps.roles.append(role_obj)
+    if role_obj and ps and role_obj not in (prole.role for prole in ps.roles):
+        associate = PermissionRole()
+        associate.role = role_obj
+        ps.roles.append(associate)
         db.session.add(ps)
         return True, u"添加成功"
 
     return False, u"指定角色不存在"
+
+
+def get_all_permission_role():
+    return PermissionRole.query.join(Permission).order_by(Permission.value.desc()).all()
+
+
+def get_permission_role_by_role_id(role_id):
+    return PermissionRole.query.join(Permission).filter(PermissionRole.role_id == role_id).order_by(Permission.value.desc()).all()
 
 
 def get_less_permission(value):

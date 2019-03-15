@@ -149,29 +149,43 @@ def permission_table():
                                            'custom/cms/gm_permission_table.html',
                                            'custom/cms/admin_permission_table.html',)
 
+    # param = {'profile': 'class=active'}
+    # # ps = get_all_permission(need_value=False)
+    # rs = find_all_roles(need_label=True)
+    # # 一个权限有多个角色
+    # roles = []
+    # titles = [u'值']
+    #
+    # [(titles.append(role[1]), roles.append(role[0])) for role in rs]
+    # param['titles'] = titles
+    #
+    # rows = []
+    # for level in xrange(1, get_permission_num()+1):
+    #     title_row = []
+    #     current_row = [permission_value_by_level(level)]
+    #     level_p = get_permission_by_level(level)
+    #     for role in roles:
+    #         title_p = get_permission_by_role(role)
+    #         if level_p and title_p and level_p >= title_p:
+    #             title_row.append('glyphicon glyphicon-ok')
+    #         else:
+    #             title_row.append('glyphicon glyphicon-remove')
+    #     current_row.append(tuple(title_row))
+    #     rows.append(tuple(current_row))
+    # param['rows'] = rows
+    # param['cur_per'] = user.permission.value
+
     param = {'profile': 'class=active'}
-    # ps = get_all_permission(need_value=False)
-    rs = find_all_roles(need_label=True)
-    # 一个权限有多个角色
     roles = []
     titles = [u'值']
 
+    rs = find_all_roles(need_label=True)
     [(titles.append(role[1]), roles.append(role[0])) for role in rs]
     param['titles'] = titles
-
     rows = []
-    for level in xrange(1, get_permission_num()+1):
+    for level in xrange(1, get_permission_num() + 1):
         title_row = []
-        current_row = [permission_value_by_level(level)]
-        level_p = get_permission_by_level(level)
-        for role in roles:
-            title_p = get_permission_by_role(role)
-            if level_p and title_p and level_p >= title_p:
-                title_row.append('glyphicon glyphicon-ok')
-            else:
-                title_row.append('glyphicon glyphicon-remove')
-        current_row.append(tuple(title_row))
-        rows.append(tuple(current_row))
+
     param['rows'] = rows
     param['cur_per'] = user.permission.value
 

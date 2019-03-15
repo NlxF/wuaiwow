@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding:utf-8
 
-from wuaiwow import create_app # , celery
+from wuaiwow import create_app  # , celery
 app = create_app()
 from wuaiwow import db
 from flask_script import Manager
@@ -30,8 +30,9 @@ def list_routes():
 @manager.command
 def init_data():
     from wuaiwow.utils.default_data import add_default_data, add_test_data
-    # add_default_data()
-    add_test_data()
+    add_default_data(app.config['PERMISSIONS'])
+    # add_test_data()
+    db.session.commit()
 
 
 if __name__ == '__main__':

@@ -43,14 +43,14 @@ PERMISSIONS = [(10, 'CHRACE', u'变种族'), (15, 'CUSTOMIZE', u'性别'), (20, 
 URL_QUERY = 'http://api.map.baidu.com/location/ip?ak=MGe5iir7DLaKia6HgoFG9Pab2GweMQL9&ip='
 
 # 职业
-WOW_CLASS = [u'战士', u'潜行者', u'德鲁伊', u'法师', u'圣骑士', u'牧师', u'萨满', u'术士', u'猎人', u'死亡骑士']
-WOW_CLASS_SX = ['ZS', 'DZ', 'XD', 'FS', 'QS', 'MS', 'SM', 'SS', 'LR', 'SQ']
+WOW_CLASS = (u'战士', u'潜行者', u'德鲁伊', u'法师', u'圣骑士', u'牧师', u'萨满', u'术士', u'猎人', u'死亡骑士')
+WOW_CLASS_SX = ('ZS', 'DZ', 'XD', 'FS', 'QS', 'MS', 'SM', 'SS', 'LR', 'SQ')
 
 # 种族
-WOW_RACE_ALLIANCE = [u'人类', u'矮人', u'侏儒', u'暗夜精灵', u'德莱尼']
-WOW_RACE_ALLIANCE_EN = ['Humans', 'Gnomes', 'Dwarves', 'Night-elves', 'Draenei', 'Worgen']
-WOW_RACE_HORDE = [u'兽人', u'牛头人', u'巨魔', u'血精灵', u'亡灵']
-WOW_RACE_HORDE_EN = ['Orcs', 'Tauren', 'Ogres', 'Blood elves', 'Goblins', 'Forsaken']
+WOW_RACE_ALLIANCE = (u'人类', u'矮人', u'侏儒', u'暗夜精灵', u'德莱尼')
+WOW_RACE_ALLIANCE_EN = ('Humans', 'Gnomes', 'Dwarves', 'Night-elves', 'Draenei', 'Worgen')
+WOW_RACE_HORDE = (u'兽人', u'牛头人', u'巨魔', u'血精灵', u'亡灵')
+WOW_RACE_HORDE_EN = ('Orcs', 'Tauren', 'Ogres', 'Blood elves', 'Goblins', 'Forsaken')
 
 # 允许上传的文件类型
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])

@@ -220,7 +220,7 @@ def change_role_permission():
     else:
         role_value = find_all_roles(need_label=True)
 
-        values = get_all_permission(need_value=True)
+        values = get_all_permission(only_value=True)
 
         return render_template('custom/cms/admin_permission.html',
                                user=current_user,
