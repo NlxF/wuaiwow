@@ -5,7 +5,7 @@ from wuaiwow import db
 from wuaiwow.models import Characters, User
 
 
-def get_user_by_name(name):
+def _get_user_by_name(name):
     user = User.query.filter(User.username == name).first()
     return user
 
@@ -39,7 +39,7 @@ def update_wowaccount(username, data_dict):
     """
     characters = []
     data = data_dict.get('message', None)
-    user = get_user_by_name(name=username)
+    user = _get_user_by_name(name=username)
     if user and data and isinstance(data, basestring):
         pattern1 = re.compile(r'.+\s*\(.*\)')
         pattern2 = re.compile(r'(\w{2,})\s+\(GUID\s*(\d+)\)')

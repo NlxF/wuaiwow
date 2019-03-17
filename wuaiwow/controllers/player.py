@@ -15,8 +15,9 @@ from wuaiwow.utils.accountHelper import endpoint_url
 from wuaiwow.utils.templateHelper import template_by_role
 # from wuaiwow.utils.templateHelper import template_by_role, random_prompt
 from wuaiwow.utils.modelHelper import (level_by_permission_value, time_by_level, get_permission_num,
-                                       get_permission_by_role, get_permission_by_level, find_all_roles,
-                                       permission_value_by_level, get_user_messages, get_user_new_messages_num)
+                                       get_permission_by_level, get_all_roles, get_all_permission_role,
+                                       permission_has_role, permission_value_by_level, get_user_messages,
+                                       get_user_new_messages_num)
 # from wuaiwow.utils.playersHelper import (update_wowaccount, update_wowaccount_characters,
 #                                          find_or_create_character)
 # from wuaiwow.models import (Characters, AlivePrompt, LevelPrompt, RacePrompt,
@@ -39,7 +40,6 @@ def user_account():
                                                    'custom/cms/gm_profile.html',
                                                    'custom/cms/admin_profile.html')
     return render_template(template_name,
-                           user=current_user,
                            unread_cnt=unread_message_num,
                            profile='class=active')
 
@@ -148,43 +148,26 @@ def permission_table():
     template_name = template_by_role(user, 'custom/cms/player_permission_table.html',
                                            'custom/cms/gm_permission_table.html',
                                            'custom/cms/admin_permission_table.html',)
-
-    # param = {'profile': 'class=active'}
-    # # ps = get_all_permission(need_value=False)
-    # rs = find_all_roles(need_label=True)
-    # # 一个权限有多个角色
-    # roles = []
-    # titles = [u'值']
-    #
-    # [(titles.append(role[1]), roles.append(role[0])) for role in rs]
-    # param['titles'] = titles
-    #
-    # rows = []
-    # for level in xrange(1, get_permission_num()+1):
-    #     title_row = []
-    #     current_row = [permission_value_by_level(level)]
-    #     level_p = get_permission_by_level(level)
-    #     for role in roles:
-    #         title_p = get_permission_by_role(role)
-    #         if level_p and title_p and level_p >= title_p:
-    #             title_row.append('glyphicon glyphicon-ok')
-    #         else:
-    #             title_row.append('glyphicon glyphicon-remove')
-    #     current_row.append(tuple(title_row))
-    #     rows.append(tuple(current_row))
-    # param['rows'] = rows
-    # param['cur_per'] = user.permission.value
-
     param = {'profile': 'class=active'}
     roles = []
     titles = [u'值']
 
-    rs = find_all_roles(need_label=True)
-    [(titles.append(role[1]), roles.append(role[0])) for role in rs]
+    all_role = get_all_roles()
+    [(titles.append(role.label), roles.append(role.role)) for role in all_role]
     param['titles'] = titles
+
     rows = []
     for level in xrange(1, get_permission_num() + 1):
         title_row = []
+        current_row = [permission_value_by_level(level)]
+        row_permission = get_permission_by_level(level)
+        for role in roles:
+            if permission_has_role(row_permission, role):
+                title_row.append('glyphicon glyphicon-ok')
+            else:
+                title_row.append('glyphicon glyphicon-remove')
+        current_row.append(tuple(title_row))
+        rows.append(tuple(current_row))
 
     param['rows'] = rows
     param['cur_per'] = user.permission.value

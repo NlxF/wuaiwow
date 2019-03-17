@@ -154,7 +154,7 @@ def register():
                     # _send_registered_email(user, user_email, require_email_confirmation)
                     db_adapter.commit()
 
-                    # send register email async
+                    # send register email sync
                     tasks.send_registered_email(user, user_email, require_email_confirmation)
 
                     # Prepare one-time system message

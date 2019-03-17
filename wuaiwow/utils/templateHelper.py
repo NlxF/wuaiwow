@@ -1,7 +1,6 @@
 # coding: utf-8
 from sqlalchemy.sql import func
 from sqlalchemy.orm import load_only
-from .modelHelper import get_permission_by_role
 
 
 def template_by_role(user, *templates):
@@ -13,9 +12,9 @@ def template_by_role(user, *templates):
     """
     template_name = ''
     if user and len(templates):
-        if user.has_permission(get_permission_by_role('UPGRADE')):
+        if user.has_role('UPGRADE'):
             template_name = templates[-1]
-        elif user.has_permission(get_permission_by_role('GM')):
+        elif user.has_role('GM'):
             template_name = templates[0] if len(templates) == 2 else templates[1]
         else:
             template_name = templates[0]

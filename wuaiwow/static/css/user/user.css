@@ -26,3 +26,8 @@ hr { border-color: #cccccc; margin: 0px; }
  .scrollable select{
    border: none;
  }
+
+.form-all {
+  border: medium ridge #3e89cb69;
+  border-radius: 8px;
+}

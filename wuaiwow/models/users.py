@@ -32,6 +32,11 @@ def _mapping_class(job):
     return class_sx
 
 
+def permission_has_role(ps, role_obj):
+    has_role = role_obj in (prole.role.role for prole in ps.roles)
+    return has_role
+
+
 # 登录IP表
 class UserIp(db.Model):
     __tablename__ = 'user_ip'
@@ -91,7 +96,7 @@ class Permission(db.Model):  # CacheableMixin,
     roles = db.relationship('PermissionRole', order_by=desc(PermissionRole.role_id), backref=db.backref('permission'), lazy='dynamic')
 
     # roles = db.relationship('Role', backref='permission', lazy='dynamic')    # one permission have many role
-    # users = db.relationship('User', backref='permission', lazy='dynamic')    # one permission for many user
+    users = db.relationship('User', backref='permission', lazy='dynamic')    # one permission for many user
 
     def __lt__(self, other):  # 小于
         if isinstance(other, Permission):
@@ -206,29 +211,51 @@ class User(db.Model, UserMixin):
         """
 
         if permission:
-            self.permission = permission    # 由Permission 反射而来的属性
+            self.permission_id = permission.id
             db.session.add(self)
 
     def is_active(self):
         return self.active
 
-    def has_permission(self, permission):
+    def has_role(self, role_obj):
         """
-            如果当前满足权限值要求则返回True
-            @param permission 操作要求的权限值
+            当前用户是否拥有指定的角色权限
+            @param role_obj 操作要求的角色权限
         """
-        if permission == None:
+        if not role_obj:
             return False
-            
+
+        role_string = role_obj
+        if isinstance(role_obj, Role):
+            role_string = role_obj.role
+
         if hasattr(self, 'permission'):
-            value = self.permission.value
+            permission = self.permission
         else:
             if hasattr(self, 'user_profile') and hasattr(self.user_profile, 'permission'):
-                value = self.user_profile.permission.value
+                permission = self.user_profile.permission
             else:
-                value = 0
+                permission = None
 
-        return value >= permission.value
+        return permission_has_role(permission, role_string)
+
+    # def has_permission(self, permission):
+    #     """
+    #         如果当前满足权限值要求则返回True
+    #         @param permission 操作要求的权限值
+    #     """
+    #     if permission == None:
+    #         return False
+    #
+    #     if hasattr(self, 'permission'):
+    #         value = self.permission.value
+    #     else:
+    #         if hasattr(self, 'user_profile') and hasattr(self.user_profile, 'permission'):
+    #             value = self.user_profile.permission.value
+    #         else:
+    #             value = 0
+    #
+    #     return value >= permission.value
 
     # @property
     # def is_gm(self):
@@ -238,25 +265,25 @@ class User(db.Model, UserMixin):
     # def is_admin(self):
     #     return self.has_permission(permission=100)
 
-    def _role(self, need_string):
+    def _permission(self, need_string):
         if need_string:
             if self.permission.value < 98:
-                role_name = 'player'  # u'玩家'
+                permission_name = u'玩家'       # 'player'
             elif self.permission.value < 100:
-                role_name = 'GM'  # u'游戏管理员'
+                permission_name = u'管理员'     # 'GM'
             else:
-                role_name = 'admin'  # u'超级管理员'
+                permission_name = u'超级管理员'  # 'admin'
         else:
-            role_name = self.permission.value
-        return role_name
+            permission_name = self.permission.value
+        return permission_name
 
     @property
-    def role_string(self):
-        return self._role(True)
+    def permission_string(self):
+        return self._permission(True)
 
     @property
-    def role_name(self):
-        return self._role(False)
+    def permission_name(self):
+        return self._permission(False)
 
     @property
     def last_login(self):

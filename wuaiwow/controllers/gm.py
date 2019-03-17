@@ -4,10 +4,9 @@ from flask import (render_template, Blueprint, request, url_for,
 from werkzeug.local import LocalProxy
 from flask_user import current_user, login_required
 from wuaiwow.utils import add_blueprint, save_file_upload
-from wuaiwow.utils.accountHelper import permission_required
+from wuaiwow.utils.accountHelper import role_required
 from wuaiwow.utils.templateHelper import template_by_role
 from wuaiwow.utils.modelHelper import (find_or_create_news,
-                                       get_permission_by_role,
                                        find_or_create_permission,
                                        get_permission_by_value, get_user_by_name,
                                        get_less_permission, get_less_permission_user,
@@ -21,7 +20,7 @@ bp = Blueprint('GM', __name__, url_prefix='/gm')
 
 @bp.route('/add-news', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+@role_required('GM')
 def add_news():
     default_url = url_for('static', filename='images/default_title.jpg')
 
@@ -71,7 +70,7 @@ def add_news():
 
 @bp.route('/get-a-news', methods=['GET'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+@role_required('GM')
 def get_a_news():
     news_title = request.args.get('title', '')
     selected, exist = find_or_create_news(title=news_title)
@@ -85,7 +84,7 @@ def get_a_news():
 
 @bp.route('/add-tutorial', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+@role_required('GM')
 def add_tutorial():
     if request.method == 'POST':
         guild_info = request.form['guildinfotext']
@@ -115,7 +114,7 @@ def add_tutorial():
 
 # @bp.route('/add-message', methods=['GET', 'POST'])
 # @login_required
-# @permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+# @role_required('GM')
 # def add_message():
 #     if request.method == 'POST':
 #         guild_info = request.form['guildinfotext']
@@ -144,7 +143,7 @@ def add_tutorial():
 @csrf.exempt
 @bp.route('upload/images', methods=['POST', 'OPTIONS'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+@role_required('GM')
 def upload_images():
     """CKEditor images upload"""
     error = ''
@@ -172,7 +171,7 @@ def upload_images():
 
 @bp.route('/change-user-role/', methods=['GET', ])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+@role_required('GM')
 def change_user_role():
 
     template_name = template_by_role(current_user, 'custom/cms/gm_add_role.html',
@@ -184,7 +183,7 @@ def change_user_role():
 
 @bp.route('/user-role-list/', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda: get_permission_by_role('GM')))
+@role_required('GM')
 def role_list():
     if request.method == 'POST':
         form = request.form
@@ -203,8 +202,8 @@ def role_list():
                         db.session.commit()
 
                         # 同步game server端的account-permission表
-                        from wuaiwow import tasks
-                        tasks.update_account_permission.delay([(user.username, new_perm.value)])
+                        # from wuaiwow import tasks
+                        # tasks.update_account_permission.delay([(user.username, new_perm.value)])
                     result = {'status': 'Ok', 'msg': u'修改成功', 'newValue': value}
                 else:
                     result = {'status': 'Err', 'msg': u'用户不存在'}

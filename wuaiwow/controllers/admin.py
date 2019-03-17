@@ -5,12 +5,11 @@ from flask_user import current_user, login_required
 from wuaiwow import db, app, tasks
 from wuaiwow.utils import add_blueprint, save_file_upload
 from wuaiwow.utils.templateHelper import all_prompt
-from wuaiwow.utils.accountHelper import permission_required
-from wuaiwow.utils.modelHelper import (find_or_create_sidebar,
-                                       get_permission_by_role, get_permission_by_value,
+from wuaiwow.utils.accountHelper import role_required
+from wuaiwow.utils.modelHelper import (find_or_create_sidebar, get_permission_by_value,
                                        find_or_create_permission,
-                                       find_all_roles, get_role_by_name,
-                                       get_all_permission, get_permission_num,
+                                       get_all_roles, get_role_by_name,
+                                       get_less_permission, get_permission_num,
                                        permission_value_by_level, add_role_to_permission,
                                        create_role)
 from wuaiwow.models import (Donate, LevelPrompt, AlivePrompt, RacePrompt, Agreement,
@@ -21,7 +20,7 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/add-donate', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def add_donate():
     result_info = ''
     if request.method == 'POST':
@@ -39,7 +38,6 @@ def add_donate():
         donate_info = donate.info if donate else " "
 
     return render_template('custom/cms/admin_add_donate.html',
-                           user=current_user,
                            adddonate='class=active',
                            donate_info=donate_info,
                            result=result_info)
@@ -47,7 +45,7 @@ def add_donate():
 
 @bp.route('/add-userAgreement', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def add_user_agreement():
     result_info = ''
     if request.method == 'POST':
@@ -65,7 +63,6 @@ def add_user_agreement():
         content = agreement.content if agreement else " "
 
     return render_template('custom/cms/admin_add_userAgreement.html',
-                           user=current_user,
                            adduseragreement='class=active',
                            content=content,
                            result=result_info)
@@ -73,7 +70,7 @@ def add_user_agreement():
 
 @bp.route('/add-prompt', methods=[])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def add_prompt():
     if request.method == 'POST':
         form = request.get_json()
@@ -100,14 +97,13 @@ def add_prompt():
             prompt_dict = {'id': m.class_id(), 'title': m.title(), 'prompt': enumerate(prompt)}
             rst.append(prompt_dict)
         return render_template('custom/cms/admin_add_prompt.html',
-                               user=current_user,
                                prompts=rst,
                                addprompt='class=active')
 
 
 @bp.route('/del-prompt', methods=[])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def del_prompt():
     if request.method == 'POST':
         form = request.get_json()
@@ -134,7 +130,7 @@ def del_prompt():
 
 @bp.route('/add-sidebar', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def add_sidebar():
     default_url = url_for('static', filename='images/default_title.jpg')
     sidebars = [sd.name for sd in Sidebar.query.order_by(Sidebar.created.asc()).all()]
@@ -168,8 +164,7 @@ def add_sidebar():
 
     sidebars.insert(0, u"选择侧边栏编辑或新建侧边栏" if sidebars else u"还未添加侧边栏")
 
-    return render_template('custom/cms/admin_add_sidebar.html'
-                           , user=current_user,
+    return render_template('custom/cms/admin_add_sidebar.html',
                            addsidebar='class=active',
                            sidebars=enumerate(sidebars),
                            photo=photo_url)
@@ -177,7 +172,7 @@ def add_sidebar():
 
 @bp.route('/get-a-sidebar', methods=['GET'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def get_a_sidebar():
     sd_id = request.args.get('id', '')
     sds = Sidebar.query.order_by(Sidebar.created.desc()).all()
@@ -192,7 +187,7 @@ def get_a_sidebar():
 
 @bp.route('/change-role-permission/', methods=['GET', 'POST'])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def change_role_permission():
     if request.method == 'POST':
         role_permission = request.form.get('newRolePerm', "")
@@ -212,31 +207,28 @@ def change_role_permission():
                 db.session.commit()
                 result = {'status': 'Ok', 'msg': u'修改成功'}
 
-            if len(command_list) > 0:
-                # 更新game server端的对应表
-                tasks.update_permission_table(command_list)
+            # if len(command_list) > 0:
+            #     # 更新game server端的对应表
+            #     tasks.update_permission_table(command_list)
 
         return jsonify(result)
     else:
-        role_value = find_all_roles(need_label=True)
 
-        values = get_all_permission(only_value=True)
+        ps = get_less_permission(value=current_user.permission.value)
 
         return render_template('custom/cms/admin_permission.html',
-                               user=current_user,
-                               addpermission='class=active',
-                               roles=role_value,
-                               selected=values)
+                               permissions=ps,
+                               addpermission='class=active')
 
 
 @bp.route('/add-permission/', methods=['GET', ])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def add_permission():
     max_level = get_permission_num()
     next_permission_value = permission_value_by_level(max_level + 1)
     if next_permission_value > 98:
-        result = {'status': 'Err', 'msg': u'添加失败,已没有空余位置新增权限'}
+        result = {'status': 'Err', 'msg': u'添加失败,权限已达到上限'}
     else:
         created, ps = find_or_create_permission(value=next_permission_value, need_created=True)
         if created:
@@ -249,7 +241,7 @@ def add_permission():
 
 @bp.route('/add-role/', methods=['POST', ])
 @login_required
-@permission_required(permission_value=LocalProxy(lambda : get_permission_by_role('UPGRADE')))
+@role_required('UPGRADE')
 def add_role():
     new_role = request.form.get('newRole', "")
     new_value = request.form.get('newValue', -1)
@@ -272,7 +264,7 @@ def add_role():
             result = {'status': 'Ok', 'msg': u'添加成功'}
 
             # 更新game server端的permission表
-            tasks.update_permission_table([(ps.value, role_obj.role, role_obj.label)])
+            # tasks.update_permission_table([(ps.value, role_obj.role, role_obj.label)])
         else:
             result = {'status': 'Err', 'msg': rst}
 

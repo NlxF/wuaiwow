@@ -22,7 +22,7 @@
 											<td class="col-md-1 container" style="vertical-align:middle">用户名:</td>
 											<td class="col-md-8 container" style="vertical-align:middle;font-size:15px">
 												<a href="" data-toggle="tooltip" data-placement="right" title="用户名已用于创建游戏账号,不能修改." onclick="return false;">
-													<strong>{{user.username}}</strong>
+													<strong>{{g.user.username}}</strong>
 												</a>
 											</td>
 										</tr>
@@ -31,23 +31,23 @@
 											<td class="container" style="vertical-align:middle">邮箱：</td>
 											<td class="container" style="vertical-align:middle;font-size:15px">
 												<a href="/change-email" data-toggle="tooltip" data-placement="right" title="邮箱暂不能修改" onclick="return false;">
-													<strong>{{user.email}}</strong>
+													<strong>{{g.user.email}}</strong>
 												</a>
 											</td>
 										</tr>
 										<tr>
 											<td class="container" style="vertical-align:middle">在线时间:</td>
 											<td class="container" style="vertical-align:middle;font-size:15px">
-												<a href="/upgrade-table" data-toggle="tooltip" data-placement="right" title="点击查看升级规则">
-													{{user.online_time_by_hour}}
+												<a href="{{ url_for('player.upgrade_online') }}" data-toggle="tooltip" data-placement="right" title="点击查看升级规则">
+													{{g.user.online_time_by_hour}}
 												</a>
 											</td>
 										</tr>
 										<tr>
 											<td class="container" style="vertical-align:middle">权限值:</td>
 											<td class="container" style="vertical-align:middle;font-size:15px">
-												<a href="/permission-table" data-toggle="tooltip" data-placement="bottom" title="查看当前权限">
-													<strong>{{user.role_name}}</strong>
+												<a href="{{ url_for('player.permission_table') }}" data-toggle="tooltip" data-placement="bottom" title="查看当前权限">
+													<strong>{{g.user.permission_name}}</strong>
 												</a>
 											</td>
 										</tr>

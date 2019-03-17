@@ -7,7 +7,8 @@ import functools
 from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
 from wuaiwow import db, app, cache
-from wuaiwow.models import News, Sidebar, Permission, User, Role, GuildInfo, Donate, Agreement, PermissionRole
+from wuaiwow.models import (News, Sidebar, Permission, User, Role, GuildInfo, Donate, Agreement,
+                            PermissionRole, permission_has_role)
 
 
 # def memoize(ttl=timedelta(seconds=600)):
@@ -119,7 +120,8 @@ def get_all_permission(only_value=True):
     num = get_permission_num()               # 有效(能升级的)的所有权限
     # noinspection PyBroadException
     try:
-        # print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(), UserOnline.occ_time.desc()).options(UserOnline.cache.from_cache('cache_key')).first()', number=1000))
+        # print(timeit.timeit('UserOnline.query.order_by(UserOnline.online_user_num.desc(),
+        # UserOnline.occ_time.desc()).options(UserOnline.cache.from_cache('cache_key')).first()', number=1000))
         ps = Permission.query.order_by(Permission.value.asc()).limit(num).all()
         rst = (p.value for p in ps) if only_value else ps
     except Exception as e:
@@ -128,7 +130,7 @@ def get_all_permission(only_value=True):
     return list(rst)
 
 
-def get_permission_by_value(value):  # need_update
+def get_permission_by_value(value):
     """
         根据权限值,返回相应的权限
         @param value 权限值
@@ -145,7 +147,7 @@ def get_permission_by_value(value):  # need_update
 
 def get_permission_by_level(level):
     """
-        返回等级对应的权限
+        返回等级(1,2,3...)对应的权限(10,15,20...)
         @param level 等级
     """
     if level > 0:
@@ -206,16 +208,16 @@ def get_user_by_name(name):
     return user
 
 
-def get_permission_by_role(role):
-    """
-        根据给出的role,查找相应的权限
-        @param role 权限名
-    """
-    role_obj = role
-    if isinstance(role_obj, basestring):
-        role_obj = get_role_by_name(role)
-
-    return role_obj.permission if role_obj else None
+# def get_permission_by_role(role):
+#     """
+#         根据给出的role, 查找相应的权限
+#         @param role 权限名
+#     """
+#     role_obj = role
+#     if isinstance(role_obj, basestring):
+#         role_obj = get_role_by_name(role)
+#
+#     return role_obj.permission if role_obj else None
 
 
 def change_permission_by_time(original, value):
@@ -250,22 +252,24 @@ def change_permission_by_time(original, value):
     return False, None
 
 
-def find_all_roles(need_label=False):
+def get_all_roles():
     """
-        返回当前所有角色及对应的权限值[(role,value)...]或[(role,label,value)...]
-        @param need_label 是否需要返回label
+        返回所有角色(隐藏最后三个角色)
     """
-    ps = get_all_permission(only_value=False)
 
-    if need_label:
-        rst = ((role.role, role.label, p.value) for p in ps for role in p.roles)
-    else:
-        rst = ((role.role, p.value) for p in ps for role in p.roles)
+    all_role = Role.query.order_by(Role.id.asc()).all()
+    return all_role[:-3]
 
-    return list(rst)
+    # ps = get_all_permission(only_value=False)
+    #
+    # if need_label:
+    #     rst = ((role.role, role.label, p.value) for p in ps for role in p.roles)
+    # else:
+    #     rst = ((role.role, p.value) for p in ps for role in p.roles)
+    #
+    # return list(rst)
 
 
-# need update
 def find_or_create_permission(value, need_created=False):
     """
         查找或新建权限
@@ -281,7 +285,6 @@ def find_or_create_permission(value, need_created=False):
     return False, p
 
 
-# need update
 def add_role_to_permission(ps, role):
     """
         添加角色到指定权限
@@ -292,7 +295,10 @@ def add_role_to_permission(ps, role):
     if isinstance(role, basestring):
         role_obj = get_role_by_name(role=role)
 
-    if role_obj and ps and role_obj not in (prole.role for prole in ps.roles):
+    if permission_has_role(ps, role_obj.role):
+        return True, u"权限已有角色"
+
+    if role_obj and ps:
         associate = PermissionRole()
         associate.role = role_obj
         ps.roles.append(associate)
@@ -377,9 +383,9 @@ def find_or_create_user(username, email, password, permission=10, need_create=Tr
     if not user and need_create:
         user = User(email=email, username=username, password=app.user_manager.hash_password(password), active=True,
                     confirmed_at=datetime.utcnow())
-        created, user.permission = find_or_create_permission(permission)
+        created, permission = find_or_create_permission(permission)
+        user.permission_id = permission.id
         db.session.add(user)
-        db.session.commit()
 
     return user
 
