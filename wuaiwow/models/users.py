@@ -1,5 +1,5 @@
 # coding:utf-8
-from sqlalchemy import literal, desc
+from sqlalchemy import literal, desc, asc
 from sqlalchemy.orm import synonym
 from flask_user import UserMixin
 from wuaiwow import db, app
@@ -93,7 +93,7 @@ class Permission(db.Model):  # CacheableMixin,
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.Integer, nullable=False, unique=True)               # for @permission_required()
 
-    roles = db.relationship('PermissionRole', order_by=desc(PermissionRole.role_id), backref=db.backref('permission'), lazy='dynamic')
+    roles = db.relationship('PermissionRole', order_by=asc(PermissionRole.role_id), backref=db.backref('permission'), lazy='dynamic')
 
     # roles = db.relationship('Role', backref='permission', lazy='dynamic')    # one permission have many role
     users = db.relationship('User', backref='permission', lazy='dynamic')    # one permission for many user

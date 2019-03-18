@@ -10,18 +10,23 @@
                     <div style="overflow-y: scroll; height:300px;">
                         {% for permission in permissions %}
                         <br/>
-                        <form action="" method="post" class="form-all">
+                        <form action="{{ url_for('admin.change_role_permission', value=permission.value) }}" method="post" class="form-all" id="form-edit-roles">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                             <table class="table table-bordered">
                                 <thead class="thead-inverse">
                                     <tr>
-                                        <th colspan="6" style="text-align: center">权限 {{permission.value}} 所包含的角色</th>
+                                        <th colspan="6" style="text-align: center">值 {{permission.value}} 拥有的权限</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for role in permission.roles %}
+                                    {% for row in roles %}
                                     <tr>
-                                        {% for role in row.roles %}
-                                            <th><input type="checkbox" name="{{role.role.role}}" value="{{role.role.role}}" style="margin-top:-2px"/>{{role.role.label}}</th>
+                                        {% for role in row %}
+                                            {% if permission | hasRole(role) %}
+                                                <th><input type="checkbox" name="role" value="{{role.role}}" style="margin-top:-2px" checked/>{{role.label}}</th>
+                                            {% else %}
+                                                <th><input type="checkbox" name="role" value="{{role.role}}" style="margin-top:-2px"/>{{role.label}}</th>
+                                            {% endif %}
                                         {% endfor %}
                                     </tr>
                                     {% endfor %}

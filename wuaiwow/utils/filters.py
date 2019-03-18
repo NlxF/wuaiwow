@@ -51,3 +51,8 @@ def _jinja2_filter_summary(content):
     summary_len = 20 if content_len < 20 else content_len
 
     return content[:summary_len]
+
+
+@app.template_filter('hasRole')
+def _jinja2_filter_summary(permission, role_obj):
+    return role_obj.role in (prole.role.role for prole in permission.roles)

@@ -8,7 +8,7 @@ from wuaiwow.utils.templateHelper import all_prompt
 from wuaiwow.utils.accountHelper import role_required
 from wuaiwow.utils.modelHelper import (find_or_create_sidebar, get_permission_by_value,
                                        find_or_create_permission,
-                                       get_all_roles, get_role_by_name,
+                                       get_role_by_name, get_permission_by_id,
                                        get_less_permission, get_permission_num,
                                        permission_value_by_level, add_role_to_permission,
                                        create_role)
@@ -185,24 +185,24 @@ def get_a_sidebar():
     return jsonify(result)
 
 
-@bp.route('/change-role-permission/', methods=['GET', 'POST'])
+@bp.route('/change-role-permission/<int:value>', defaults={'value': 0}, methods=['GET', 'POST'])
 @login_required
 @role_required('UPGRADE')
-def change_role_permission():
+def change_role_permission(value):
     if request.method == 'POST':
         role_permission = request.form.get('newRolePerm', "")
-        if not role_permission:
+        current_permission = get_permission_by_value(value)
+        if not role_permission or not current_permission:
             result = {'status': 'Err', 'msg': u'参数错误'}
         else:
             command_list = []
             role_perm = [a.split('=') for a in role_permission.split('&')]
             for r, v in role_perm:
-                created, ps = find_or_create_permission(value=v)
-                role = get_role_by_name(role=r)
-                if ps and role not in ps.roles:
-                    added, _ = add_role_to_permission(ps=ps, role=role)                   # 更新权限拥有的role
+                if r == 'role':
+                    role = get_role_by_name(role=v)
+                    added, _ = add_role_to_permission(ps=current_permission, role=role)          # 更新权限拥有的role
                     if added:
-                        command_list.append((ps.value, role.role, role.label))            # 保存更改成功的记录
+                        command_list.append((current_permission.value, role.role, role.label))   # 保存更改成功的记录
             else:
                 db.session.commit()
                 result = {'status': 'Ok', 'msg': u'修改成功'}
@@ -213,11 +213,21 @@ def change_role_permission():
 
         return jsonify(result)
     else:
-
-        ps = get_less_permission(value=current_user.permission.value)
-
+        current_permission = current_user.permission
+        roles = [pr.role for pr in current_permission.roles]
+        less_ps = get_less_permission(value=current_permission.value)
+        i = 0
+        less_roles = []
+        role_size = len(roles)
+        while 1:
+            less_roles.append(roles[i:i+6])
+            if i+6 >= role_size:
+                break
+            else:
+                i += 6
         return render_template('custom/cms/admin_permission.html',
-                               permissions=ps,
+                               roles=less_roles,
+                               permissions=less_ps,
                                addpermission='class=active')
 
 

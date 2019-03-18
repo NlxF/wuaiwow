@@ -145,10 +145,24 @@ def get_permission_by_value(value):
     return ps
 
 
+def get_permission_by_id(permission_id):
+    """
+        根据id,返回相应的权限
+        @param permission_id 权限id
+    """
+    # noinspection PyBroadException
+    try:
+        ps = Permission.query.filter(Permission.id == permission_id).first()
+    except Exception as e:
+        ps = None
+
+    return ps
+
+
 def get_permission_by_level(level):
     """
-        返回等级(1,2,3...)对应的权限(10,15,20...)
-        @param level 等级
+        返回等级对应的权限(10,15,20...)
+        @param level 等级(1,2,3...)
     """
     if level > 0:
         num = get_permission_num()

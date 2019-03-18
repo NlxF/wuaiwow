@@ -7,16 +7,16 @@ from wuaiwow.utils.modelHelper import (find_or_create_permission, find_or_create
 
 
 def create_all_permissions(permission_config):
-    sorted(permission_config, key=lambda x: x[0])
+    sorted_permission = sorted(permission_config, key=lambda x: x[0])
     permissions = []
-    for idx, role in enumerate(permission_config):
+    for idx, role in enumerate(sorted_permission):
         role_obj = get_role_by_name(role=role[1])
         if not role_obj:
             role_obj = create_role(role=role[1], label=role[2])
 
         created, ps = find_or_create_permission(value=role[0], need_created=True)
         add_role_to_permission(ps, role_obj)             # 添加当前角色到权限
-        for previous_role in permission_config[:idx]:    # 权限包含之前的角色
+        for previous_role in sorted_permission[:idx]:    # 权限包含之前的角色
             role_obj = get_role_by_name(role=previous_role[1])
             add_role_to_permission(ps, role_obj)
         permissions.append(ps)
