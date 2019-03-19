@@ -29,7 +29,7 @@
             window.onload = function () {
                 envelope = window.parent.document.getElementsByClassName('badge');
                 if (envelope){
-                    envelope[0].innerHTML='{{ unread_cnt }}';
+                    envelope[0].innerHTML='{{ g.unread_cnt }}';
                 }
             };
         </script>

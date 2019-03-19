@@ -63,7 +63,7 @@ def add_reset_password_message(user):
 
 def add_change_password_message(user):
     title = u'修改成功'
-    content = u"密码修改成功，如果不是本人操作的，请立即 <a target='_parent' href={}> 修改密码 </a>".format(url_for('users.change_password'))
+    content = u"密码修改成功，如若不是本人操作的，请立即 <a target='_parent' href={}> 修改密码 </a>".format(url_for('users.change_password'))
     add_user_message(user, [(title, content)])
 
 
@@ -72,6 +72,6 @@ def add_upgrade_message(user):
     content = u"{} 恭喜升级到 {}，现在你拥有 <span style='color:#4293ff'>{}</span> 权限. 更多权限请参考 <a target='_parent' href={}> 用户权限表 </a>".format(
         user.username,
         user.permission.value,
-        " ".join((role.label for role in user.permission.roles)),
+        ",".join((ps_role.role.label for ps_role in user.permission.roles)),
         url_for('player.permission_table'),)
     add_user_message(user, [(title, content)])

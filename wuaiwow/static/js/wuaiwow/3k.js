@@ -543,7 +543,7 @@ $("form#form-permission").submit(function(){
 
 $("form#form-roles").submit(function(){
     $role = $('#input-role')
-    $select = $('#role-select')
+    $select = $('#auto-select')
     $label = $('#role-label')
     if($role.val() == ""){
         $role.focus();
@@ -556,7 +556,7 @@ $("form#form-roles").submit(function(){
     $.ajax({
         url: '/admin/add-role/',
         type: 'POST',
-        data: {'newRole': $role.val(), 'newValue': $select.val(), 'newLabel': $label.val()},
+        data: {'newRole': $role.val(), 'autoSelect': $select.prop('checked'), 'newLabel': $label.val()},
         cache: false,
         success: function (data) {
             if (data.status=='Ok'){
@@ -588,7 +588,8 @@ $("form#form-edit-roles").submit(function(){
     $.ajax({
         url: '/admin/change-role-permission/',
         type: 'POST',
-        data: {'newRolePerm': $('#form-edit-roles').serialize()},
+        data: {'newRolePerm': $('#form-edit-roles').serialize(),
+               'value': $('#form-edit-roles').find('input[name="value"]').val()},
         cache: false,
         success: function (data) {
             if (data.status=='Ok'){

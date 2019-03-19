@@ -91,6 +91,10 @@ def online_setup():
                               'occ_time' : max_online_occ_time if max_online_occ_time else datetime.fromtimestamp(int(occ_time)),
                               'time_zone': time.strftime("%z")}   #u"中国标准时间" }
 
+        if '/admin/' in request.path or '/gm/' in request.path or '/user/' in request.path:
+            from utils.modelHelper import get_user_new_messages_num
+            g.unread_cnt = get_user_new_messages_num(current_user)
+
 
 @app.after_request
 def add_header(response):

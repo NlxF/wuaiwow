@@ -27,44 +27,40 @@ from wuaiwow import tasks, app, db
 # from wuaiwow.forms import PromoteForm
 
 
-bp = Blueprint('player', __name__, url_prefix='/')
+bp = Blueprint('player', __name__, url_prefix='/user')
 
 
-@bp.route('user/profile', methods=['GET', ])
-@bp.route('user/account', methods=['GET', ])
+@bp.route('profile', methods=['GET', ])
+@bp.route('account', methods=['GET', ])
 @login_required
 def user_account():
 
-    unread_message_num = get_user_new_messages_num(current_user)
+    # unread_message_num = get_user_new_messages_num(current_user)
     template_name = template_by_role(current_user, 'custom/cms/player_profile.html',
                                                    'custom/cms/gm_profile.html',
                                                    'custom/cms/admin_profile.html')
     return render_template(template_name,
-                           unread_cnt=unread_message_num,
                            profile='class=active')
 
 
-@bp.route('user/all/message', methods=['GET', ])
+@bp.route('all/message', methods=['GET', ])
 @login_required
 def user_message():
-    unread_message_num = get_user_new_messages_num(current_user)
+    # unread_message_num = get_user_new_messages_num(current_user)
     template_name = template_by_role(current_user, 'custom/cms/player_message.html',
                                                    'custom/cms/gm_message.html',
                                                    'custom/cms/admin_message.html')
     return render_template(template_name,
-                           user=current_user,
-                           unread_cnt=unread_message_num,
                            usermsg='class=active')
 
 
-@bp.route('user/message/list', methods=['GET', ])
+@bp.route('message/list', methods=['GET', ])
 @login_required
 def user_message_list():
     if request.method == 'GET':
         message_list = get_user_messages(current_user)
-        unread_message_num = len(list((new_msg for new_msg in message_list if not new_msg.has_read)))
+        # unread_message_num = len(list((new_msg for new_msg in message_list if not new_msg.has_read)))
         return render_template('custom/cms/profile_title_message_list.html',
-                               unread_cnt=unread_message_num,
                                msglist=enumerate(message_list))
 
 
@@ -152,7 +148,8 @@ def permission_table():
     roles = []
     titles = [u'值']
 
-    all_role = get_all_roles()
+    # all_role = get_all_roles()
+    all_role = set((pr.role for pr in current_user.permission.roles)) | set(get_all_roles())  # 只显示当前用户拥有的角色及所有非admin角色(并不被当前用户拥有)
     [(titles.append(role.label), roles.append(role.role)) for role in all_role]
     param['titles'] = titles
 
@@ -231,7 +228,6 @@ def permission_table():
 #         tasks.tasksDict[update_id] = result
 #
 #         return render_template(template_name,
-#                                user=user,
 #                                character='class=active',
 #                                update_id=update_id), 202
 #     else:
@@ -256,7 +252,6 @@ def permission_table():
 #                 races.append(enumerate([race for race in _races if race != ch.race]))
 #
 #     return render_template(template_name,
-#                            user=user,
 #                            character='class=active',
 #                            characters=enumerate(characters),
 #                            races=races,

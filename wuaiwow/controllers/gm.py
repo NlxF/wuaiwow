@@ -62,7 +62,6 @@ def add_news():
     titles.insert(0, u"选择新闻编辑或新建新闻" if titles else u"还未添加新闻")
 
     return render_template(template_name,
-                           user=current_user,
                            addnews='class=active',
                            titles=enumerate(titles),
                            photo=photo_url)
@@ -106,7 +105,6 @@ def add_tutorial():
     template_name = template_by_role(current_user, 'custom/cms/gm_add_tutorial.html',
                                                    'custom/cms/admin_add_tutorial.html')
     return render_template(template_name,
-                           user=current_user,
                            addtutorial='class=active',
                            guild_info=guild_info,
                            result=result_info)
@@ -134,7 +132,6 @@ def add_tutorial():
 #     template_name = template_by_role(current_user, 'custom/cms/gm_add_message.html',
 #                                                    'custom/cms/admin_add_message.html')
 #     return render_template(template_name,
-#                            user=current_user,
 #                            addtutorial='class=active',
 #                            guild_info=guild_info,
 #                            result=result_info)
@@ -177,7 +174,6 @@ def change_user_role():
     template_name = template_by_role(current_user, 'custom/cms/gm_add_role.html',
                                                    'custom/cms/admin_add_role.html')
     return render_template(template_name,
-                           user=current_user,
                            addrole='class=active')
 
 

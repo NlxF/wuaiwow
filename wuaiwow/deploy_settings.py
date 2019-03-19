@@ -28,15 +28,15 @@ CACHE_DEFAULT_TIMEOUT      = 60 * 15          # flask_cache  15分钟缓存失�
 # OnlineHelper setting
 ONLINE_DB = 1
 # 在线状态持续间隔
-ONLINE_LAST_MINUTES = 5
+ONLINE_LAST_MINUTES = 3
 # 在线记录间隔
-ONLINE_RECORD_INTERVAL = 10
+ONLINE_RECORD_INTERVAL = 30
 # ONLINE_USER_PREFIX = ''
 # ONLINE_VISITOR_PREFIX = ''
 # ONLINE_ALL_USER_PREFIX = ''
 # ONLINE_ALL_VISITOR_PREFIX = ''
 # 两次刷新的有效时间间隔(秒)
-ONLINE_PAGE_REFRESH_MIN = 15
+ONLINE_PAGE_REFRESH_MIN = 30
 ONLINE_PAGE_REFRESH_MAX = ONLINE_LAST_MINUTES * 60
 
 # Flask settings                     # Generated with: import os; os.urandom(24)

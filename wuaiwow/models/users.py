@@ -37,6 +37,12 @@ def permission_has_role(ps, role_obj):
     return has_role
 
 
+def role_is_admin(role):
+    if isinstance(role, Role):
+        return role.role == 'GM' or role.role == 'UPGRADE' or role.role == 'ADMIN'
+    return False
+
+
 # 登录IP表
 class UserIp(db.Model):
     __tablename__ = 'user_ip'
@@ -193,7 +199,6 @@ class User(db.Model, UserMixin):
 
             from wuaiwow.utils.messageHelper import add_upgrade_message
             add_upgrade_message(self)
-            db.session.commit()
 
             # 同步game server端的account-permission表
             # from wuaiwow import tasks
@@ -201,6 +206,8 @@ class User(db.Model, UserMixin):
         else:
             self.update_time += elapse_time
         self._online_time = value
+        db.session.add(self)
+        db.session.commit()
 
     online_time = synonym('_online_time', descriptor=online_time)
 

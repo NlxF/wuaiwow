@@ -8,7 +8,7 @@ from werkzeug.local import LocalProxy
 from datetime import datetime, timedelta
 from wuaiwow import db, app, cache
 from wuaiwow.models import (News, Sidebar, Permission, User, Role, GuildInfo, Donate, Agreement,
-                            PermissionRole, permission_has_role)
+                            PermissionRole, permission_has_role, role_is_admin)
 
 
 # def memoize(ttl=timedelta(seconds=600)):
@@ -266,13 +266,16 @@ def change_permission_by_time(original, value):
     return False, None
 
 
-def get_all_roles():
+def get_all_roles(exclude_gm=True):
     """
-        返回所有角色(隐藏最后三个角色)
+        返回所有角色
     """
 
     all_role = Role.query.order_by(Role.id.asc()).all()
-    return all_role[:-3]
+    if exclude_gm:
+        all_role = (role for role in all_role if not role_is_admin(role))
+
+    return all_role
 
     # ps = get_all_permission(only_value=False)
     #

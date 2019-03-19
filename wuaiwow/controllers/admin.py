@@ -7,7 +7,7 @@ from wuaiwow.utils import add_blueprint, save_file_upload
 from wuaiwow.utils.templateHelper import all_prompt
 from wuaiwow.utils.accountHelper import role_required
 from wuaiwow.utils.modelHelper import (find_or_create_sidebar, get_permission_by_value,
-                                       find_or_create_permission,
+                                       find_or_create_permission, get_all_roles,
                                        get_role_by_name, get_permission_by_id,
                                        get_less_permission, get_permission_num,
                                        permission_value_by_level, add_role_to_permission,
@@ -185,36 +185,42 @@ def get_a_sidebar():
     return jsonify(result)
 
 
-@bp.route('/change-role-permission/<int:value>', defaults={'value': 0}, methods=['GET', 'POST'])
+@bp.route('/change-role-permission/', methods=['GET', 'POST'])
 @login_required
 @role_required('UPGRADE')
-def change_role_permission(value):
+def change_role_permission():
     if request.method == 'POST':
+        value = request.form.get('value', None)
         role_permission = request.form.get('newRolePerm', "")
-        current_permission = get_permission_by_value(value)
-        if not role_permission or not current_permission:
+        if not value or value <= 0 or not role_permission:
             result = {'status': 'Err', 'msg': u'参数错误'}
         else:
             command_list = []
             role_perm = [a.split('=') for a in role_permission.split('&')]
-            for r, v in role_perm:
-                if r == 'role':
-                    role = get_role_by_name(role=v)
-                    added, _ = add_role_to_permission(ps=current_permission, role=role)          # 更新权限拥有的role
-                    if added:
-                        command_list.append((current_permission.value, role.role, role.label))   # 保存更改成功的记录
+            form_value = filter(lambda x: x[0] == 'value', role_perm)[0]
+            if not form_value[-1] == value:
+                result = {'status': 'Err', 'msg': u'参数错误'}
             else:
-                db.session.commit()
-                result = {'status': 'Ok', 'msg': u'修改成功'}
+                current_permission = get_permission_by_value(value)
+                for r, v in role_perm:
+                    if r == 'role':
+                        role = get_role_by_name(role=v)
+                        added, _ = add_role_to_permission(ps=current_permission, role=role)  # 更新权限拥有的role
+                        if added:
+                            command_list.append((current_permission.value, role.role, role.label))  # 保存更改成功的记录
+                else:
+                    db.session.commit()
+                    result = {'status': 'Ok', 'msg': u'修改成功'}
 
-            # if len(command_list) > 0:
-            #     # 更新game server端的对应表
-            #     tasks.update_permission_table(command_list)
+                # if len(command_list) > 0:
+                #     # 更新game server端的对应表
+                #     tasks.update_permission_table(command_list)
 
         return jsonify(result)
     else:
         current_permission = current_user.permission
-        roles = [pr.role for pr in current_permission.roles]
+        roles = set((pr.role for pr in current_permission.roles)) | set(get_all_roles())   # 只显示当前用户拥有的角色及所有非admin角色(并不被当前用户拥有)
+        roles = list(roles)
         less_ps = get_less_permission(value=current_permission.value)
         i = 0
         less_roles = []
@@ -254,29 +260,33 @@ def add_permission():
 @role_required('UPGRADE')
 def add_role():
     new_role = request.form.get('newRole', "")
-    new_value = request.form.get('newValue', -1)
     new_label = request.form.get('newLabel', "")
-    try:
-        new_value = int(new_value)
-    except ValueError:
-        return jsonify({'status': 'Err', 'msg': u'参数错误'})
+    auto_add = request.form.get('autoSelect', True)
 
-    if new_value < 0 or new_value > 100:
+    if not new_label or not new_label:
         result = {'status': 'Err', 'msg': u'参数错误'}
     else:
         role_obj = get_role_by_name(role=new_role)
         if not role_obj:
             role_obj = create_role(role=new_role, label=new_label)
-        ps = get_permission_by_value(value=new_value)
-        success, rst = add_role_to_permission(ps=ps, role=role_obj)
-        if success:
-            db.session.commit()
-            result = {'status': 'Ok', 'msg': u'添加成功'}
 
+        result = {'status': 'Ok', 'msg': u'添加成功'}
+
+        if auto_add == 'true':
+            ps = get_permission_by_value(value=100)
+            success, rst = add_role_to_permission(ps=ps, role=role_obj)
+            result = {'status': 'Err', 'msg': rst} if not success else result
+            ps = get_permission_by_value(value=99)
+            success, rst = add_role_to_permission(ps=ps, role=role_obj)
+            result = {'status': 'Err', 'msg': rst} if not success else result
+            ps = get_permission_by_value(value=98)
+            success, rst = add_role_to_permission(ps=ps, role=role_obj)
+            result = {'status': 'Err', 'msg': rst} if not success else result
+
+        if result['status'] == 'Ok':
+            db.session.commit()
             # 更新game server端的permission表
             # tasks.update_permission_table([(ps.value, role_obj.role, role_obj.label)])
-        else:
-            result = {'status': 'Err', 'msg': rst}
 
     return jsonify(result)
 

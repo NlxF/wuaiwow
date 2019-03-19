@@ -6,48 +6,46 @@
 			</div> <!-- /widget-header -->
 			<div class="widget-content">
                 <div class="span7">
-                    <h4>修改所需权限:</h4>
-                    <br/>
-                    <form id="form-edit-roles" action="" method="POST">
-                        <table class="table table-bordered">
-                            <thead class="thead-inverse">
-                                <tr>
-                                    <th style="text-align: center">角色</th>
-                                    {% for role,label,value in roles %}
-                                        <th style="vertical-align:middle; text-align: center">{{label}}</th>
+                    <h4>修改权限包含角色:</h4>
+                    <div style="overflow-y: scroll; height:300px;">
+                        {% for permission in permissions %}
+                        <br/>
+                        <form action="{{ url_for('admin.change_role_permission') }}" method="post" class="form-all" id="form-edit-roles">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                            <input type="hidden" name="value" value="{{ permission.value }}" />
+                            <table class="table table-bordered">
+                                <thead class="thead-inverse">
+                                    <tr>
+                                        <th colspan="6" style="text-align: center">值 {{permission.value}} 拥有的权限</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in roles %}
+                                    <tr>
+                                        {% for role in row %}
+                                            {% if permission | hasRole(role) %}
+                                                <th><input type="checkbox" name="role" value="{{role.role}}" style="margin-top:-2px" checked/> {{role.label}}</th>
+                                            {% else %}
+                                                <th><input type="checkbox" name="role" value="{{role.role}}" style="margin-top:-2px"/> {{role.label}}</th>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
                                     {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th style="vertical-align:middle;text-align:center">所需值</th>
-                                    {% for role,label,value in roles %}
-                                    <td style="vertical-align:middle;text-align:center">
-                                        <div class="select-button custom-select">
-                                        <select name="{{role}}">
-                                            {% for s in selected %}
-                                                {% if value == s %}
-                                                    <option value="{{s}}" selected>{{s}}</option>
-                                                {% else %}
-                                                    <option value="{{s}}">{{s}}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                        </div>
-                                    </td>
-                                    {% endfor %}
-                                </tr>
-                            </tbody>
-                        </table>
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">保存</button>
-                    </form>
+                                </tbody>
+                            </table>
+
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">保存</button>
+                        </form>
+                        <br/>
+                        {% endfor %}
+                    </div>
                     <br/>
                     <hr/>
                     <br/>
-                    <h4>增加新权限:</h4>
+                    <h4>增加权限:</h4>
                     <br/>
                     <form class="form-inline" id="form-permission" action="" method="POST">
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">自动添加下一个权限</button>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">添加新权限</button>
                     </form>
                     <br/>
                     <hr/>
@@ -55,24 +53,19 @@
                     <h4>增加角色:</h4>
                     <br/>
                     <form class="form-inline" id="form-roles" action="" method="POST">
+                        {# <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> #}
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">添加</div>
-                                <input type="text" class="form-control" style="height:34px;" placeholder="新角色" id="input-role">
+                                <input type="text" class="form-control" style="height:34px; border-radius:4px;" placeholder="新角色" id="input-role">
+                                <input type="text" class="form-control" style="height:34px; border-radius:4px;" placeholder="标签" id="role-label">
                             </div>
-                            <input type="text" class="form-control" style="height:34px;" placeholder="标签" id="role-label">
-                            <select class="form-control" style="height:34px;" id="role-select">
-                                {% for s in selected %}
-                                <option value="{{s}}">{{s}}</option>
-                                {% endfor %}
-                            </select>
-
+                            <input type="checkbox" id="auto-select" style="margin-top:-2px" checked/>  自动添加到管理组
                         </div>
-                      <button type="submit" class="btn btn-primary">添加</button>
+                        <br/>
+                        <br/>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">添加</button>
                     </form>
-                    <br/>
-                    <hr/>
-                    <br/>
                 </div>
 			</div> <!-- /widget-content -->
 		</div> <!-- /widget -->
