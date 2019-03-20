@@ -1,3 +1,4 @@
-# cron for daily db backup @ 4:15 am UTC
-# min  hr mday month wday command
-*/1 * * * *  /usr/local/bin/backup.sh > /dev/null 2>&1
+# cron for daily db backup @ 4:15 am every 2 day
+# min hr mday month wday command
+#15 4 */2 * *  /usr/local/bin/backup.sh > /dev/null 2>&1
+*/5 * * * *  /usr/local/bin/backup.sh > /dev/null 2>&1

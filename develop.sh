@@ -126,10 +126,10 @@ function base(){
     done
 
     echo "    "${idx}".构建database服务基础镜像"
-    docker build --no-cache -f ./deployment/docker/database/Dockerfile.Base -t wuaiwow/database:base .
+    docker build --no-cache -f ./deployment/docker/database/Dockerfile.Base -t wuaiwow/wwwdatabase:base .
     ((idx+=1))
     echo "    "${idx}".构建server基础镜像"
-    docker build --no-cache -f ./deployment/docker/www/Dockerfile.Base -t wuaiwow/server:base .
+    docker build --no-cache -f ./deployment/docker/www/Dockerfile.Base -t wuaiwow/wwwserver:base .
 }
 
 if [[ ${argc} > 0 ]]; then

@@ -28,6 +28,9 @@ echo $(python manager.py db init)
 echo $(python manager.py db migrate -m "init")
 echo $(python manager.py db upgrade)
 
+echo "Initialize default data..."
+echo $(python manager.py init_data)
+
 echo "start supervisord..."
 # if the running user is an Arbitrary User ID
 if ! whoami &> /dev/null; then

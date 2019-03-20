@@ -1,4 +1,4 @@
-FROM wuaiwow/server:base
+FROM wuaiwow/wwwserver:base
 
 ENV HOME=/www/wuaiwow-www
 

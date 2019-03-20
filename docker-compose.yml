@@ -10,7 +10,7 @@ services:
             args:
                 http_proxy: http:docker.for.mac.localhost:1087
                 https_proxy: http:docker.for.mac.localhost:1087
-                noproxy: "localhost,127.0.0.1,$LOCAL_DOMAIN"
+                # noproxy: "localhost,127.0.0.1,$LOCAL_DOMAIN"
         networks:
             - www-network
 
@@ -24,7 +24,7 @@ services:
             args:
                 http_proxy: http:docker.for.mac.localhost:1087
                 https_proxy: http:docker.for.mac.localhost:1087
-                noproxy: "localhost,127.0.0.1,$LOCAL_DOMAIN"
+                # noproxy: "localhost,127.0.0.1,$LOCAL_DOMAIN"
         networks:
             - www-network
         depends_on:

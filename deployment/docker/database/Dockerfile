@@ -1,9 +1,10 @@
-FROM wuaiwow/database:base
+FROM wuaiwow/wwwdatabase:base
 
 # Source code file
 COPY ./deployment/config/backup.sh /usr/local/bin/backup.sh
 COPY ./deployment/docker/database/init-db.sh /docker-entrypoint-initdb.d
 COPY ./deployment/docker/database/docker-entrypoint.sh /usr/local/bin/custom-docker-entrypoint.sh
+COPY ./deployment/data/ /docker-entrypoint-initdb.d
 
 COPY ./deployment/config/cronjobs /etc/cronjobs
 RUN crontab -u root /etc/cronjobs && \
