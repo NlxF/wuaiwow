@@ -138,7 +138,7 @@ def create_app(need_default_data=False, test=False):
 
     # ***** Initialize app config settings *****
     app.config.from_object('wuaiwow.flask_settings')
-    print("debug mode: {}".format("YES" if app.debug else "NO"))
+    # print("debug mode: {}".format("YES" if app.debug else "NO"))
     
     # Read environment-specific settings from file defined by OS environment variable 'ENV_SETTINGS_FILE'
     if app.debug:

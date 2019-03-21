@@ -22,10 +22,23 @@ for package in ${packages[@]}; do
     fi
 done
 
-echo "Initialize DB..."
+SQLLIST=`ls ${HOME}/sql/`
+if [ ${#SQLLIST[@]}>0 ]; then
+    echo "Data recovery..."
+    for file in ${SQLLIST}; do 
+        if [ -f ${HOME}/sql/$file ]; then
+            echo "    Recovery sql file:"$file
+            mysql -h www-database -u root -p$MYSQL_ROOT_PASSWORD wuaiwow < ${HOME}/sql/$file
+        fi
+    done
+else
+    echo "No data need recovery..."
+fi
+
+echo "Initialize or Update DB..."
 cd ${HOME}/
 echo $(python manager.py db init)
-echo $(python manager.py db migrate -m "init")
+echo $(python manager.py db migrate -m "init or update")
 echo $(python manager.py db upgrade)
 
 echo "Initialize default data..."

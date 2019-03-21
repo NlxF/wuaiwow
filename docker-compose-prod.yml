@@ -16,6 +16,8 @@ services:
         image: wuaiwow/www-server
         networks:
             - www-network
+        environment:
+            - MYSQL_ROOT_PASSWORD=password2
         ports:
             - 80:8080
         depends_on:

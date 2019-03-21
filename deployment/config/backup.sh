@@ -77,7 +77,8 @@ function backup_database(){
     fi
     output+="$database => $backup_file\n"
     echo_status "...backing up $count of $total databases: $database"
-    $(mysqldump $(mysql_login) $database | gzip -9 > $backup_file)
+    # --no-create-info
+    $(mysqldump $(mysql_login) $database --ignore-table=$database.alembic_version | gzip -9 > $backup_file)
 }
 
 function backup_databases(){

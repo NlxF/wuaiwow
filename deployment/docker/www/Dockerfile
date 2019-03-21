@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip proc
 COPY ./manager.py ${HOME}/
 COPY ./runserver.py ${HOME}/
 COPY ./wuaiwow ${HOME}/wuaiwow
-COPY ./deployment/data ${HOME}/sql/
+COPY ./deployment/data/ ${HOME}/sql/
 
 COPY ./deployment/config/wait-for-it.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/wait-for-it.sh

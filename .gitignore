@@ -68,3 +68,4 @@ env/
 wuaiwow/static/uploads/
 volume/
 dump.rdb
+deployment/data/
