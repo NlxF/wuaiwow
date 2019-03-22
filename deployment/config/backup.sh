@@ -44,6 +44,9 @@ KEEP_BACKUPS_FOR=30 #days
 # YYYY-MM-DD
 TIMESTAMP=$(date +%F)
 
+# db exclude table
+WUAIWOW_EXCLUDE=('alembic_version')
+
 function delete_old_backups()
 {
   echo "Deleting $BACKUP_DIR/*.sql.gz older than $KEEP_BACKUPS_FOR days"
@@ -77,8 +80,16 @@ function backup_database(){
     fi
     output+="$database => $backup_file\n"
     echo_status "...backing up $count of $total databases: $database"
-    # --no-create-info
-    $(mysqldump $(mysql_login) $database --ignore-table=$database.alembic_version | gzip -9 > $backup_file)
+  
+    local info=' '
+    if [ $database == 'wuaiwow' ]; then
+      local ignore=' '
+      for table in ${WUAIWOW_EXCLUDE[@]}; do
+        ignore="$ignore --ignore-table=wuaiwow.$table "
+      done
+      info="$info $ignore"
+    fi
+    $(mysqldump $(mysql_login) $database $info | gzip -9 > $backup_file)
 }
 
 function backup_databases(){

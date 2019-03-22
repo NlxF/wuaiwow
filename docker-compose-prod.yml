@@ -4,7 +4,8 @@ services:
     www-database:
         image: wuaiwow/www-database
         networks:
-            - www-network
+            www-network:
+                ipv4_address: 172.16.238.10
         ports:
             - 3309:3306
         environment:
@@ -15,7 +16,8 @@ services:
     www-server:
         image: wuaiwow/www-server
         networks:
-            - www-network
+            www-network:
+                ipv4_address: 172.16.238.12
         environment:
             - MYSQL_ROOT_PASSWORD=password2
         ports:
@@ -26,3 +28,8 @@ services:
 
 networks:
     www-network:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.238.0/24
