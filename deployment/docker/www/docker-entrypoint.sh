@@ -22,7 +22,7 @@ for package in ${packages[@]}; do
     fi
 done
 
-SQLLIST=`ls ${HOME}/sql/`
+SQLLIST=`ls ${HOME}/restore/`
 if [ ${#SQLLIST[@]}>0 ]; then
     echo "Data recovery..."
     for file in ${SQLLIST}; do 

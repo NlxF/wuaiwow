@@ -36,8 +36,8 @@ function upgrade(){
         for ((idx=0; idx<argc; ++idx)); do
             if [[ ${all_services[@]} =~ ${argv[idx]} ]]; then
                 echo "    "${num}".镜像:wuaiwow/"${argv[idx]}
-                # docker image rm -f "wuaiwow/"${argv[idx]}
-                # docker-compose -f docker-compose-prod.yml pull "www-"${argv[idx]}
+                docker image rm -f "wuaiwow/"${argv[idx]}
+                docker-compose -f docker-compose-prod.yml pull "www-"${argv[idx]}
             else
                 echo "    "${num}".镜像:wuaiwow/"${argv[idx]}" 不存在."
             fi

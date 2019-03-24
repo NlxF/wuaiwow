@@ -29,6 +29,6 @@
 备份任务由cron定期执行(cron脚本位于conf/cronjobs), 备份路径映射到本机的volume/backup下。备份最多不超过30天的数据。备份文件名格式为 timestamp.scheme_name.sql.gz
 
 ### 2. 恢复
-将从volume/backup路径下获取到的备份文件移到deployment/data/文件夹下，当启动服务后会自动执行sql脚本恢复数据。
+将从volume/backup路径下获取到的备份文件移到volume/restore文件夹下，当启动服务后会自动执行sql脚本恢复数据。
 注：恢复数据的时候可能会有重复的数据，会导致数据库启动失败。
 

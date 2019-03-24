@@ -11,8 +11,8 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=password2
         volumes:
-            - ./volume/var/lib/mysql:/var/lib/mysql
-            - ./volume/backup:/www/wuaiwow-www/backup
+            - volume/var/lib/mysql:/var/lib/mysql
+            - volume/restore:/www/wuaiwow-www/restore
     www-server:
         image: wuaiwow/www-server
         networks:
