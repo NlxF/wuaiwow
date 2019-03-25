@@ -22,17 +22,21 @@ for package in ${packages[@]}; do
     fi
 done
 
-SQLLIST=`ls ${HOME}/restore/`
-if [ ${#SQLLIST[@]}>0 ]; then
-    echo "Data recovery..."
-    for file in ${SQLLIST}; do 
-        if [ -f ${HOME}/sql/$file ]; then
-            echo "    Recovery sql file:"$file
-            mysql -h www-database -u root -p$MYSQL_ROOT_PASSWORD wuaiwow < ${HOME}/sql/$file
-        fi
-    done
+if [ -d '${HOME}/restore/' ]; then
+    SQLLIST=`ls ${HOME}/restore/`
+    if [ ${#SQLLIST[@]}>0 ]; then
+        echo "Data recovery..."
+        for file in ${SQLLIST}; do 
+            if [ -f ${HOME}/sql/$file ]; then
+                echo "    Recovery sql file:"$file
+                mysql -h www-database -u root -p$MYSQL_ROOT_PASSWORD wuaiwow < ${HOME}/sql/$file
+            fi
+        done
+    else
+        echo "No data to recovery..."
+    fi
 else
-    echo "No data need recovery..."
+    echo "No recovery directory..."
 fi
 
 echo "Initialize or Update DB..."

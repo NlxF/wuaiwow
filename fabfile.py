@@ -21,8 +21,8 @@ from fabric.contrib.files import exists
 
 # -------- fab设置 -------- #
 SSH_NEW_PORT = 22  # 50683                               # rule.v4中开放的端口需跟此一致
-env.hosts = ['172.20.10.4:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
-env.user = 'luxf'
+env.hosts = ['10.49.196.71:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
+env.user = 'lxf'
 # env.hosts = ['206.189.216.83:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
 # env.user = 'root'
 # env.use_ssh_config = True
@@ -62,10 +62,10 @@ def _prepare():
     # sudo('su - ${USER}')
 
     # download the current stable release of Docker Compose
-    sudo('pip install docker-compose')
-    # sudo('curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose')
-    # sudo('chmod +x /usr/local/bin/docker-compose')
-    # sudo('ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose')
+    # sudo('pip install docker-compose')
+    sudo('curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose')
+    sudo('chmod +x /usr/local/bin/docker-compose')
+    sudo('ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose')
 
 
 def _ssh_setting():
@@ -114,9 +114,13 @@ def _get_backup_to_local():
         get(tar_file_name, "%s/" % _BACKUP_DIR, use_sudo=True)
             
 
-def make_package(file_path):
+def _make_package(file_path):
     """定义一个打包任务, 指定包名"""
-    if file_path and not os.path.exists(file_path):
+    if file_path:
+        if not os.path.exists('volume/restore/'):
+            local('mkdir -p volume/restore/')
+        if not os.path.exists(_PACKAGE_DIR):
+            local('mkdir -p {}'.format(_PACKAGE_DIR))
         tar_files = ['deploy.sh', 'docker-compose-prod.yml', 'volume/restore/', 'deployment/config/']
         local('rm -f {}'.format(file_path))
         local('tar -czvf {} {}'.format(file_path, ' '.join(tar_files)))
@@ -127,7 +131,7 @@ def _upload_repo():
     tag = _datetime.now().strftime('%Y%m%d')
     _TAR_FILE_NAME = _TAR_FILE_TEMP.format(_TAR_DIR_NAME, tag)
     upload_file_path = os.path.join(_PACKAGE_DIR, _TAR_FILE_NAME)
-    make_package(upload_file_path)
+    _make_package(upload_file_path)
 
     # local('rsync -avz . {}:{} --delete --exclude-from \'rsync_exclude.txt\''.format(host, _REMOTE_DIR_APP))
     if not exists(_REMOTE_DIR):
@@ -146,6 +150,10 @@ def _upload_repo():
         sudo('chmod +x {}'.format(os.path.join(_REMOTE_DIR_APP, 'deploy.sh')))
 
 
+def _update_image():
+    pass
+
+
 def init_env():
     """初始化环境"""
 
@@ -159,16 +167,22 @@ def init_env():
     # _security_setting()
 
 
-def upload_task():
+def upload():
     """定义一个上传任务"""
     for host in env.hosts:
         _upload_repo()
         
 
-def download_task():
+def download():
     """定义一个下载任务"""
     for host in env.hosts:
         _get_backup_to_local()
+
+
+def update():
+    """定义一个更新任务"""
+    for host in env.hosts:
+        _update_image()
 
 
 def start():
@@ -187,3 +201,10 @@ def stop():
     """停止 服务"""
     with cd(_REMOTE_DIR_APP):
         sudo("./deploy.sh stop")
+
+
+def pull(serverName):
+    """拉取远程仓库的更新"""
+    if serverName:
+        with cd(_REMOTE_DIR_APP):
+            sudo("./deploy.sh pull {}".format(serverName))

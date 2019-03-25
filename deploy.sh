@@ -9,7 +9,7 @@
 
 set -e
 
-all_services=("server" "database")
+all_services=("www-server" "www-database")
 argc=$#
 argv=($@)
 
@@ -17,7 +17,7 @@ function startServers(){
     if [ -d ./volume/var/ ]; then
         rm -rf ./volume/var/
     fi
-    docker-compose -f docker-compose-prod.yml up 
+    docker-compose -f docker-compose-prod.yml up
 }
 
 function stopServers(){
@@ -33,11 +33,11 @@ function upgrade(){
         stopServers
         echo "    "${num}".更新镜像:"
         ((num+=1))
-        for ((idx=0; idx<argc; ++idx)); do
+        for ((idx=1; idx<argc; ++idx)); do
             if [[ ${all_services[@]} =~ ${argv[idx]} ]]; then
                 echo "    "${num}".镜像:wuaiwow/"${argv[idx]}
                 docker image rm -f "wuaiwow/"${argv[idx]}
-                docker-compose -f docker-compose-prod.yml pull "www-"${argv[idx]}
+                docker-compose -f docker-compose-prod.yml pull ${argv[idx]}
             else
                 echo "    "${num}".镜像:wuaiwow/"${argv[idx]}" 不存在."
             fi

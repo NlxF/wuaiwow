@@ -11,8 +11,7 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=password2
         volumes:
-            - volume/var/lib/mysql:/var/lib/mysql
-            - volume/restore:/www/wuaiwow-www/restore
+            - ./volume/var/lib/mysql:/var/lib/mysql
     www-server:
         image: wuaiwow/www-server
         networks:
@@ -20,6 +19,8 @@ services:
                 ipv4_address: 172.16.238.12
         environment:
             - MYSQL_ROOT_PASSWORD=password2
+        volumes:
+            - ./volume/restore:/www/wuaiwow-www/restore
         ports:
             - 80:8080
         depends_on:

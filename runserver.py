@@ -1,5 +1,5 @@
 # encoding:utf8
-from wuaiwow import create_app, celery
+from wuaiwow import create_app  # , celery
 
 # 运行 celery -A runserver:celery worker --loglevel=info
 
