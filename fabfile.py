@@ -108,9 +108,9 @@ def _get_backup_to_local():
     """最新数据备份到本地"""
     with cd(_REMOTE_DIR_APP):
         tag = _datetime.now().strftime('%Y%m%d')
-        tar_file_name = _TAR_FILE_TEMP.format("{}{}".format(_TAR_DIR_NAME, "-backup"), tag)
+        tar_file_name = _TAR_FILE_TEMP.format(os.path.join(_REMOTE_DIR_APP, "www-database-backup"), tag)
         tar_files = ['volume/backup/*']
-        run('tar -czvf {} {}'.format(tar_file_name, ' '.join(tar_files)))
+        sudo('tar -czvf {} {}'.format(tar_file_name, ' '.join(tar_files)))
         get(tar_file_name, "%s/" % _BACKUP_DIR, use_sudo=True)
             
 
@@ -150,10 +150,6 @@ def _upload_repo():
         sudo('chmod +x {}'.format(os.path.join(_REMOTE_DIR_APP, 'deploy.sh')))
 
 
-def _update_image():
-    pass
-
-
 def init_env():
     """初始化环境"""
 
@@ -164,7 +160,7 @@ def init_env():
 
     _prepare()
 
-    # _security_setting()
+    _security_setting()
 
 
 def upload():
@@ -177,12 +173,6 @@ def download():
     """定义一个下载任务"""
     for host in env.hosts:
         _get_backup_to_local()
-
-
-def update():
-    """定义一个更新任务"""
-    for host in env.hosts:
-        _update_image()
 
 
 def start():
@@ -204,7 +194,10 @@ def stop():
 
 
 def pull(serverName):
-    """拉取远程仓库的更新"""
+    """
+        拉取远程仓库的更新
+        fab pull:[www-database [,www-server]]
+    """
     if serverName:
         with cd(_REMOTE_DIR_APP):
             sudo("./deploy.sh pull {}".format(serverName))
