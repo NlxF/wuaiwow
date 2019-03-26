@@ -18,7 +18,7 @@
 -A TCP -p tcp --dport 443 -j ACCEPT
 -A TCP -p tcp --dport 587 -j ACCEPT
 -A TCP -p tcp --dport 465 -j ACCEPT
--A TCP -p tcp --dport 50683 -j ACCEPT
+-A TCP -p tcp --dport 8083 -j ACCEPT
 
 # Acceptable ICMP traffic
 -A ICMP -p icmp -m icmp --icmp-type 8 -j ACCEPT
