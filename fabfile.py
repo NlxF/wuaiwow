@@ -21,8 +21,8 @@ from fabric.contrib.files import exists
 
 # -------- fab设置 -------- #
 SSH_NEW_PORT = 22  # 50683                               # rule.v4中开放的端口需跟此一致
-env.hosts = ['10.49.196.71:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
-env.user = 'lxf'
+env.hosts = ['10.49.196.52:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
+env.user = 'luxf'
 # env.hosts = ['206.189.216.83:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
 # env.user = 'root'
 # env.use_ssh_config = True
@@ -66,6 +66,9 @@ def _prepare():
     sudo('curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose')
     sudo('chmod +x /usr/local/bin/docker-compose')
     sudo('ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose')
+
+    # sudo('docker login', pty=False, combine_stderr=True)
+    
 
 
 def _ssh_setting():
@@ -159,8 +162,9 @@ def init_env():
     #     pass
 
     _prepare()
-
-    _security_setting()
+    # _security_setting()
+    # sudo('service docker restart')
+    # sudo('iptables-save > /etc/iptables/rules.v4')
 
 
 def upload():

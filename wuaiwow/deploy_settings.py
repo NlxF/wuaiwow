@@ -64,7 +64,7 @@ DB = {'host': 'www-database',
       }
 
 # lserver setting
-LSERVER_HOST = 'docker.for.mac.localhost'
+LSERVER_HOST = '10.49.192.78' # 'docker.for.mac.localhost'
 LSERVER_PORT = 8083
 
 # 与lserver 通信是否需要加密
