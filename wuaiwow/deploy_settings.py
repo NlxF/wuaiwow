@@ -45,7 +45,7 @@ SECRET_KEY = "\xcdG\xe8\xc0\x05\xfb\x87\x0f\xc6$o\xdb`k\n\x18\xebB\xeb\x0cm\xf6'
 
 # Flask-Mail settings
 MAIL_USERNAME = 'it1780@sina.com' #'wuaiwow@gmail.com'
-MAIL_PASSWORD = 'luxiaofei3517'
+MAIL_PASSWORD = 'luffy,20170116!'
 MAIL_DEFAULT_SENDER = '"吾爱魔兽" <it1780@sina.com>'
 MAIL_SERVER = 'smtp.sina.com'
 MAIL_PORT = 587       #25

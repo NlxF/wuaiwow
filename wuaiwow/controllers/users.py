@@ -1,7 +1,7 @@
 # coding:utf-8
 from flask import current_app, flash, redirect, render_template, request, url_for, Blueprint, jsonify
 from flask_login import login_user, logout_user
-from flask_user import current_user, login_required, emails
+from flask_user import current_user, login_required, emails, signals
 from flask_user.signals import user_confirmed_email
 from flask_user.decorators import confirm_email_required, login_required
 from flask_user.forms import LoginForm
@@ -168,7 +168,12 @@ def register():
                     flash(_(msg), category='error')
             except Exception as e:
                 msg = u"{}:{}".format(e.args[0], unicode(e.args[-1]))
-                logger.error(msg)
+                print(msg)
+                # logger.error(msg)
+                tasks.delete_account(user_fields['username'])
+                db_adapter.delete_object(user)
+                db_adapter.commit()
+
                 flash(_("LServer:Create account failed."), category='error')
             else:
                 if resp[0]:
@@ -217,18 +222,23 @@ def change_password():
         else:
             if resp[0]:
                 # Change password
-                user_manager.update_password(current_user, hashed_password)
+                # user_manager.update_password(current_user, hashed_password)
+                try:
+                    # Send 'password_changed' email
+                    if user_manager.enable_email and user_manager.send_password_changed_email:
+                        emails.send_password_changed_email(current_user)
+                except Exception as e:
+                    # 恢复密码
+                    tasks.change_pwd(current_user.username, form.old_password.data)
+                    flash(_('Your password changed failed.'), 'error')
+                else:
+                    # Change password
+                    user_manager.update_password(current_user, hashed_password)
 
-                # Send 'password_changed' email
-                if user_manager.enable_email and user_manager.send_password_changed_email:
-                    emails.send_password_changed_email(current_user)
+                    # Send password_changed signal
+                    signals.user_changed_password.send(current_app._get_current_object(), user=current_user)
 
-                # Send password_changed signal
-                # signals.user_changed_password.send(current_app._get_current_object(), user=current_user)
-
-                # Prepare one-time system message
-                # flash(_('Your password has been changed successfully.'), 'success')
-                add_change_password_message(current_user)
+                    add_change_password_message(current_user)
 
                 # Redirect to 'next' URL
                 return redirect(form.next.data)
@@ -239,12 +249,13 @@ def change_password():
 
 @user_confirmed_email.connect_via(app)
 def active_use(sender, user, **extra):
+    msg = _("lserver:account activation failed")
     try:
         resp = tasks.active_account(user.username)
         if not resp[0]:
-            flash(_("lserver:account activation failed"), 'error')
+            flash(msg, 'error')
     except Exception, e:
-        flash(_("lserver:Account activation failed"), 'error')
+        flash(msg, 'error')
     else:
         # flash(_('account activation succeeded'))
         add_new_register_message(user)
@@ -308,9 +319,12 @@ def reset_password(token):
             db_adapter.update_object(user_auth, password=hashed_password)
             db_adapter.commit()
 
-            # Send 'password_changed' email
-            if user_manager.enable_email and user_manager.send_password_changed_email:
-                emails.send_password_changed_email(user)
+            try:
+                # Send 'password_changed' email
+                if user_manager.enable_email and user_manager.send_password_changed_email:
+                    emails.send_password_changed_email(user)
+            except Exception, e:
+                pass
 
             # Prepare one-time system message
             # flash(_("Your password has been reset successfully."), 'success')
