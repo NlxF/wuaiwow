@@ -27,15 +27,15 @@ def configure_extensions(app, db):
     babel = Babel(app)
 
     # Setup DebugToolbarExtension
-    # toolbar = DebugToolbarExtension(app)
+    toolbar = DebugToolbarExtension(app)
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
-    from wtforms.fields import HiddenField
-
-    def is_hidden_field_filter(field):
-        return isinstance(field, HiddenField)
-
-    app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
+    # from wtforms.fields import HiddenField
+    #
+    # def is_hidden_field_filter(field):
+    #     return isinstance(field, HiddenField)
+    #
+    # app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Setup Flask-User to handle user account related forms
     from wuaiwow.models.users import User, UserInvitation

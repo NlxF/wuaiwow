@@ -21,7 +21,7 @@ from fabric.contrib.files import exists
 
 # -------- fab设置 -------- #
 SSH_NEW_PORT = 22  # 50683                               # rule.v4中开放的端口需跟此一致
-env.hosts = ['10.49.192.82:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
+env.hosts = ['10.0.0.11:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
 env.user = 'luxf'
 # env.hosts = ['206.189.216.83:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
 # env.user = 'root'

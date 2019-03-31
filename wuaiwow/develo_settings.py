@@ -1,5 +1,7 @@
 # coding:utf-8
 
+SERVER_NAME = 'www.wuaiwow.com'
+
 ADMINS = frozenset(['wuaiwow@gmail.com'])
 
 DATABASE_NAME = 'wuaiwow_test_2'

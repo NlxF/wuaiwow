@@ -2,6 +2,8 @@
 
 import os
 
+SERVER_NAME = 'www.wuaiwow.com'
+
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
 ADMINS = frozenset(['wuaiwow@gmail.com'])
@@ -41,16 +43,23 @@ ONLINE_PAGE_REFRESH_MAX = ONLINE_LAST_MINUTES * 60
 
 # Flask settings                     # Generated with: import os; os.urandom(24)
 SECRET_KEY = "\xcdG\xe8\xc0\x05\xfb\x87\x0f\xc6$o\xdb`k\n\x18\xebB\xeb\x0cm\xf6'\x92"
-# PLEASE USE A DIFFERENT KEY FOR PRODUCTION ENVIRONMENTS!
 
 # Flask-Mail settings
-MAIL_USERNAME = 'it1780@sina.com' #'wuaiwow@gmail.com'
-MAIL_PASSWORD = 'luffy,20170116!'
-MAIL_DEFAULT_SENDER = '"吾爱魔兽" <it1780@sina.com>'
-MAIL_SERVER = 'smtp.sina.com'
-MAIL_PORT = 587       #25
-#MAIL_USE_SSL = True  #465
-MAIL_USE_TLS = True   #587
+MAIL_USERNAME = 'wuaiwow@gmail.com'
+MAIL_PASSWORD = 'zhbcgkirzhrgarmr'
+MAIL_DEFAULT_SENDER = '"吾爱魔兽" <wuaiwow@gmail.com>'
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587                    # 25
+MAIL_USE_TLS = True                # 587
+MAIL_USE_SSL = False               # 465
+MAIL_MAX_EMAILS = 500
+# MAIL_USERNAME = 'it1780@sina.com'
+# MAIL_PASSWORD = 'luffy,20170116!'
+# MAIL_DEFAULT_SENDER = '"吾爱魔兽" <it1780@sina.com>'
+# MAIL_SERVER = 'smtp.sina.com'
+# MAIL_PORT = 587        #25
+# # MAIL_USE_SSL = True  #465
+# MAIL_USE_TLS = True    #587
 
 
 # mySQLHandler settings
@@ -64,7 +73,7 @@ DB = {'host': 'www-database',
       }
 
 # lserver setting
-LSERVER_HOST = '10.49.192.78' # 'docker.for.mac.localhost'
+LSERVER_HOST = '10.0.0.10'  # 'docker.for.mac.localhost'
 LSERVER_PORT = 8083
 
 # 与lserver 通信是否需要加密

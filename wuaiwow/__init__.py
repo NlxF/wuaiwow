@@ -15,7 +15,7 @@ from utils.plugHelper import register_blueprints
 from utils.onlineHelper import Online
 from utils.factory import make_celery
 from utils.mySqlalchemy import UnlockedReadAlchemy, Model
-from celery.utils.log import get_task_logger
+# from celery.utils.log import get_task_logger
 
 # Initialize Flask app and db
 app = Flask("wuaiwow")
