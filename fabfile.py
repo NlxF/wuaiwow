@@ -209,10 +209,10 @@ def stop():
             sudo("./deploy.sh stop")
 
 
-def pull(serverName):
+def pull(*serverName):
     """
         拉取远程仓库的更新
-        fab pull:[www-database [,www-server]]
+        fab pull:[www-database[,www-server]]
     """
     for host in env.hosts:
         if serverName:
