@@ -14,14 +14,25 @@ argc=$#
 argv=($@)
 
 function startServers(){
-    if [ -d ./volume/var/ ]; then
-        rm -rf ./volume/var/
-    fi
-    docker-compose -f docker-compose-prod.yml up
+    docker-compose -f docker-compose-prod.yml up -d
 }
 
 function stopServers(){
     docker-compose -f docker-compose-prod.yml down
+}
+
+function nanualBackup(){
+    database_container=$(docker container ls --filter ancestor='wuaiwow/www-database:latest' --format "{{.ID}}")
+    if [[ ${#database_container[@]} -eq 0 ]]; then
+        echo "2.www-database镜像未运行."
+    else 
+        local idx=0
+        for db in ${database_container}; do
+            echo "    "${idx}".备份数据库:"${db}
+            docker exec -i -t ${db} /bin/sh -c "/usr/local/bin/backup.sh"
+            ((idx+=1))
+        done
+    fi
 }
 
 function upgrade(){
@@ -38,6 +49,11 @@ function upgrade(){
                 echo "    "${num}".镜像:wuaiwow/"${argv[idx]}
                 docker image rm -f "wuaiwow/"${argv[idx]}
                 docker-compose -f docker-compose-prod.yml pull ${argv[idx]}
+                if [ "www-database" == ${argv[idx]} ]; then
+                    if [ -d ./volume/var/ ]; then
+                        rm -rf ./volume/var/
+                    fi
+                fi
             else
                 echo "    "${num}".镜像:wuaiwow/"${argv[idx]}" 不存在."
             fi
@@ -58,6 +74,9 @@ if [[ ${argc} > 0 ]]; then
         echo "1.重启服务:"
         stopServers
         startServers
+    elif [ ${argv[0]} == "backup" ]; then
+        echo "1.备份服务:"
+        nanualBackup
     elif [ ${argv[0]} == "pull" ]; then
         echo "1.更新服务:"
         upgrade ${argv[@]}

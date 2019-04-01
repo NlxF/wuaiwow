@@ -8,7 +8,7 @@ import os
 from datetime import datetime as _datetime
 from fabric import network
 from fabric.api import *
-# from fabric.utils import abort
+from fabric.utils import abort
 from fabric.contrib.files import exists
 
 
@@ -21,7 +21,7 @@ from fabric.contrib.files import exists
 
 # -------- fab设置 -------- #
 SSH_NEW_PORT = 22  # 50683                               # rule.v4中开放的端口需跟此一致
-env.hosts = ['10.0.0.11:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
+env.hosts = ['10.49.192.82:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
 env.user = 'luxf'
 # env.hosts = ['206.189.216.83:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
 # env.user = 'root'
@@ -110,6 +110,12 @@ def _security_setting():
     sudo('iptables-save > /etc/iptables/rules.v4')
 
 
+def _nanual_backup_db():
+    """主动备份数据"""
+    with cd(_REMOTE_DIR_APP):
+        sudo("./deploy.sh backup")
+
+
 def _get_backup_to_local():
     """最新数据备份到本地"""
     with cd(_REMOTE_DIR_APP):
@@ -178,25 +184,29 @@ def upload():
 def download():
     """定义一个下载任务"""
     for host in env.hosts:
+        _nanual_backup_db()
         _get_backup_to_local()
 
 
 def start():
     """启动 服务"""
-    with cd(_REMOTE_DIR_APP):
-        sudo("./deploy.sh start")
+    for host in env.hosts:
+        with cd(_REMOTE_DIR_APP):
+            sudo("./deploy.sh start")
 
 
 def restart():
     """重启 服务"""
-    with cd(_REMOTE_DIR_APP):
-        sudo("./deploy.sh restart")
+    for host in env.hosts:
+        with cd(_REMOTE_DIR_APP):
+            sudo("./deploy.sh restart")
 
 
 def stop():
     """停止 服务"""
-    with cd(_REMOTE_DIR_APP):
-        sudo("./deploy.sh stop")
+    for host in env.hosts:
+        with cd(_REMOTE_DIR_APP):
+            sudo("./deploy.sh stop")
 
 
 def pull(serverName):
@@ -204,6 +214,14 @@ def pull(serverName):
         拉取远程仓库的更新
         fab pull:[www-database [,www-server]]
     """
-    if serverName:
-        with cd(_REMOTE_DIR_APP):
-            sudo("./deploy.sh pull {}".format(serverName))
+    for host in env.hosts:
+        if serverName:
+            if 'www-database' in serverName:
+                up_to_date = prompt('即将更新www-database,请先确认备份数据是否为最新?', default=False, validate=bool)
+                if not up_to_date:
+                    abort("请先运行 'download'命令，备份最新数据到本地")
+                with cd(_REMOTE_DIR_APP):
+                    sudo("./deploy.sh pull {}".format(serverName))
+        else:
+            print('No server need to pull')
+
