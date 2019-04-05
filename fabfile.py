@@ -21,12 +21,12 @@ from fabric.contrib.files import exists
 
 # -------- fab设置 -------- #
 SSH_NEW_PORT = 22  # 50683                               # rule.v4中开放的端口需跟此一致
-env.hosts = ['10.49.192.82:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
-env.user = 'luxf'
-# env.hosts = ['206.189.216.83:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
-# env.user = 'root'
-# env.use_ssh_config = True
-# env.key_filename = ['~/.ssh/wuaiwow_rsa']
+# env.hosts = ['10.49.192.82:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
+# env.user = 'luxf'
+env.hosts = ['178.128.180.34:%d' % SSH_NEW_PORT]           # 如果有多个主机，fabric会自动依次部署
+env.user = 'root'
+env.use_ssh_config = True
+env.key_filename = ['~/.ssh/ism_rsa']
 
 _REMOTE_DIR     = '/www'
 _TAR_DIR_NAME   = 'wuaiwow'
@@ -83,6 +83,21 @@ def _ssh_setting():
 
 def _security_setting():
     """服务器安全设置"""
+    # iptables setting
+    def _reload_iptables():
+        try:
+            sudo('sudo service netfilter-persistent reload')
+        except BaseException as e:
+            sudo('sudo service iptables-persistent reload')
+
+    sudo('apt-get install iptables-persistent -y')
+
+    with cd(_REMOTE_DIR_APP):
+        put('deployment/config/rules.v4', '/etc/iptables/', use_sudo=True)
+        # put('deployment/config/rules.v6', '/etc/iptables/', use_sudo=True)    # 不更新，会阻塞DNS查询
+    
+    _reload_iptables()
+
     # fail2ban
     sudo('apt-get install fail2ban -y')
 
@@ -94,20 +109,11 @@ def _security_setting():
 
         sudo('service fail2ban start')
 
-    # iptables setting
-    sudo('apt-get install iptables-persistent -y')
-
-    with cd(_REMOTE_DIR_APP):
-        put('deployment/config/rules.v4', '/etc/iptables/', use_sudo=True)
-        # put('deployment/config/rules.v6', '/etc/iptables/', use_sudo=True)    # 不更新，会阻塞DNS查询
-
-    try:
-        sudo('sudo service netfilter-persistent reload')
-    except BaseException as e:
-        sudo('sudo service iptables-persistent reload')
-
     sudo('service docker restart')
     sudo('iptables-save > /etc/iptables/rules.v4')
+
+    _reload_iptables()     # 重新加载
+    
 
 
 def _nanual_backup_db():
@@ -220,8 +226,8 @@ def pull(*serverName):
                 up_to_date = prompt('即将更新www-database,请先确认备份数据是否为最新?', default=False, validate=bool)
                 if not up_to_date:
                     abort("请先运行 'download'命令，备份最新数据到本地")
-                with cd(_REMOTE_DIR_APP):
-                    sudo("./deploy.sh pull {}".format(serverName))
+            with cd(_REMOTE_DIR_APP):
+                sudo("./deploy.sh pull {}".format(' '.join(serverName)))
         else:
             print('No server need to pull')
 
