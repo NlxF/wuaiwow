@@ -62,7 +62,6 @@ migrations/
 *.xml~
 .idea/
 .vscode/
-https/
 env/
 *.pot
 *.pot.bak
@@ -71,3 +70,5 @@ volume/
 dump.rdb
 deployment/data/
 package/
+*.key
+*.csr

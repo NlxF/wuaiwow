@@ -42,7 +42,10 @@ def _prepare():
     sudo('timedatectl set-timezone "Asia/Shanghai"')
 
     sudo('apt-get update')
-    sudo('apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common python-pip')
+    sudo('apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common python-pip cron')
+
+    # 添加 cron
+    _add_cron_job()
 
     # add the GPG key for the official Docker repository to system
     sudo('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
@@ -56,10 +59,8 @@ def _prepare():
     sudo('apt-get install -y docker-ce')
 
     # executing the Docker Command Without Sudo
-    # add your username to the docker group
+    # add username to the docker group
     sudo('usermod -aG docker ${USER}')
-    # apply the new group membership
-    # sudo('su - ${USER}')
 
     # download the current stable release of Docker Compose
     # sudo('pip install docker-compose')
@@ -113,7 +114,6 @@ def _security_setting():
     sudo('iptables-save > /etc/iptables/rules.v4')
 
     _reload_iptables()     # 重新加载
-    
 
 
 def _nanual_backup_db():
@@ -139,9 +139,19 @@ def _make_package(file_path):
             local('mkdir -p volume/restore/')
         if not os.path.exists(_PACKAGE_DIR):
             local('mkdir -p {}'.format(_PACKAGE_DIR))
-        tar_files = ['deploy.sh', 'docker-compose-prod.yml', 'volume/restore/', 'deployment/config/']
+        tar_files = ['deploy.sh', 'docker-compose-prod.yml', 'volume/restore/', 'deployment/config/', 'deployment/https/']
         local('rm -f {}'.format(file_path))
         local('tar -czvf {} {}'.format(file_path, ' '.join(tar_files)))
+
+
+def _add_cron_job():
+    #write out current crontab
+    sudo('crontab -l > all-cron-jobs')
+    #echo new cron into cron file
+    sudo('echo "0 0 1 * * {} >/dev/null 2>&1" >> all-cron-jobs'.format(os.path.join(_REMOTE_DIR_APP, 'deployment/https/update-cert.sh')))
+    #install new cron file
+    sudo('crontab all-cron-jobs')
+    sudo('rm all-cron-jobs')
 
 
 def _upload_repo():
@@ -166,6 +176,7 @@ def _upload_repo():
         sudo('rm -f %s' % _TAR_FILE_NAME)
         # 赋权限
         sudo('chmod +x {}'.format(os.path.join(_REMOTE_DIR_APP, 'deploy.sh')))
+        sudo('chmod +x {}'.format(os.path.join(_REMOTE_DIR_APP, 'deployment/https/update-cert.sh')))
 
 
 def init_env():
