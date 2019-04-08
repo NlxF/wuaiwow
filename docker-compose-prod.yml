@@ -22,7 +22,7 @@ services:
             - MYSQL_ROOT_PASSWORD=password2
         volumes:
             - ./volume/restore:/www/wuaiwow-www/restore
-            - ./volume/challenges:/var/www/challenges
+            - /var/www/challenges:/var/www/challenges
         ports:
             - 80:8080
         depends_on:
