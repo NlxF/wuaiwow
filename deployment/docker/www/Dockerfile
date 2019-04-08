@@ -31,7 +31,7 @@ RUN touch /var/log/supervisor/supervisord.log
 
 COPY ./deployment/config/redis.conf /etc/redis/redis.conf
 
-EXPOSE 80:8080
+# EXPOSE 80:8080
 
 # setup entrypoint
 COPY ./deployment/docker/www/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

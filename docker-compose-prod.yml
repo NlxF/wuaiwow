@@ -22,9 +22,12 @@ services:
             - MYSQL_ROOT_PASSWORD=password2
         volumes:
             - ./volume/restore:/www/wuaiwow-www/restore
-            - /var/www/challenges:/var/www/challenges
+            - /var/www:/var/www
+            - ./deployment/https:/www/https
+            - /var/log/:/var/log/
         ports:
             - 80:8080
+            - 443:443
         depends_on:
             - www-database
         command: ["wait-for-it.sh", "-t", "90", "www-database:3306", "--", "docker-entrypoint.sh", "supervisord"]

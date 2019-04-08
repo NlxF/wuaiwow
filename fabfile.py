@@ -58,7 +58,7 @@ def _prepare():
     # Finally, install Docker
     sudo('apt-get install -y docker-ce')
 
-    # executing the Docker Command Without Sudo
+    # executing the Docker Command Without sudo
     # add username to the docker group
     sudo('usermod -aG docker ${USER}')
 
