@@ -15,22 +15,29 @@ COPY ./wuaiwow ${HOME}/wuaiwow
 COPY ./deployment/config/wait-for-it.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
+COPY ./deployment/config/update-cert.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/update-cert.sh
+
+COPY ./deployment/config/acme_tiny.py /usr/local/bin/
+
 COPY ./requirements.txt ${HOME}/
 RUN cd ${HOME} && \
    /usr/bin/pip install -r requirements.txt
 
 # Copy the nginx configuration file from the current directory and paste 
 COPY ./deployment/config/nginx.conf /etc/nginx/nginx.conf
+RUN touch /var/log/nginx/stdout.log && touch /var/log/nginx/stderr.log && touch /var/log/nginx/www.wuaiwow.log
 
 # Copy the base uWSGI ini file to enable default dynamic uwsgi process number
 COPY ./deployment/config/uwsgi.ini /etc/uwsgi/apps-available/uwsgi.ini
 RUN ln -s /etc/uwsgi/apps-available/uwsgi.ini /etc/uwsgi/apps-enabled/uwsgi.ini
+RUN touch /var/log/uwsgi/stdout.log && touch /var/log/uwsgi/stderr.log
 
 COPY ./deployment/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN touch /var/log/supervisor/supervisord.log
 
 COPY ./deployment/config/redis.conf /etc/redis/redis.conf
-
+RUN touch /var/log/redis/stdout.log && touch /var/log/redis/stderr.log
 # EXPOSE 80:8080
 
 # setup entrypoint

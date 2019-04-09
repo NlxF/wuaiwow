@@ -24,7 +24,6 @@ services:
             - ./volume/restore:/www/wuaiwow-www/restore
             - /var/www:/var/www
             - ./deployment/https:/www/https
-            - /var/log/:/var/log/
         ports:
             - 80:8080
             - 443:443

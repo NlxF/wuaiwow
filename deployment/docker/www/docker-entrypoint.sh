@@ -22,6 +22,20 @@ for package in ${packages[@]}; do
     fi
 done
 
+echo "add update-cert cron job"
+echo $(crontab -l > all-cron-jobs)
+if output=$(egrep -lir --include=all-cron-jobs "(update-cert.sh)" .); then
+    echo "update-cert job already exist, skip!!!"
+else
+    echo "0 0 1 * * /usr/local/bin/update-cert.sh >/dev/null 2>&1" >> all-cron-jobs
+    crontab all-cron-jobs
+    echo "update-cert job add successfully!!!"
+fi
+rm all-cron-jobs
+
+echo "Init Cert"
+# update-cert.sh
+
 if [ -d '${HOME}/restore/' ]; then
     SQLLIST=`ls ${HOME}/restore/`
     if [ ${#SQLLIST[@]}>0 ]; then
@@ -57,6 +71,7 @@ if ! whoami &> /dev/null; then
         echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd
     fi
 fi
+
 if [ "$1" = 'supervisord' ]; then
     exec /usr/bin/supervisord
 fi

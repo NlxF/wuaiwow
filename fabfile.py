@@ -45,7 +45,7 @@ def _prepare():
     sudo('apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common python-pip cron')
 
     # 添加 cron
-    _add_cron_job()
+    # _add_cron_job()
 
     # add the GPG key for the official Docker repository to system
     sudo('curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -')
@@ -70,6 +70,25 @@ def _prepare():
         sudo('ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose')
 
     sudo('docker login')
+
+
+# def _add_cron_job():
+#     with settings(warn_only=True):
+#         with cd(_REMOTE_DIR):
+#             # 是否已写入
+#             try:
+#                 run("crontab -l > all-cron-jobs")
+#                 old_jons = run('egrep -lir --include=all-cron-jobs "(update-cert.sh)" .')
+#             except BaseException:
+#                 old_jons = None
+#             finally:
+#                 if not old_jons:
+#                     run('echo "0 0 1 * * {} >/dev/null 2>&1" >> all-cron-jobs'.format(os.path.join(_REMOTE_DIR_APP, 'deployment/https/update-cert.sh')))
+#                     run('crontab all-cron-jobs')
+#                 else:
+#                     puts("update-cert job already exist, skip!!!")
+#                 run('rm all-cron-jobs')
+            
 
 
 def _ssh_setting():
@@ -139,19 +158,10 @@ def _make_package(file_path):
             local('mkdir -p volume/restore/')
         if not os.path.exists(_PACKAGE_DIR):
             local('mkdir -p {}'.format(_PACKAGE_DIR))
+        
         tar_files = ['deploy.sh', 'docker-compose-prod.yml', 'volume/restore/', 'deployment/config/', 'deployment/https/']
         local('rm -f {}'.format(file_path))
         local('tar -czvf {} {}'.format(file_path, ' '.join(tar_files)))
-
-
-def _add_cron_job():
-    #write out current crontab
-    sudo('crontab -l > all-cron-jobs')
-    #echo new cron into cron file
-    sudo('echo "0 0 1 * * {} >/dev/null 2>&1" >> all-cron-jobs'.format(os.path.join(_REMOTE_DIR_APP, 'deployment/https/update-cert.sh')))
-    #install new cron file
-    sudo('crontab all-cron-jobs')
-    sudo('rm all-cron-jobs')
 
 
 def _upload_repo():
@@ -161,7 +171,6 @@ def _upload_repo():
     upload_file_path = os.path.join(_PACKAGE_DIR, _TAR_FILE_NAME)
     _make_package(upload_file_path)
 
-    # local('rsync -avz . {}:{} --delete --exclude-from \'rsync_exclude.txt\''.format(host, _REMOTE_DIR_APP))
     if not exists(_REMOTE_DIR):
         sudo('mkdir {} {}'.format(_REMOTE_DIR, _REMOTE_DIR_APP))
 
@@ -176,7 +185,6 @@ def _upload_repo():
         sudo('rm -f %s' % _TAR_FILE_NAME)
         # 赋权限
         sudo('chmod +x {}'.format(os.path.join(_REMOTE_DIR_APP, 'deploy.sh')))
-        sudo('chmod +x {}'.format(os.path.join(_REMOTE_DIR_APP, 'deployment/https/update-cert.sh')))
 
 
 def init_env():
@@ -188,7 +196,6 @@ def init_env():
     #     pass
 
     _prepare()
-
     _security_setting()
 
 

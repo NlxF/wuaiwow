@@ -14,7 +14,7 @@ argc=$#
 argv=($@)
 
 function startServers(){
-    docker-compose -f docker-compose-prod.yml up -d
+    docker-compose -f docker-compose-prod.yml up
 }
 
 function stopServers(){
