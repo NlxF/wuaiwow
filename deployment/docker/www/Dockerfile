@@ -3,7 +3,7 @@ FROM wuaiwow/wwwserver:base
 ENV HOME=/www/wuaiwow-www
 
 # install python, and supervisord, redis-server
-RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server && \
+RUN apt-get update && apt-get install -y supervisor uwsgi python python-pip procps redis-server wget logrotate && \
     /usr/bin/pip install uwsgi flask==1.0.2
 
 # Source code file
@@ -26,6 +26,8 @@ RUN cd ${HOME} && \
 
 # Copy the nginx configuration file from the current directory and paste 
 COPY ./deployment/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./deployment/config/nginx-cert.conf /etc/nginx/conf.d/
+COPY ./deployment/config/nginx-server.conf /etc/nginx/conf.d/
 RUN touch /var/log/nginx/stdout.log && touch /var/log/nginx/stderr.log && touch /var/log/nginx/www.wuaiwow.log
 
 # Copy the base uWSGI ini file to enable default dynamic uwsgi process number
@@ -38,7 +40,8 @@ RUN touch /var/log/supervisor/supervisord.log
 
 COPY ./deployment/config/redis.conf /etc/redis/redis.conf
 RUN touch /var/log/redis/stdout.log && touch /var/log/redis/stderr.log
-# EXPOSE 80:8080
+
+# COPY ./deployment/config/logslice.conf /etc/logrotate.d/
 
 # setup entrypoint
 COPY ./deployment/docker/www/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

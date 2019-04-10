@@ -27,14 +27,20 @@ echo $(crontab -l > all-cron-jobs)
 if output=$(egrep -lir --include=all-cron-jobs "(update-cert.sh)" .); then
     echo "update-cert job already exist, skip!!!"
 else
-    echo "0 0 1 * * /usr/local/bin/update-cert.sh >/dev/null 2>&1" >> all-cron-jobs
+    # echo "0 0 1 * * /usr/local/bin/update-cert.sh >/dev/null 2>&1" >> all-cron-jobs
+    echo "15 4 */1 * * /usr/local/bin/update-cert.sh >/dev/null 2>&1" >> all-cron-jobs
     crontab all-cron-jobs
     echo "update-cert job add successfully!!!"
 fi
 rm all-cron-jobs
 
-echo "Init Cert"
-# update-cert.sh
+echo "Init Cert update"
+/usr/local/bin/update-cert.sh
+
+# echo "Add log slice conf"
+# /usr/sbin/logrotate -f /etc/logrotate.d/nginx    // 未到时间或者未到切割条件，强制切割
+# /usr/sbin/logrotate -d -f /etc/logrotate.d/nginx // 输出切割debug信息
+# /usr/sbin/logrotate -f /etc/logslice.conf
 
 if [ -d '${HOME}/restore/' ]; then
     SQLLIST=`ls ${HOME}/restore/`

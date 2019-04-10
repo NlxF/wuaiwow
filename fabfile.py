@@ -30,7 +30,7 @@ env.key_filename = ['~/.ssh/ism_rsa']
 
 _REMOTE_DIR     = '/www'
 _TAR_DIR_NAME   = 'wuaiwow'
-_REMOTE_DIR_APP = os.path.join(_REMOTE_DIR, _TAR_DIR_NAME)  # '/www/app'
+_REMOTE_DIR_APP = os.path.join(_REMOTE_DIR, _TAR_DIR_NAME)  # '/www/wuaiwow'
 _TAR_FILE_TEMP  = '{}.tar.gz@{}'
 _BACKUP_DIR     = 'volume/backup'
 _PACKAGE_DIR    = 'package/'
@@ -89,7 +89,6 @@ def _prepare():
 #                     puts("update-cert job already exist, skip!!!")
 #                 run('rm all-cron-jobs')
             
-
 
 def _ssh_setting():
     """ssh 设置"""

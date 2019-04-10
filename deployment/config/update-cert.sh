@@ -12,7 +12,7 @@ openssl genrsa 4096 > account.key
 echo "3.generate domain.key"
 openssl genrsa 4096 > domain.key
 echo "4.generate domain.csr"
-openssl req -new -sha256 -key domain.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:wuaiwow.com,DNS:www.wuaiwow.com")) > domain.csr
+openssl req -new -sha256 -key domain.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:www.wuaiwow.com,DNS:wuaiwow.com")) > domain.csr
 echo "5.generate signed.crt"
 python /usr/local/bin/acme_tiny.py --account-key ./account.key --csr ./domain.csr --acme-dir /var/www/challenges/ > ./signed.crt
 echo "6.generate schained.pem"
